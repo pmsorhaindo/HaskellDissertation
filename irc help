@@ -1,0 +1,296 @@
+IRC Parameterized
+<-- docTony has quit (Quit: Leaving)
+<ski> hello yourself
+<-- rsampaio has quit (Ping timeout: 245 seconds)
+<_Mikey> how are things?
+<-- Cloud_ has quit (Ping timeout: 260 seconds)
+* ski is looking at a coalgebra and coinduction tutorial
+<_Mikey> nice..
+* _Mikey is trying to get my head around parameterized types
+<ski> ok
+ any specific example you're pondering ?
+<ski> erus` : huh ?
+<_Mikey> well I'm really wondering. what exactly they're good for
+<erus`> go :: (a -> a) -> !a -> Integer -> a
+<_Mikey> minus the nulling thing with Maybe
+<cheater> ski: is the + in 1 + Btree^2 actually the disjoint sum |_| ?
+<-- lpeterse has quit (Remote host closed the connection)
+<ski> cheater : eys
+--> mreh (~matthew@host86-133-37-91.range86-133.btcentralplus.com) has joined #haskell
+<ski> s/eys/yes/
+<-- afy has quit (Quit: Leaving)
+<ski> _Mikey : well, consider the case of lists
+--> incluye (~incluye@LO1-ESR-74-215-187-208.fuse.net) has joined #haskell
+<_Mikey> it Maybe empty
+ it Maybe not.
+<ski> _Mikey : it would be quite tiring if every time you need a list with a new kind of element, you would have to define a new data type
+<-- perspectival has quit (Ping timeout: 256 seconds)
+<ski> like :
+<_Mikey> hmm
+<ski>   data IntList = IntNil
+                | IntCons Int IntList
+   data StringList = StringNil
+                 | StringCons String StringList
+  &c.
+also, it doesn't stop there, one'd also need
+<cheater> ski: that was really well explained, thanks!
+<ski>   lengthIntList :: IntList -> Int
+   lengthIntList  IntNil        = 0
+<cheater> btw, another question: finite lists are data whereas infinite lists are codata, yes?
+--> MK_FG (~MK_FG@pdpc/supporter/active/mk-fg) has joined #haskell
+<_Mikey> so we're sthmm
+<erus`> > let go f a 0 = a; go f a n = go f (f a) (n - 1) in go (+ 1) 0 5
+<lambdabot>   5
+<ski>   lengthIntList (IntCons _ ns) = 1 + lengthIntList ns
+<_Mikey> we're still haven't to create for each type
+<erus`> can i add a seq in there somewhere to make it strict?
+<_Mikey> and it still seems parameterized
+<ski>   lengthStringList :: StringList -> Int
+   ...
+<erus`> well make a strict
+<ski> cheater : yes
+<sipa> _Mikey: a parametrized type would be:
+<sipa>  data List a= Nil
+             | Const a (List a)
+<ski> s/Const/Cons/ :)
+<_Mikey> ;)
+<sipa> yeah
+<ski> and then you can define
+   lengthList :: List a -> Int
+<sipa> which works for evere a
+<ski> once and for all possible element types `a'
+<sipa> every
+<_Mikey> ok
+ but thats already taken care of by List
+ I mean, thats in the language.
+<ski> yes, lists are predefined
+ lists are just an example
+<_Mikey> ok
+<sipa> the language provides special syntactic sugar for lists
+<ski> you might want to define your own datatype
+<_Mikey> hmmm
+<sipa> but they are a parametrized data type like eveyr other
+<ski> and sometimes you'd run into the same problems as with lists above
+<_Mikey> so ..
+ if I wished
+<ski> so you need to be able to define parameterized data types yourselves
+--> rsampaio (~rodrigo@187.57.211.141) has joined #haskell
+<_Mikey> I could make a tuple type
+--> lmolr (~quassel@host252-247-dynamic.11-87-r.retail.telecomitalia.it) has joined #haskell
+<_Mikey> which took doubles and floats?
+<sipa> type DoubleFloatTuple = (Double, Float)
+<_Mikey>             | (Float,Double)
+                   | (Float, Float)
+  			|(Double,Double)
+ ?
+<sipa> no
+<_Mikey> oh..
+ we're missing value constructors?
+ or is it just plain wrong.
+<int-e> _Mikey: you need constructors. right.
+<sipa> indeed
+<ski> _Mikey : well, with parameterized data types, the type parameter can be replaced by any type whatsoever
+ _Mikey : if you're only going to use it with `Float' or `Double', that's fine
+<applicative> type DFTuple = DF Double Float | FD Float Double | FF Float Float | DD Double Double
+<int-e> data DoubleFloatTuple = DD Double Double | DF Double Float | FD Float Double | FF Float Float  will work, but is of questionable value.
+<_Mikey> yea
+ this is the thing
+<applicative> sorry that should be 'data DFTuple'
+<_Mikey> I think I get what I can do with them now
+ but..
+<ski> cheater : did you give the Jacobs paper a look ?
+<_Mikey> they're use.
+<-- gehmehgeh has quit (Quit: leaving)
+<_Mikey> oh?
+ which paper?
+ ahh that wasn't for me :p
+<-- gtirloni has quit (Ping timeout: 240 seconds)
+<ski> hehe
+<-- tim-m89 has quit (Read error: Operation timed out)
+<ski> _Mikey : you can take a look at it if you want as well. but i suspect you're not ready to appreciate it yet :)
+--> fitoria (~fitoria@163.247.43.83) has joined #haskell
+<_Mikey> possibly
+--> owst (~owst@tarsier.ecs.soton.ac.uk) has joined #haskell
+<_Mikey> I do like a good few pages of confusing a4 paper though
+<ski> hehe
+--> gtirloni (~gtirloni@pdpc/supporter/active/gtirloni) has joined #haskell
+<_Mikey> would I be right in saying,
+ parameterized type allow us to make the strong type system in haskell less strong.
+ types*
+<ski> the paper is "A Tutorial on (Co)Algebras and (Co)Induction" by Bart Jacobs at <http://www.cs.ru.nl/B.Jacobs/PAPERS/JR.pdf>, in case you'd want to glance at it :)
+<ski> _Mikey : no
+<_Mikey> cool!
+--> accel (~accel@unaffiliated/accel) has joined #haskell
+<ski> parameteried types allows us to make the type system (and thus the code using it) more flexible, but still as strong
+<sipa> it allows generalizations without compromising the type system
+<_Mikey> ok
+<ski> in dynamically typed languages, you don't *need* an (explicit) concept of parameterized data types (though it's still useful), since you can write the code anyway (and it'll possibly error out in case you're doing something wrong)
+ so, in dynamically typed languages, you have this flexibility already
+<_Mikey> HMmm
+<ski> what parameterized types in a statically typed language gives you is the flexibility, *without* losing the static type checking
+<_Mikey> Haskell will catch any type errors at compile time
+ so
+ I think I get why it stays strong.
+<hpc> you can weaken the type system with data declarations, though, if you abuse them
+ data DF = D Double | F Float -- now you don't know if a DF is a double or a float, until you try it at runtime
+<_Mikey> its what I thought.
+<applicative> why would you call that weakening the type system?
+* _Mikey is so confused
+<hpc> applicative: because at the logical extreme, you define an ubertype and get a dynamic language
+<ski> _Mikey : at each point in the code, it knows the element type of your lists (e.g.). even if it doesn't know the exact element type that will be used, it knows that the element type is `a', for some unknown type variable `a', and it checks that you don't mix up `a's with `b's (which might be different), and that you don't try to use an `a' as an `Int' (or vice versa), which would be unsafe
+<applicative> the ultimate sum type
+<-- fryguybob has quit (Quit: Page closed)
+* ski wonders where defining an ultimate product type would get us
+<applicative> ()
+--> nighty-- (~nighty@TOROON12-1279662182.sdsl.bell.ca) has joined #haskell
+<ski> no, that's the wrong direction
+<applicative> grrrr
+<ski> (using the same argument, the ultimate sum type is `Void')
+<hpc> ski: nowhere useful, i would guess
+<applicative> it has one for each type
+--> fryguybob (c0053579@gateway/web/freenode/ip.192.5.53.121) has joined #haskell
+<_Mikey> hmm
+<ski> _Mikey : what are you confused about ?
+--> cfricke (~cfricke@dslb-094-222-060-207.pools.arcor-ip.net) has joined #haskell
+<_Mikey> say type variable a
+<hpc> ski: i expect it would be a lot like C unions
+<_Mikey> is doubles and floats
+--> tim-m89 (~chatzilla@119.224.35.68) has joined #haskell
+<_Mikey> and type variable be is strings and floats
+ I guess my example isn't of much practical use
+ but
+<-- donri has quit (Remote host closed the connection)
+<_Mikey> haskell won't mix up my a's and b's
+<applicative> if I define
+--> rostayob (~rostayob@5add3a8e.bb.sky.com) has joined #haskell
+<_Mikey> but I can still use b wrongly
+<hpc> _Mikey: are you going through a tutorial?
+<_Mikey> by trying to devide a potential string
+<applicative> data Foo a b = B b | A a | AB a b
+<applicative> in that a and b can be absolutely anything, not just Float and Double, or whatever
+<_Mikey> I'm glad you think so ski ;)
+<ski> (it's good to discuss simple contrived examples, to get a grip of a concept, in a simpler setting)
+<_Mikey> going through real world haskell
+<rostayob> I'm looking for a data structure on hackage that permitx me to query for all the elements that have some prefix
+ a radix tree or a ternary search tree basically
+<-- tim-m89 has quit (Client Quit)
+ PhilRod has quit (Remote host closed the connection)
+<rostayob> but I can't find any
+* applicative recommends (,) and fst to rostayob 
+<ski> _Mikey : yeah, Haskell won't check that you only use `String' or `Float' for `a'
+<rostayob> applicative: mhm?
+--> jeltsch (~jeltsch@kybi.ioc.ee) has joined #haskell
+<applicative> rostayob: I was just trying to get a clearer picture of what you meant
+<ski> (well, you can do some tricks with type classes)
+<-- dreixel has quit (Quit: off)
+* ski wonders why ternary
+<rostayob> ski: TST work well with these things
+<-- kushal has quit (Remote host closed the connection)
+<ski> why ?
+* applicative now sees the second bit about radix trees etc
+<rostayob> because they perform well with a lot of elements with shared prefixes
+<-- Apocalisp has quit (Ping timeout: 244 seconds)
+<rostayob> http://en.wikipedia.org/wiki/Ternary_search_tree
+<-- moonlite has quit (Ping timeout: 245 seconds)
+--> Apocalisp (~textual@c-50-133-132-143.hsd1.ma.comcast.net) has joined #haskell
+ lpeterse (~lpeterse@91-64-60-77-dynip.superkabel.de) has joined #haskell
+<luite> is there a standard exponentiation operator that works with rational exponents?
+--> dnolen (~davidnole@cpe-98-14-92-234.nyc.res.rr.com) has joined #haskell
+<hpc> :t (^^)
+<lambdabot> forall a b. (Fractional a, Integral b) => a -> b -> a
+<hpc> :t (^)
+<lambdabot> forall a b. (Num a, Integral b) => a -> b -> a
+<ski> rostayob : ty, i see
+<hpc> :t (**)
+<luite> yeah I've tried those :p
+<lambdabot> forall a. (Floating a) => a -> a -> a
+<hpc> that's annoying
+<ski> > 2 ** (1/3)
+<lambdabot>   1.2599210498948732
+<luite> ski: guess the type of (1/3) there ;p
+<_Mikey> Aha!
+<ski> `Double' :)
+<_Mikey> I think I understand how parameter types can be usefull
+--- LeNsTR is now known as LeNsTR|off
+--> maurer (maurer@lethe.ugcs.caltech.edu) has joined #haskell
+<maurer> Hey, is HP up to ghc7 yet?
+<ski> luite : what type did you expect ?
+<luite> I want something that works for Ratinal
+<_Mikey> in the example Tree
+<luite> Rational
+<ski> (s/parameter types/parameterized types/)
+<luite> but I guess I'll make my own
+<ski> luite : rational exponents only ?
+<_Mikey> a value can be Nill or a  have branges ect.
+ although
+<hpc> _Mikey: there's two good LYAH chapters (3, 8) that you could try reading too
+<ski> luite : what should the base and result type be ?
+<hpc> http://learnyouahaskell.com/chapters
+<_Mikey> I have a vague feeling that tree is a predefined data type
+ so yet again I don't have to define it
+ hpc, I'll check it out
+--> dreixel (~dreixel@nat/microsoft/x-dqehoysayfvsnlkc) has joined #haskell
+<luite> ski: at least something that works without converting to Double
+ ski: Fractional
+<ski> _Mikey : no, there's many variants of trees. usually you define the one you want
+<maurer> Oh, found the current version.
+<applicative> maurer: yes
+<ski> _Mikey : though, there is one sortof general purpose `data Tree a = Node a [Tree a]', in `Data.Tree' -- but often you want something more specific, or different
+<maurer> Is there a place to look at HP dev in general? I'm wondering what lies open between us and 7.2.x support
+<applicative> maurer, I don't think the libraries are all in shape for 7.2... yet, but 7.0.x for some time
+<ski> (_Mikey : e.g., in a sense, a list is a special kind of tree)
+--> plutoniix (~plutoniix@ppp-110-169-233-238.revip5.asianet.co.th) has joined #haskell
+ zomgbie (~jesus@212095007116.public.telering.at) has joined #haskell
+ balor (~aidan@193.62.183.62) has joined #haskell
+<maurer> applicative: Yeah, I just checked, and the current HP ships matched with 7.0.2
+<_Mikey> hmm
+<maurer> I'm wondering because I've got a friend who is new to Haskell from ML, but one of the things he may want to play with is -XDeriveGeneric
+<_Mikey> splay trees red black trees ect..
+ ok
+<ski> luite : i'm wondering what concrete type you want to represent the result of `2' raised to the power of `1/3' in
+--> RaptorRarr (~Olathe@unaffiliated/olathe) has joined #haskell
+<_Mikey> reading LYAH's chapter 8
+--> ssice (~ssice@80.45.27.77.dynamic.mundo-r.com) has joined #haskell
+<_Mikey> seems to be answering my question I think
+<RaptorRarr> Is it presumably possible to make a module that has a bunch of rewrite rules that changes a program to print its source code after other optimizations like list fusion and so on?
+<-- incluye has quit (Quit: I've horsed through the desert on a bin with no name)
+<luite> ski: yeah that's a tricky question ;p
+--> incluye (~incluye@LO1-ESR-74-215-187-208.fuse.net) has joined #haskell
+ jkoshy (~jkoshy@117.204.63.100) has joined #haskell
+<ski> (:
+--> Jafet (~Jafet@unaffiliated/jafet) has joined #haskell
+<-- rekahsoft has quit (Ping timeout: 252 seconds)
+<applicative> maurer, on the mailing list I notice a Thanksgiving release was mentioned for a new platform
+--> rekahsoft (~collin@CPE002129ce62e2-CM0026f30ca5ed.cpe.net.cable.rogers.com) has joined #haskell
+<maurer> applicative: So there's no central thing like the GHC trac?
+--> jamil_1 (~quassel@175.110.81.251) has joined #haskell
+* maurer was hoping for an HP trac or similar
+<ski> luite : i suppose maybe you could work in rings or fields where e.g. all third roots exists
+<applicative> theres a trac and a mailing list
+<-- zomgbie has quit (Read error: Connection reset by peer)
+ agumonkey has quit (Ping timeout: 244 seconds)
+ wli has quit (Ping timeout: 240 seconds)
+<applicative> http://projects.haskell.org/pipermail/haskell-platform/ is the list, though I think discussion occurs on all the lists.
+<maurer> Thanks
+--> WilleD (~WilleD@gateway/tor-sasl/willed) has joined #haskell
+* ski . o O ( "Mauer Palast" )
+<maurer> ?
+--> TacticalGrace (~chak@101.161.8.101) has joined #haskell
+ hellsome (~hellsome@ubi-1-236-148.dhcp.uni-bielefeld.de) has joined #haskell
+ perspectival (silas@nat/redhat/x-snftobdswncogzkz) has joined #haskell
+--- dybber is now known as Dybber
+<applicative> maurer, did you see the trac, http://trac.haskell.org/haskell-platform/ as might be predicted
+<ski> maurer : sorry, just a random association
+<applicative> maurer, the idea of the Platform at the outset was that it would appear some months after new ghc's.  Somehow peoples' patience cant take this, so they always think it's late.
+<maurer> applicative: Yeah, I found it.
+--> rsampaio (~rodrigo@187.56.226.234) has joined #haskell
+<maurer> applicative: So, I'm fine with this, which is why I kind of have my own bastardized version of the platform, which I may have him use
+<-- hellsome has quit (Read error: Connection reset by peer)
+<maurer> (e.g. just use the new ghc, use cabal to get and install packages, when that fails, patch them, add a .1 to the end of the revision numbers, put in a local cabal repo)
+ errr, local hackage repo
+<-- DevHC has quit (Ping timeout: 252 seconds)
+ lpeterse has quit (Remote host closed the connection)
+<_Mikey> hey guys
+ I'm off for some lunch
+ thanks for your help ^^
+* Loaded log from Mon Nov 14 13:36:26 2011

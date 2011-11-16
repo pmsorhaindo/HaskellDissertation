@@ -1,0 +1,35 @@
+Parameterized data Types in the console..
+
+<interactive>:1:0: Not in scope: data constructor `MaybeFS'
+ghci>Float a
+
+<interactive>:1:6: Not in scope: `a'
+ghci>Float 0.02
+
+<interactive>:1:0:
+    No instance for (Show (MaybeFS t))
+      arising from a use of `print' at <interactive>:1:0-9
+    Possible fix: add an instance declaration for (Show (MaybeFS t))
+    In a stmt of a 'do' expression: print it
+ghci>:r
+[1 of 1] Compiling Main             ( RealWorldex2.hs, interpreted )
+Ok, modules loaded: Main.
+ghci>Float 0.02
+Float 2.0e-2
+ghci>let a = Float 0.02
+ghci>:t a
+a :: MaybeFS Double
+ghci>let a = String "yo"
+ghci>:t a
+a :: MaybeFS [Char]
+ghci> let a =
+
+<interactive>:1:7: parse error (possibly incorrect indentation)
+ghci> let a = Nothing
+
+<interactive>:1:8:
+    Ambiguous occurrence `Nothing'
+    It could refer to either `Main.Nothing', defined at RealWorldex2.hs:81:3
+                          or `Prelude.Nothing', imported from Prelude
+ghci> let a = Nil
+
