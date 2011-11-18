@@ -30,7 +30,7 @@ data BodyCurrPher = BodyCurrPher (PherType,PherStrength)
 
 data Ant = Ant Location Vector BodyCurrPher
 
-amy = Ant (0.0,0.1,0.5) (0.0,0.4,0.0) 3 (3,10.)
+amy = Ant (0.0,0.1,0.5) (0.0,0.4,0.0) 3 (3,10.0)
 
 moveUp :: Location -> Location
 --moveUp :: 
