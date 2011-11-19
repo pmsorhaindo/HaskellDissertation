@@ -1,13 +1,4 @@
-module AntRepresent  
-( moveUp  
-, moveDown  
-, moveLeft  
-, moveRight
-, move
-, changeDir 
-, releasePheremone  
-, senseSurroundings
-) where  
+module AntRepresent where
 
 --Representation of an ANT
 
@@ -21,23 +12,62 @@ type Speed = Double
 type PherType = Int
 type PherStrength = Double
 
-data Location = Location (LocX,LocY,LocZ)
-	deriving(Show)
-data Vector = Vector (DiffX,DiffY,DiffZ) Speed
-	deriving(Show)
-data BodyCurrPher = BodyCurrPher (PherType,PherStrength)
+--Type enumeration
+data Direction = North | South | East | West
+
+
+instance Show Direction where 
+        show North = "North"
+        show South = "South"
+        show East = "East"
+        show West = "West"
+
+
+data Location = Location {
+        x :: Int,
+        y :: Int
+        } 
 	deriving(Show)
 
-data Ant = Ant Location Vector BodyCurrPher
+data Vector = Vector {
+        direction :: Direction,
+        magnitude :: Int
+        }
+	deriving(Show)
 
-amy = Ant (0.0,0.1,0.5) (0.0,0.4,0.0) 3 (3,10.0)
+--data BodyCurrPher = BodyCurrPher (PherType,PherStrength)
+--	deriving(Show)
+
+data Ant = Ant Location Vector
+        deriving(Show)
+
+getAntLocation :: Ant -> Location
+getAntLocation (Ant l _) = l
+
+getAntVector :: Ant -> Vector
+getAntVector (Ant _ v) = v
+
+
+--A complex 
+--amy = Ant (Location 0.0,0.1,0.5) (Vector 0.0,0.4,0.0)  (BodyCurrPher 3,10.0)
+amy2 :: Ant
+amy2 = Ant (Location 0 1) (Vector North 2)
+
+moveAntUp:: Ant -> Ant
+moveAntUp (Ant x y) = Ant (moveUp x) y
 
 moveUp :: Location -> Location
---moveUp :: 
+moveUp (Location x y) = Location x (y+1)
+
 moveDown :: Location -> Location
+moveDown (Location x y) = Location x (y-1)
+
 moveLeft :: Location -> Location
+moveLeft (Location x y) = Location (x+1) y
+
 moveRight :: Location -> Location
-move :: Location -> Location
-changeDir :: Vector -> Vector
-releasePheremone :: BodyCurrPher -> (PherType,PherStrength) -- This is called by the environment to update its pheromone concentration.
+moveRight (Location x y) = Location (x-1) y
+
+--changeDir :: Vector -> Vector
+--releasePheremone :: BodyCurrPher -> (PherType,PherStrength) -- This is called by the environment to update its pheromone concentration.
 --senseSurroundings ::
