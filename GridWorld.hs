@@ -1,6 +1,9 @@
 module GridWorld where
 --import qualified AntRepresent as Ant 
 
+gridSize :: Int
+gridSize = 10
+
 localSquare :: [[a]] -> (Int,Int) -> [[a]]
 localSquare xss (x,y) = map (take y . drop n) $ (take x . drop n) xss
   where n = length xss `div` 2

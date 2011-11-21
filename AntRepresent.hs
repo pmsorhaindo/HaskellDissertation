@@ -56,6 +56,15 @@ amy2 = Ant (Location 0 1) (Vector North 2)
 moveAntUp:: Ant -> Ant
 moveAntUp (Ant x y) = Ant (moveUp x) y
 
+moveAntDown:: Ant -> Ant
+moveAntDown (Ant x y) = Ant (moveDown x) y
+
+moveAntRight:: Ant -> Ant
+moveAntRight (Ant x y) = Ant (moveRight x) y
+
+moveAntLeft:: Ant -> Ant
+moveAntLeft (Ant x y) = Ant (moveLeft x) y
+
 moveUp :: Location -> Location
 moveUp (Location x y) = Location x (y+1)
 
@@ -67,6 +76,7 @@ moveLeft (Location x y) = Location (x+1) y
 
 moveRight :: Location -> Location
 moveRight (Location x y) = Location (x-1) y
+
 
 --changeDir :: Vector -> Vector
 --releasePheremone :: BodyCurrPher -> (PherType,PherStrength) -- This is called by the environment to update its pheromone concentration.

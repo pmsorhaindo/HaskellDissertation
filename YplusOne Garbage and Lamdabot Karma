@@ -1,0 +1,120 @@
+14:45:11 * SgeoN1 vaguely laughs at y = y + 1
+14:45:30 <alistra> now
+14:45:41 <_Mikey> geheimdienst, I intend to ;) thanks.
+14:45:43 <alistra> i'm not sure if it only works in pattern matching
+14:46:21 <_Mikey> my code is hilarious :(
+14:47:15 --- quit: ksi (Remote host closed the connection)
+14:47:25 <monochrom> one more way: moveUp loc = loc{y = y loc + 1}
+14:47:26 <SgeoN1> Mikey, I wasn't laughing at you
+14:47:32 <jaapweel> Another question (sorry to interrupt hilarity): in which version of GHC was the new "IO manager using epoll/kqueue/poll" introduced, roughly?
+14:47:34 <_Mikey> I knoww ;)
+14:47:41 <shachaf> jaapweel: 7, I think.
+14:47:57 <SgeoN1> Just at the y = y + 1 which is an example of something that Haskell doesn't do.
+14:47:57 <monochrom> one more way: moveUp loc{y=y0} = loc{y = y0 + 1}
+14:48:06 <SgeoN1> In LYAH
+14:48:11 <_Mikey> monochrom, I'm so lost on that last ecample
+14:48:28 <jaapweel> shachaf: thanks, that's very useful
+14:48:29 <monochrom> oops, sorry, my last way is wrong
+14:48:36 <alistra>  moveUp loc{y=y} = loc{y = y + 1}
+14:48:38 <monochrom> moveUp loc@Location{y=y0} = loc{y = y0 + 1}
+14:48:41 <alistra> probably would work
+14:48:56 <alistra> hmm
+14:49:07 <geheimdienst> _Mikey: "somerecord { field = 42 }" is the record update syntax. it means "give me a new record, same type and values as somerecord, but with field set to 42 instead"
+14:49:09 <_Mikey> Wow..
+14:49:13 <monochrom> may still need some parenthese i.e. may need to be loc@(Location@{y=y0}) but I bet no need
+14:49:25 <monochrom> no, not same type
+14:49:28 <_Mikey> ahh ok
+14:50:04 <_Mikey> it makes a bit more sense now ;)
+14:50:18 --- nick: LeNsTR -> LeNsTR|off
+14:50:31 <shachaf> Huh, @ is another thing that binds more tightly than application!
+14:50:33 --- quit: MayDaniel (Read error: Connection reset by peer)
+14:50:38 <_Mikey> Do I need to worry about deleting old ants?
+14:50:42 <shachaf> > let f x@y = (x,y) in f 1
+14:50:43 <lambdabot>   (1,1)
+14:50:49 <_Mikey> Don't want to fill my rams with ants.. ;/
+14:50:52 --- join: EvilMachine (~evi1m4chi@dslb-094-220-242-144.pools.arcor-ip.net) joined #haskell
+14:50:53 <monochrom> all of the above ways have the same runtime cost, so feel free to use whichever you like
+14:51:05 <alistra> _Mikey: garbage collectore
+14:51:07 <alistra> _Mikey: garbage collectors
+14:51:12 <alistra> worry about that
+14:51:23 <_Mikey> simple as?
+14:51:35 <_Mikey> no need to optimize anything?
+14:51:40 <alistra> hahaha
+14:51:43 <alistra> not really
+14:51:48 <lispy> edwardk: I bought a book to help me learn opencl.  The examples it gives of opengl/opencl interop all start with a "what platform are you on?  Okay, call this function..."  The interop functions in the actual api seem to be mostly about locking.  Does that match your understanding?
+14:52:01 --- quit: alexrn (Ping timeout: 252 seconds)
+14:52:06 <monochrom> data R a = R{item::a};  f r = r{item = ()}   is valid
+14:52:19 <alistra> http://www.scs.stanford.edu/11au-cs240h/notes/perf.html _Mikey
+14:52:20 --- quit: copumpkin (Quit: Computer has gone to sleep.)
+14:52:22 <alistra> :P
+14:52:35 <_Mikey> cheers ;)
+14:52:45 --- quit: SyntaxNinja (Ping timeout: 244 seconds)
+14:52:53 <monochrom> not only valid, but also type-infers to f :: R a -> R ()
+14:53:35 <edwardk> lispy: i mean the standard interop calls like clCreateFromGLBuffer clCreateFromGLTexture, clGetGLObjectInfo, etc.
+14:53:42 --- join: drake01 (~drake01@unaffiliated/drake01) joined #haskell
+14:54:00 <lispy> ah
+14:54:08 <_Mikey> are QuickCheck tests written in Haskell?
+14:54:12 <edwardk> lispy: those are set up to move content from GL and ensure it doesn't get disposed of while cl is using it
+14:54:16 --- join: Shin-LaC (~LaC@dhcp-vlan3242-193-224-73.wireless.uic.edu) joined #haskell
+14:54:24 <lispy> So before those you have to tell your OS that you intend to allow sharing
+14:54:44 <alistra> _Mikey: yes
+14:55:24 <edwardk> creating the shared context is the messy part, yes =)
+14:55:25 <_Mikey> alistra, and do all compiled programs go through this Core stage?
+14:55:32 * hackagebot monad-supply 0.1 - Stateful supply monad.  http://hackage.haskell.org/package/monad-supply-0.1 (GeoffHulette)
+14:55:50 --- quit: saml (Read error: Connection reset by peer)
+14:56:04 <alistra> _Mikey: in ghc yes, in hugs i don't know
+14:56:18 <_Mikey> wow
+14:56:19 <_Mikey> ok
+14:56:22 <alistra> it's like llvm for clang :P
+14:56:28 <_Mikey> Thats a really cool link.
+14:56:33 <alistra> or whatever it name is in gcc
+14:56:41 <alistra> _Mikey: go a level higher
+14:56:47 <nwf> Can anybody tell me why the HList package's apply is complaining about "No instance" for things for which there are clearly instances? :)
+14:56:48 <alistra> all the stanford lectures
+14:56:54 <_Mikey> so it might seem grossy inefficient
+14:56:58 <_Mikey> but its optimized out
+14:57:15 <monochrom> for practical reasons, you can bet every compiler and every interpreter has its own intermediate language.
+14:57:20 <nwf> In particular, given "instance [overlap ok] H.Apply (x -> y) x y" I would expect "H.apply id 3" to work, but it does not: "No instance for (H.Apply (a1 -> a1) a0 r0)"
+14:57:21 <alistra> _Mikey: if you want performance, remember to compile haskell, not run in ghci
+14:57:21 <_Mikey> there are Haskell Sanford lectures?
+14:57:22 <_Mikey> O.o
+14:57:39 <alistra> yes, lol
+14:57:44 <_Mikey> cool
+14:57:47 <_Mikey> ok
+14:57:51 --- join: SyntaxNinja (~ijones@pdx.galois.com) joined #haskell
+14:57:53 <alistra> 00:07:06    alistra> http://www.scs.stanford.edu/11au-cs240h/notes/perf.html _Mikey
+14:57:58 <alistra> //www.scs.stanford.edu/11
+14:57:59 <_Mikey> cheerts!
+14:58:03 <alistra> stanford
+14:58:04 <_Mikey> cheers!
+14:58:28 <dmwit> nwf: Because x = x, but a1 /= a0 (and it can't (won't) try guessing that a1 = a0).
+14:59:04 <rwbarton> there might have been another instance with H.Apply (x -> y) x Char or whatever
+14:59:10 --- join: int80_h (~mlitchard@unaffiliated/int80h/x-0283782) joined #haskell
+14:59:16 <nwf> dmwit: So essentially only monomorphic types are permitted?
+14:59:21 <rwbarton> though hmm
+14:59:25 --- quit: hgolden (Remote host closed the connection)
+14:59:36 <dmwit> nwf: No, polymorphic types are permitted, but they must be at least as monomorphic as the instance declaration.
+14:59:37 --- quit: zhulikas (Quit: Leaving)
+14:59:49 <rwbarton> I bet if you write "H.apply id (3 :: Int) :: Int" then it will work
+15:00:01 <dmwit> nwf: If you give a type signature, like (H.apply :: (x -> y) -> x -> y) id 3, it should probably work.
+15:00:04 <nwf> rwbarton: Yeah, but if you leave off either it odesn't work.
+15:00:21 --- join: dgpratt (~dpratt71@pool-72-65-96-10.ptldme.east.myfairpoint.net) joined #haskell
+15:00:39 <dmwit> > (id :: a -> a) 3
+15:00:39 <lambdabot>   3
+15:00:56 <nwf> "(H.apply :: (x -> y) -> x -> y) (id) 3" does indeed work.
+15:01:11 <_Mikey> @karma alistra
+15:01:11 <lambdabot> alistra has a karma of 1
+15:01:20 <nwf> What stops the unification of type vars here?
+15:01:33 <_Mikey> standford seem to have soo cool stuff on Haskell :)
+15:01:47 <_Mikey> stanford*
+15:01:56 --- quit: gwern (Ping timeout: 244 seconds)
+15:02:05 <dmwit> nwf: Nothing. What stops is the choice of instances.
+15:02:48 <nwf> I'm confused; No instance means it's rejected all of them -- if there were several, shouldn't I get an ambiguity warning?
+15:03:01 <dmwit> No.
+15:03:02 <hpaste> int80_h pasted â€œWhat's wrong with my recursive list construction?â€ at http://hpaste.org/54254
+15:03:08 <dmwit> nwf: You've got the phases all interleaved.
+15:03:26 <dmwit> nwf: Ambiguity is a property of the set of instances, not of the particular type you're trying to choose an instance for.
+15:03:29 --- join: nullachtfuffzeh1 (~Adium@e178038046.adsl.alicedsl.de) joined #haskell
+15:03:51 <rwbarton> let's write 't' for the type of H.apply id 3
+15:04:12 <alistra> _Mikey: karma+ or something if you want to increase it xD
+15:04:22 <_Mikey> ooh
