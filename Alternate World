@@ -1,0 +1,4 @@
+-- Seperate structures for sperate entities
+-- [Ant::Ant Location Vecot] 
+-- [Square::Square Surface]
+-- [Food::Food Location Type]

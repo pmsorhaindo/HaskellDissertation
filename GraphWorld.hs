@@ -1,4 +1,5 @@
 module GridWorld where
+import Data.Graph
 import qualified AntRepresent as Ant 
 
 gridSize :: Int
@@ -42,19 +43,54 @@ mkSquare x y z px py = Square (x, y, z, Position px py)
 
 theWorld :: [[([Maybe Ant], Maybe Food)]]
 
-antWorld :: World
---antWorld = World [ Row [mkSquare $ (0,0,0, (0,0))]]
-antWorld = World [ Row [ Square (0,0,0, Position 0 0), Square (0,0,0, Position 1 0), Square (0,0,0, Position 2 0), Square (0,0,0, Position 3 0), Square (0,0,0, Position 4 0)],
-	    	   Row [ Square (0,0,0, Position 0 1), Square (0,0,0, Position 1 1), Square (0,0,0, Position 2 1), Square (0,0,0, Position 3 1), Square (0,0,0, Position 4 1)],
-	    	   Row [ Square (0,0,0, Position 0 2), Square (0,0,0, Position 1 2), Square (0,0,0, Position 2 2), Square (0,0,0, Position 3 2), Square (0,0,0, Position 4 2)],
-	    	   Row [ Square (0,0,0, Position 0 3), Square (0,0,0, Position 1 3), Square (0,0,0, Position 2 3), Square (0,0,0, Position 3 3), Square (0,0,0, Position 4 3)],
-	    	   Row [ Square (0,0,0, Position 0 4), Square (0,0,0, Position 1 4), Square (0,0,0, Position 2 4), Square (0,0,0, Position 3 4), Square (0,0,0, Position 4 4)]]
+1  - 2  - 3  - 4  - 5  - 6
+|    |    |    |    |    |
+7  - 8  - 9  - 10 - 11 - 12
+|    |    |    |    |    |
+13 - 14 - 15 - 16 - 17 - 18
+|    |    |    |    |    |
+19 - 20 - 21 - 22 - 23 - 24
+|    |    |    |    |    |
+25 - 26 - 27 - 28 - 29 - 30
+|    |    |    |    |    |
+31 - 32 - 33 - 34 - 35 - 36
 
-simpleAntWorld = [ Square (1,1,1, Position 0 0), Square (3,3,2, Position 1 0), Square (0,0,0, Position 2 0), Square (0,0,0, Position 3 0), Square (0,0,0, Position 4 0),
-                   Square (1,2,1, Position 0 1), Square (1,0,1, Position 1 1), Square (0,0,0, Position 2 1), Square (0,0,0, Position 3 1), Square (0,0,0, Position 4 1),
-                   Square (3,3,3, Position 0 2), Square (0,8,0, Position 1 2), Square (0,0,0, Position 2 2), Square (0,0,0, Position 3 2), Square (0,0,0, Position 4 2),
-                   Square (6,6,6, Position 0 3), Square (8,0,8, Position 1 3), Square (0,0,0, Position 2 3), Square (0,0,0, Position 3 3), Square (0,0,0, Position 4 3),
-                   Square (8,0,0, Position 0 4), Square (0,0,0, Position 1 4), Square (0,0,0, Position 2 4), Square (0,0,0, Position 3 4), Square (3,4,7, Position 4 4)] 
+1[2,7]
+2[1,8,3]
+3[1,4,9]
+4[3,10,5]
+5[4,11,6]
+6[5,12]
+7[1,8,13]
+8[2,7,9,14]
+9[3,8,10,15]
+10[4,9,11,16]
+11[5,10,12,17]
+12[6,11,18]
+13[7,14,19]
+14[8,13,15,20]
+15[9,14,16,21]
+16[10,15,17,22]
+17[11,16,18,23]
+18[12,17,24]
+19[13,20,25]
+20[14,19,21,26]
+21[15,20,22,27]
+22[16,21,23,28]
+23[17,22,24,29]
+24[18,23,30]
+25[19,26,31]
+26[20,25,27,32]
+27[21,26,28,33]
+28[22,27,29,34]
+29[23,28,30,35]
+30[24,29,36]
+31[25,32]
+32[26,31,33]
+33[27,32,34]
+34[28,33,35]
+35[29,34,36]
+36[30,35]
 
 data NewRow = NewRow [(Integer,Integer)]
 	deriving(Show)
@@ -76,9 +112,6 @@ returnAtPos px py world = Square (dataA,dataB,dataC, Position px py)
               dataB = 0 + (head [b | Square (a,b,c,d) <- world, (get_xpos d)==px, (get_ypos d)==py ])
               dataC = 0 + (head [c | Square (a,b,c,d) <- world, (get_xpos d)==px, (get_ypos d)==py ])
 
--- Seperate structures for sperate entities
--- [Ant::Ant Location Vecot] 
--- [Square::Square Surface]
--- [Food::Food Location Type]
+
 
 
