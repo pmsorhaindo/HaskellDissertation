@@ -5,6 +5,9 @@ import Ant
 import Surface
 import Food
 import SimDefine
+import Control.Monad.Writer  
+import Control.Monad.RWS  
+import System.Random
 
 data AntList = AntList [Ant]
         deriving(Show)
@@ -13,13 +16,22 @@ data SurfaceList = SurfaceList [Surface]
 data FoodList = FoodList [Food]
         deriving(Show)
 
+--newAntColonyLocation :: Int -> (Location,Direction)
 
---generateAnts :: Int -> AntList
+genRandoms :: IO [Int]
+genRandoms = do { g <- getStdGen; return $ randomRs (1, 100) g}
 
---newAntColonyLocation :: Int ->
+random :: (MonadIO m) => m Int
+random = liftIO $ randomRIO (1, 10)
 
-newLocation = Location 1 2
-createAnt = Ant newLocation SimDefine.North
+--randomval = do { l <- ListWorld.random; newLocation l l}
+
+newLocation :: Int -> Int -> Location
+newLocation a b = Location  a b 
+        
+newerLocation = Location 3 2
+
+createAnt = Ant (newLocation 4 5) North
 
 createAntLoop :: Integer -> [Ant]
 createAntLoop acc
@@ -27,7 +39,10 @@ createAntLoop acc
         | acc < colonyCapacity = createAnt : createAntLoop (acc-1)
         | acc > colonyCapacity = []
 
-{-generateSurface ::
+
+{--generateAnts :: Int -> AntList
+
+--generateSurface ::
 
 generateFood ::
 

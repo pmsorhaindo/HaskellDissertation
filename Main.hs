@@ -4,8 +4,6 @@ import Control.Monad.Writer
 import Control.Monad.RWS  
 import System.Random
 
-genRandoms :: IO [Int]
-genRandoms = do { g <- getStdGen; return $ randomRs (1, 100) g}
 x = createAntLoop 3
 y = show Main.x ++ "\n"
 main = do
