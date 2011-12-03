@@ -78,7 +78,7 @@ returnAtPos px py world = Square (dataA,dataB,dataC, Position px py)
 
 -- Seperate structures for sperate entities
 -- [Ant::Ant Location Vecot] 
--- [Square::Square Surface]
+-- [Square::Square Location Surface]
 -- [Food::Food Location Type]
 
 
