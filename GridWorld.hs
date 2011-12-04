@@ -77,7 +77,7 @@ returnAtPos px py world = Square (dataA,dataB,dataC, Position px py)
               dataC = 0 + (head [c | Square (a,b,c,d) <- world, (get_xpos d)==px, (get_ypos d)==py ])
 
 -- Seperate structures for sperate entities
--- [Ant::Ant Location Vecot] 
+-- [Ant::Ant Location Vector] 
 -- [Square::Square Location Surface]
 -- [Food::Food Location Type]
 

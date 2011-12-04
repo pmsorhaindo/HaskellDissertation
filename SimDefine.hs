@@ -1,8 +1,8 @@
 module SimDefine where
 
 data Location = Location {
-        x :: Int,
-        y :: Int
+        xpos :: Int,
+        ypos :: Int
         } 
 	deriving(Show)
 

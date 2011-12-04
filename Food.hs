@@ -3,7 +3,12 @@ module Food where
 
 import SimDefine
 
-type Quantity = Int
-
-data Food = Food Location Quantity
+data Food = Food {
+        loc :: Location,
+        quantity :: Int
+        }
         deriving(Show)
+
+harvestFood :: Food -> Food
+harvestFood food  = Food (loc food) ((quantity food)-1)
+

@@ -21,30 +21,38 @@ data FoodList = FoodList [Food]
 genRandoms :: IO [Int]
 genRandoms = do { g <- getStdGen; return $ randomRs (1, 100) g}
 
-random :: (MonadIO m) => m Int
+--random :: (MonadIO m) => m Int
 random = liftIO $ randomRIO (1, 10)
 
---randomval = do { l <- ListWorld.random; newLocation l l}
 
-newLocation :: Int -> Int -> Location
-newLocation a b = Location  a b 
-        
+--newLocation = do{ a<-ListWorld.random; b<-ListWorld.random;  c>>=Location  a b; return$ Ant c North} 
+  
+newLocation a b = Location a b      
 newerLocation = Location 3 2
 
 createAnt = Ant (newLocation 4 5) North
 
 createAntLoop :: Integer -> [Ant]
-createAntLoop acc
-        | acc < 1 = []
-        | acc < colonyCapacity = createAnt : createAntLoop (acc-1)
-        | acc > colonyCapacity = []
+createAntLoop decr -- decrimenting parameter for a loop
+        | decr < 1 = [] -- ends the loop
+        | decr < colonyCapacity = createAnt : createAntLoop (decr-1)
+        | decr > colonyCapacity = []
+
+
+createFood = Food newerLocation 40
+
+createFoodLoop :: Integer -> [Food]
+createFoodLoop decr
+        | decr < 1 = []
+        | decr < colonyCapacity = createFood : createFoodLoop (decr-1)
+        | decr > colonyCapacity = []
 
 
 {--generateAnts :: Int -> AntList
 
 --generateSurface ::
 
-generateFood ::
+
 
 updateAnts :: AntList -> AntList
 
