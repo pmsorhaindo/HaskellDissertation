@@ -77,19 +77,6 @@ generateSurface (SimParameters size ants capacity food) =
      >>= insertTilesRandomly UnstableDry (size)
 
 
-
-generateAnts :: SimParameters -> State [Int] [Surface]
-generateAnts (SimParameters size ants capacity food) =
-  let initialSurface = listArray ((1, 1), (x, y)) $ repeat StableDry
-  in randomTerrain UnstableDry w initialGrid
-     >>= randomTerrain Wet ()
-
-generateFood :: SimParameters -> State [Int] [Surface]
-generateFood (SimParameters size ants capacity food) =
-  let initialSurface = listArray ((1, 1), (x, y)) $ repeat StableDry
-  in randomTerrain UnstableDry w initialGrid
-     >>= randomTerrain Wet ()
-
 --Randomly add varied terrain with the extraction of Random numbers.
 randomTerrainPlacement ::  
 randomTerrainPlacement _ 0 g = return g
