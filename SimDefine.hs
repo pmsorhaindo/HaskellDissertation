@@ -26,3 +26,9 @@ instance Show Direction where
 getParameters Simple   = SimParameters 10 5 10 2
 getParameters Interesting = SimParameters 20 15 30 4
 getParameters Complex   = SimParameters 60 40 80 10
+
+--For the old code
+worldSize = 10
+startAntAmount = 3
+colonyCapacity = 5
+amountOfFood = 5
