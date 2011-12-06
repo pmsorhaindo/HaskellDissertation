@@ -7,6 +7,20 @@ import qualified AntRepresent as Ant
 
 --theWorld :: [[([Maybe Ant], Maybe Food)]]
 
+
+{-If a programmer has a custom datatype for example an (Int,Bool,Maybe [Char]) tuple, and they want to hold all of these with the Data.Graph library, how is it possible when the the graph creation methods are defined as.
+
+graphFromEdges :: Ord key => [(node, key, [key])] -> (Graph, Vertex -> (node, key, [key]), key -> Maybe Vertex)Source
+
+graphFromEdges' :: Ord key => [(node, key, [key])] -> (Graph, Vertex -> (node, key, [key]))Source
+
+Would I be passing my custom type as a node?
+
+Rozumiem teraz! Muszę zip my custom data type as a node with my key values! JAaaa!
+-}
+
+
+
 --1  - 2  - 3 
 -- |    |    | 
 --4  - 5  - 6  
@@ -25,7 +39,7 @@ import qualified AntRepresent as Ant
 --9[8,6]
 
 
-edges = [(1,2),(1,4),(2,1),(2,5),(2,3),(3,2),(3,6),(4,1),(4,7),(4,15),(5,2),(5,4),(5,8),(5,6),(6,3),(6,5),(6,9),(7,4),(7,8),(8,7),(8,5),(8,9),(9,8),(9,6)]
+newEdges = [(1,2),(1,4),(2,1),(2,5),(2,3),(3,2),(3,6),(4,1),(4,7),(4,15),(5,2),(5,4),(5,8),(5,6),(6,3),(6,5),(6,9),(7,4),(7,8),(8,7),(8,5),(8,9),(9,8),(9,6)]
 
 node1 = array (0,1) [(0,2),(1,4)]
 node2 = array (0,2) [(0,1),(1,3),(2,5)]

@@ -1,4 +1,4 @@
-pristine:0000002021-4fa741cb56e00b45920a617e527965ee878df2bf24c7889e143ab87ef7979431
+pristine:0000002021-8bace835e1fce39f129bcdf1a930b51a24df3831929729014f402e5029167812
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -34,3 +34,8 @@ pmsorhaindo@gmail.com**20111205194810
  Ignore-this: 9a865f665ed531cb2480010965b7efe6
 ] 
 hash: 0000004142-3e7624f86b28a454752b410eeaaac0d57939fd88984bc34758496023f6f8bf6d
+[idea for getting the Graph Representation working ^^
+pmsorhaindo@gmail.com**20111206164138
+ Ignore-this: e43fccb59eddf42ca33be74241fd1d3e
+] 
+hash: 0000006000-3902fe1a638b017f4bb2fdecee7deb4fe813559c04125703999e5564222d04a1
