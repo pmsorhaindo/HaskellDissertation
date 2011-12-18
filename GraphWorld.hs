@@ -20,25 +20,6 @@ Rozumiem teraz! Muszę zip my custom data type as a node with my key values! JAa
 -}
 
 
-
---1  - 2  - 3 
--- |    |    | 
---4  - 5  - 6  
--- |    |    | 
---7  - 8 -  9 
-
-
---1[2,4]
---2[1,5,3]
---3[2,6]
---4[1,7,15]
---5[2,4,8,6]
---6[3,5,9]
---7[4,8]
---8[7,5,9]
---9[8,6]
-
-
 newEdges = [(1,2),(1,4),(2,1),(2,5),(2,3),(3,2),(3,6),(4,1),(4,7),(4,15),(5,2),(5,4),(5,8),(5,6),(6,3),(6,5),(6,9),(7,4),(7,8),(8,7),(8,5),(8,9),(9,8),(9,6)]
 
 node1 = array (0,1) [(0,2),(1,4)]
@@ -51,9 +32,22 @@ node7 = array (0,1) [(0,4),(1,8)]
 node8 = array (0,2) [(0,5),(1,7),(2,9)]
 node9 = array (0,1) [(0,6),(1,8)]
 
+--amy3 :: AntRepresent.Ant
+--amy3 = AntRepresent.Ant (AntRepresent.Location 0 1) (AntRepresent.Vector North 2)
+
 squares =  array (1,100) [(i, i*i) | i <- [1..100]]
 
-{-
+
+-- graphFromEdges :: Ord key => [(node,key,[key])] ->(Graph,Vertex->(node,key,[key]),key->Maybe Vertex)
+
+--Small
+--1  - 2  - 3 
+-- |    |    | 
+--4  - 5  - 6  
+-- |    |    | 
+--7  - 8 -  9 
+
+--Large
 --1  - 2  - 3  - 4  - 5  - 6
 -- |    |    |    |    |    |
 --7  - 8  - 9  - 10 - 11 - 12
@@ -66,42 +60,48 @@ squares =  array (1,100) [(i, i*i) | i <- [1..100]]
 -- |    |    |    |    |    |
 --31 - 32 - 33 - 34 - 35 - 36
 
---1[2,7]
---2[1,8,3]
---3[1,4,9]
---4[3,10,5]
---5[4,11,6]
---6[5,12]
---7[1,8,13]
---8[2,7,9,14]
---9[3,8,10,15]
---10[4,9,11,16]
---11[5,10,12,17]
---12[6,11,18]
---13[7,14,19]
---14[8,13,15,20]
---15[9,14,16,21]
---16[10,15,17,22]
---17[11,16,18,23]
---18[12,17,24]
---19[13,20,25]
---20[14,19,21,26]
---21[15,20,22,27]
---22[16,21,23,28]
---23[17,22,24,29]
---24[18,23,30]
---25[19,26,31]
---26[20,25,27,32]
---27[21,26,28,33]
---28[22,27,29,34]
---29[23,28,30,35]
---30[24,29,36]
---31[25,32]
---32[26,31,33]
---33[27,32,34]
---34[28,33,35]
---35[29,34,36]
---36[30,35] -}
+siz = 6
+sizSmall = 3
+sizeLarge = 6
+--original value x  = Small 5 - Large 8
+
+--down
+getNeighboursd x = (x`div`siz + 1 * siz) + (x`mod`siz)
+--left
+getNeighboursl x = x-1
+--right
+getNeighboursr x = x+1
+--up
+getNeighboursu x = ((x`div`siz -1) * siz) + (x`mod`siz)
+--[left right up down]
+getNeighbours x = [getNeighboursu,getNeighboursr,getNeighboursd,getNeighboursl]
+
+--x [?(x.div.siz + 1 * siz) - (x.mod.siz),x-1,x+1, (x.div.siz - 1 * siz) - (x.mod.siz)?]
+--if-} 
 
 
+--1[2,4]
+--2[1,5,3]
+--3[2,6]
+--4[1,7,15]
+--5[2,4,8,6]
+--6[3,5,9]
+--7[4,8]
+--8[7,5,9]
+--9[8,6]
 
+--instance show Maybe Ant.Ant where 
+--         show Just Ant.Ant = "Ant"
+--         show Nothing = "NO ANT!"
+
+
+amy2 :: Ant.Ant
+amy2 = Ant.Ant (Ant.Location 0 1) (Ant.Vector Ant.North 2)
+
+edgesToBuild = [(Just amy2,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+
+edgesToBuild2 = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
+
+gra = fst $ graphFromEdges' edgesToBuild
+
+aph = snd $ graphFromEdges' edgesToBuild
