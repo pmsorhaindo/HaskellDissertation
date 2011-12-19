@@ -19,13 +19,17 @@ Would I be passing my custom type as a node?
 Rozumiem teraz! Muszę zip my custom data type as a node with my key values! JAaaa!
 -}
 
+fstTrip (x,y,z) = x 
+sndTrip (x,y,z) = y
+trdTrip (x,y,z) = z
 
-newEdges = [(1,2),(1,4),(2,1),(2,5),(2,3),(3,2),(3,6),(4,1),(4,7),(4,15),(5,2),(5,4),(5,8),(5,6),(6,3),(6,5),(6,9),(7,4),(7,8),(8,7),(8,5),(8,9),(9,8),(9,6)]
+
+newEdges = [(1,2),(1,4),(2,1),(2,5),(2,3),(3,2),(3,6),(4,1),(4,7),(4,5),(5,2),(5,4),(5,8),(5,6),(6,3),(6,5),(6,9),(7,4),(7,8),(8,7),(8,5),(8,9),(9,8),(9,6)]
 
 node1 = array (0,1) [(0,2),(1,4)]
 node2 = array (0,2) [(0,1),(1,3),(2,5)]
 node3 = array (0,1) [(0,2),(1,6)]
-node4 = array (0,2) [(0,1),(1,7),(2,15)]
+node4 = array (0,2) [(0,1),(1,7),(2,5)]
 node5 = array (0,3) [(0,2),(1,4),(2,6),(3,8)]
 node6 = array (0,2) [(0,3),(1,5),(2,9)]
 node7 = array (0,1) [(0,4),(1,8)]
@@ -77,7 +81,7 @@ getNeighboursu x = ((x`div`siz -1) * siz) + (x`mod`siz)
 getNeighbours x = [getNeighboursu,getNeighboursr,getNeighboursd,getNeighboursl]
 
 --x [?(x.div.siz + 1 * siz) - (x.mod.siz),x-1,x+1, (x.div.siz - 1 * siz) - (x.mod.siz)?]
---if-} 
+-- if edge 
 
 
 --1[2,4]
@@ -98,10 +102,20 @@ getNeighbours x = [getNeighboursu,getNeighboursr,getNeighboursd,getNeighboursl]
 amy2 :: Ant.Ant
 amy2 = Ant.Ant (Ant.Location 0 1) (Ant.Vector Ant.North 2)
 
-edgesToBuild = [(Just amy2,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+edgesToBuild = [(Just amy2,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,5]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])] -- accidently had a link to vertex 5 as Vertex 15 need to auto  generate this. 
 
 edgesToBuild2 = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
 
-gra = fst $ graphFromEdges' edgesToBuild
+graph' = fst $ graphFromEdges' edgesToBuild
+graphfunc' = snd $ graphFromEdges' edgesToBuild
 
-aph = snd $ graphFromEdges' edgesToBuild
+graph = fstTrip $ graphFromEdges edgesToBuild
+graphfunc = sndTrip $ graphFromEdges edgesToBuild
+graphfuncVert = trdTrip $ graphFromEdges edgesToBuild
+
+
+whatIsAtVert x = fstTrip $ graphfunc x
+--using map to generate a list of what the nodes contain, grab the max size of the graph array using bounds
+listOfWhatIsAtVert = map whatIsAtVert [0..(snd $ bounds graph)] 
+
+
