@@ -102,20 +102,41 @@ getNeighbours x = [getNeighboursu,getNeighboursr,getNeighboursd,getNeighboursl]
 amy2 :: Ant.Ant
 amy2 = Ant.Ant (Ant.Location 0 1) (Ant.Vector Ant.North 2)
 
-edgesToBuild = [(Just amy2,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,5]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])] -- accidently had a link to vertex 5 as Vertex 15 need to auto  generate this. 
+edgesToBuildEm :: [(Maybe Ant.Ant, Integer, [Integer])] -- wouldn't compile withouth this signature cause of abiguity when testing all nothing.
+edgesToBuildEm = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,5]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])] -- accidently had a link to vertex 5 as Vertex 15 need to auto  generate this. 
+
+edgesToBuild :: [(Maybe Ant.Ant, Integer, [Integer])]
+edgesToBuild = [(Just amy2,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,5]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])] -- accidently had a link to vertex 5 as Vertex 15 need to auto  generate this.
 
 edgesToBuild2 = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
 
-graph' = fst $ graphFromEdges' edgesToBuild
-graphfunc' = snd $ graphFromEdges' edgesToBuild
+graph' = fst $ graphFromEdges' edgesToBuild2
+graphfunc' = snd $ graphFromEdges' edgesToBuild2
 
-graph = fstTrip $ graphFromEdges edgesToBuild
-graphfunc = sndTrip $ graphFromEdges edgesToBuild
-graphfuncVert = trdTrip $ graphFromEdges edgesToBuild
+graph = fstTrip $ graphFromEdges edgesToBuild2
+graphfunc = sndTrip $ graphFromEdges edgesToBuild2
+graphfuncVert = trdTrip $ graphFromEdges edgesToBuild2
 
+
+--check to see if processing is needed
+--processCheck = any (/=Nothing) listOfWhatIsAtVert 
 
 whatIsAtVert x = fstTrip $ graphfunc x
 --using map to generate a list of what the nodes contain, grab the max size of the graph array using bounds
-listOfWhatIsAtVert = map whatIsAtVert [0..(snd $ bounds graph)] 
+listOfWhatIsAtVert = map whatIsAtVert [0..(snd $ bounds graph)]
+
+--splittedVertlist1 x = fst $ splitAt x listOfWhatIsAtVert
+--splittedVertlist2 x = snd $ splitAt x listOfWhatIsAtVert
+
+splittedVertlist1 x y = fst $ splitAt x y
+splittedVertlist2 x y = snd $ splitAt x y
+
+modifiedWhatIsAtVert x y z = (init $ splittedVertlist1 x z) ++ (tail $ splittedVertlist1 y z)  ++ (init $ splittedVertlist1 (y-x) (splittedVertlist2 x z)) ++ (tail $ splittedVertlist1 x z) ++ (splittedVertlist2 (y-x) (splittedVertlist2 x z))
+
+-- broken down for debugging
+
+
+
+newStruc = zip3 (vertices graph) listOfWhatIsAtVert
 
 

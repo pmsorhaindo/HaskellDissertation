@@ -14,6 +14,7 @@ type PherStrength = Double
 
 --Type enumeration
 data Direction = North | South | East | West
+        deriving(Eq)
 
 
 instance Show Direction where 
@@ -27,19 +28,19 @@ data Location = Location {
         x :: Int,
         y :: Int
         } 
-	deriving(Show)
+	deriving(Show,Eq)
 
 data Vector = Vector {
         direction :: Direction,
         magnitude :: Int
         }
-	deriving(Show)
+	deriving(Show,Eq)
 
 --data BodyCurrPher = BodyCurrPher (PherType,PherStrength)
 --	deriving(Show)
 
 data Ant = Ant Location Vector
-        deriving(Show)
+        deriving(Show,Eq)
 
 getAntLocation :: Ant -> Location
 getAntLocation (Ant l _) = l
