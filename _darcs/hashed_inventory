@@ -1,4 +1,4 @@
-pristine:0000002021-a7c67a04bd80a299b3bc8cef967eb4e5ef58f0ba00d79bcd1d234ae7b3c62147
+pristine:0000004162-eb47fc469553880d6283a8ab810ce69713673e55c6f3e7d70635d8a5145ae72d
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -49,3 +49,13 @@ pmsorhaindo@gmail.com**20111220104321
  Ignore-this: d7ffaeeee02ff64e418e89342562591b
 ] 
 hash: 0000003158-6d04a04b9e1ad900e2a414ed8437bd0d2ae8a966cf7da016232a4b04be017c83
+[Basic swapNodes is down
+pmsorhaindo@gmail.com**20111221123141
+ Ignore-this: 6f5695fd9b231bc3ef88127e63f0f4d2
+] 
+hash: 0000003324-e31c1f926820003322573e28a7d7793ae4ad1efd57cfb9edd7fd91c66fb57125
+[all files
+pmsorhaindo@gmail.com**20111221123324
+ Ignore-this: 7a7a3bebf8253589c2ab716984c2d0
+] 
+hash: 0024188443-740be091e4150e04c28f7ce6ee3287af9f03702fce31d95d640af60b5aefaf4f
