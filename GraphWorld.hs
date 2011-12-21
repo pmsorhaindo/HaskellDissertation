@@ -7,62 +7,14 @@ import qualified AntRepresent as Ant
 
 --theWorld :: [[([Maybe Ant], Maybe Food)]]
 
-
-{-If a programmer has a custom datatype for example an (Int,Bool,Maybe [Char]) tuple, and they want to hold all of these with the Data.Graph library, how is it possible when the the graph creation methods are defined as.
-
-graphFromEdges :: Ord key => [(node, key, [key])] -> (Graph, Vertex -> (node, key, [key]), key -> Maybe Vertex)Source
-
-graphFromEdges' :: Ord key => [(node, key, [key])] -> (Graph, Vertex -> (node, key, [key]))Source
-
-Would I be passing my custom type as a node?
-
-Rozumiem teraz! Muszę zip my custom data type as a node with my key values! JAaaa!
--}
-
 fstTrip (x,y,z) = x 
 sndTrip (x,y,z) = y
 trdTrip (x,y,z) = z
-
-
-newEdges = [(1,2),(1,4),(2,1),(2,5),(2,3),(3,2),(3,6),(4,1),(4,7),(4,5),(5,2),(5,4),(5,8),(5,6),(6,3),(6,5),(6,9),(7,4),(7,8),(8,7),(8,5),(8,9),(9,8),(9,6)]
-
-node1 = array (0,1) [(0,2),(1,4)]
-node2 = array (0,2) [(0,1),(1,3),(2,5)]
-node3 = array (0,1) [(0,2),(1,6)]
-node4 = array (0,2) [(0,1),(1,7),(2,5)]
-node5 = array (0,3) [(0,2),(1,4),(2,6),(3,8)]
-node6 = array (0,2) [(0,3),(1,5),(2,9)]
-node7 = array (0,1) [(0,4),(1,8)]
-node8 = array (0,2) [(0,5),(1,7),(2,9)]
-node9 = array (0,1) [(0,6),(1,8)]
-
---amy3 :: AntRepresent.Ant
---amy3 = AntRepresent.Ant (AntRepresent.Location 0 1) (AntRepresent.Vector North 2)
 
 squares =  array (1,100) [(i, i*i) | i <- [1..100]]
 
 
 -- graphFromEdges :: Ord key => [(node,key,[key])] ->(Graph,Vertex->(node,key,[key]),key->Maybe Vertex)
-
---Small
---1  - 2  - 3 
--- |    |    | 
---4  - 5  - 6  
--- |    |    | 
---7  - 8 -  9 
-
---Large
---1  - 2  - 3  - 4  - 5  - 6
--- |    |    |    |    |    |
---7  - 8  - 9  - 10 - 11 - 12
--- |    |    |    |    |    |
---13 - 14 - 15 - 16 - 17 - 18
--- |    |    |    |    |    |
---19 - 20 - 21 - 22 - 23 - 24
--- |    |    |    |    |    |
---25 - 26 - 27 - 28 - 29 - 30
--- |    |    |    |    |    |
---31 - 32 - 33 - 34 - 35 - 36
 
 siz = 6
 sizSmall = 3
@@ -117,13 +69,12 @@ graph = fstTrip $ graphFromEdges edgesToBuild2
 graphfunc = sndTrip $ graphFromEdges edgesToBuild2
 graphfuncVert = trdTrip $ graphFromEdges edgesToBuild2
 
-
 --check to see if processing is needed
 --processCheck = any (/=Nothing) listOfWhatIsAtVert 
 
 whatIsAtVert x = fstTrip $ graphfunc x
 --using map to generate a list of what the nodes contain, grab the max size of the graph array using bounds
-listOfWhatIsAtVert = map whatIsAtVert [0..(snd $ bounds graph)]
+listOfWhatIsAtVert graph = map whatIsAtVert [0..(snd $ bounds graph)]
 
 --splittedVertlist1 x = fst $ splitAt x listOfWhatIsAtVert
 --splittedVertlist2 x = snd $ splitAt x listOfWhatIsAtVert
@@ -131,12 +82,23 @@ listOfWhatIsAtVert = map whatIsAtVert [0..(snd $ bounds graph)]
 splittedVertlist1 x y = fst $ splitAt x y
 splittedVertlist2 x y = snd $ splitAt x y
 
-modifiedWhatIsAtVert x y z = (init $ splittedVertlist1 x z) ++ (tail $ splittedVertlist1 y z)  ++ (init $ splittedVertlist1 (y-x) (splittedVertlist2 x z)) ++ (tail $ splittedVertlist1 x z) ++ (splittedVertlist2 (y-x) (splittedVertlist2 x z))
+modifiedWhatIsAtVert x y z = (init $ splittedVertlist1 x z) ++ [(last $ splittedVertlist1 y z)]  ++ (init $ splittedVertlist1 (y-x) (splittedVertlist2 x z)) ++ [(last $ splittedVertlist1 x z)] ++ (splittedVertlist2 (y-x) (splittedVertlist2 x z))
 
 -- broken down for debugging
+lpart1 x z = init $ splittedVertlist1 x z
+lpart2 y z = last $ splittedVertlist1 y z
+lpart3 x y z = init $ splittedVertlist1 (y-x) (splittedVertlist2 x z)
+lpart4 x z = (last $ splittedVertlist1 x z) -- was tail ;/
+lpart5 x y z = (splittedVertlist2 (y-x) (splittedVertlist2 x z))
+-- yay works tested for edge cases too
+
+brokenUpGraph z = map graphfunc (vertices z)
+
+verticesConntected:: Graph -> [[Int]] -- was defaulting to Integers before I put this!
+verticesConntected graph = map trdTrip (brokenUpGraph graph)
+
+updateGraph x y graph = zip3 (modifiedWhatIsAtVert x y (listOfWhatIsAtVert graph)) (vertices graph)  (verticesConntected graph)
 
 
-
-newStruc = zip3 (vertices graph) listOfWhatIsAtVert
 
 
