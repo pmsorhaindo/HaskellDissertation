@@ -72,8 +72,10 @@ graphfuncVert = trdTrip $ graphFromEdges edgesToBuild2
 --check to see if processing is needed
 --processCheck = any (/=Nothing) listOfWhatIsAtVert 
 
+--TYPE NEEEDS TO BE INT
 whatIsAtVert x = fstTrip $ graphfunc x
 --using map to generate a list of what the nodes contain, grab the max size of the graph array using bounds
+--listOfWhatIsAtVert :: Array Vertex e -> [[Int]]
 listOfWhatIsAtVert graph = map whatIsAtVert [0..(snd $ bounds graph)]
 
 --splittedVertlist1 x = fst $ splitAt x listOfWhatIsAtVert
@@ -82,6 +84,7 @@ listOfWhatIsAtVert graph = map whatIsAtVert [0..(snd $ bounds graph)]
 splittedVertlist1 x y = fst $ splitAt x y
 splittedVertlist2 x y = snd $ splitAt x y
 
+--modifiedWhatIsAtVert :: Int -> Int -> [Int] -> [Int]
 modifiedWhatIsAtVert x y z = (init $ splittedVertlist1 x z) ++ [(last $ splittedVertlist1 y z)]  ++ (init $ splittedVertlist1 (y-x) (splittedVertlist2 x z)) ++ [(last $ splittedVertlist1 x z)] ++ (splittedVertlist2 (y-x) (splittedVertlist2 x z))
 
 -- broken down for debugging
@@ -94,11 +97,14 @@ lpart5 x y z = (splittedVertlist2 (y-x) (splittedVertlist2 x z))
 
 brokenUpGraph z = map graphfunc (vertices z)
 
-verticesConntected:: Graph -> [[Int]] -- was defaulting to Integers before I put this!
+--verticesConntected:: Graph -> [[Int]] -- was defaulting to Integers before I put this!
 verticesConntected graph = map trdTrip (brokenUpGraph graph)
 
+--updateGraph :: Int -> Int -> Array Vertex [Vertex] -> [([Int], Vertex, [Int])]
 updateGraph x y graph = zip3 (modifiedWhatIsAtVert x y (listOfWhatIsAtVert graph)) (vertices graph)  (verticesConntected graph)
 
+updateGraph' x y graph = graphFromEdges$ zip3 (modifiedWhatIsAtVert x y (listOfWhatIsAtVert graph)) (vertices graph)  (verticesConntected graph)
+ 
 
 
 

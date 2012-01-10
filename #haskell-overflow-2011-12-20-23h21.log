@@ -1,0 +1,163 @@
+--> You are now talking on #haskell-overflow
+--- Topic for #haskell-overflow is Overflow conversations and technical discussion from #haskell
+ Topic for #haskell-overflow set by dons at Mon Jan 29 12:07:43 2007
+<Peaker> _Mikey: Why is you addOne not adding one? :)
+<Peaker> (besides the syntax)
+<_Mikey> it wouldn't besides the syntax cause no 1 is provided to be added
+<Peaker> _Mikey: why do you need to be provided 1? Just use 1
+<_Mikey> I was trying to generalize
+<Peaker> don't
+<_Mikey> ok
+<Peaker> just write the same function you wrote originally -- but with correct syntax
+ (your original solution for add 1 was close, but not quite the right syntax)
+<_Mikey> so
+ addOne Nothing = Nothing
+ addOne Just x = Just (x+1)
+<Peaker> _Mikey: close, but not quite
+<dylukes> You need parens around (Just x)
+ Since it's one argument, not too.
+<Peaker> _Mikey: your second equation parses as if it has 2 arguments: "Just" and "x"
+<dylukes> two*
+<_Mikey> ahh
+ I just realized
+ compiled in ghci and it said
+<Peaker> _Mikey: because   addOne Just x    parses as:    (addOne Just) x
+<_Mikey> $ wouldn't help out in this instance would it?
+ addOne $ Just x
+<Peaker> _Mikey: nope, because it's a pattern-match, not function application
+<Peaker> in other contexts, you could do that, but not in a pattern-match
+<_Mikey> thought as much
+ ok
+<Peaker> _Mikey: so write the correct def.
+<_Mikey> can I cheat and :t it?
+<Peaker> _Mikey: I mean, write the fixed syntax
+<Peaker> of what you wrote above
+ the type is slightly annoying because of it's generalized to all numbers
+<_Mikey> guessing I'd say, f a -> f a
+<Peaker> _Mikey: you wrote:
+ <_Mikey> addOne Nothing = Nothing
+ <_Mikey> addOne Just x = Just (x+1)
+<Peaker> fix it :)
+<_Mikey> ahh
+ addOne Nothing = Nothing
+ addOne (Just x) = Just (x+1)
+<Peaker> now generalize it so it can add any number, not just 1
+<_Mikey> addOne Nothing = Nothing
+ nooo
+ sorry
+ add One Nothing y = Nothing
+ addOne (Just x) y = Just (x+y)
+ s/add One/addOne
+<Peaker> flip the args :)
+<_Mikey> okies
+<Peaker> (also rename, it's not addOne)
+<_Mikey> ha true!
+ addToMaybe x Nothing = Nothing
+ addToMaybe x (Just y) = Just (x+y)
+<Peaker> now try to generalize it to not just add a number to the content, but apply any given function on the content
+<_Mikey> ohh
+ total stab in the dark
+ doStuffToMaybe = x y Nothing = Nothing
+<Peaker> what's this syntax supposed to mean? :)
+<_Mikey> doStuffToMaybe x y (Just z) = Just (x`y`z)
+ ohhh
+ XD
+ sorry
+ doStuffToMaybe x y Nothing = Nothing
+ doStuffToMaybe x y (Just z) = Just (x`y`z)
+<Peaker> you're getting closer
+ but there's an unnecessary complication in your solution..   Replace the `y` syntax with prefix syntax
+ (so it's easier to see what it is)
+<_Mikey> ahh
+ so
+ doStuffMaybe x y (Just z) = Just (y x z)
+<Peaker> so you take 2 args, x and y, only to apply them to one another, before applying them to z
+ why not have your caller apply them to one another?
+--> tac-tics (foobar@173-161-6-33-Illinois.hfc.comcastbusiness.net) has joined #haskell-overflow
+<_Mikey> hmm
+<Peaker> doStuffToMaybe is currently doing 2 things instead of just 1: Combining its two args (x and y), and applying the result of that combination to z
+<-- tac-tics (foobar@173-161-6-33-Illinois.hfc.comcastbusiness.net) has left #haskell-overflow
+<_Mikey> I see
+<Peaker> _Mikey: what happens if instead of taking both x and y and then using (y x) you just take the result of applying y with x?
+<_Mikey> so pass in partially applied y x
+<Peaker> exactly
+<_Mikey> ^^ you rock!
+<Peaker> :)
+ so write the new solution
+<_Mikey> I was just about to ask :p
+ how does one write this parameter is a partially applied function
+ but
+ third stab in the dark this evening
+ I'm gonna go with
+<Peaker> You don't really care whether it's partially applied or not
+ you just need a function-of-one-arg
+<_Mikey> ok
+ soStuffToMaybe y (Just z) = Just (y z)
+ where y is a function which already has stuff going down.
+<Peaker> great!  now rename doStuffToMaybe to "fmap", "y" to "f", and "z" to "x"
+ and write the whole definition
+<_Mikey> ok
+ fmap f Nothing = Nothing
+ fmap f (Just x) = Just (f x)
+<Peaker> great! this is a very useful standard function on Maybes
+<Peaker> _Mikey: now try to use this "fmap" to add 1 to a maybe value, or to multiply by two...
+<_Mikey> in ghci?
+<Peaker> in here :)
+ let's say you're given:   x :: Maybe Int
+ and   y :: Maybe Double
+ you want to add 1 to x, and multiply y by 2  (inside the Maybe, of course)
+<_Mikey> ahh
+ sorry I went to ghci
+ I got 
+ fmap (+1) Just 4
+<Peaker> ((fmap (+1)) Just) 4  ?
+<_Mikey> and fmap (*2) Just 7
+<Peaker> remember function application is left-associative, so parens stick to the left if you don't tell them otherwise
+<_Mikey> and fmap (*2) (Just 4)
+<Peaker> same for the (+1)
+<_Mikey> and fmap (+1) (Just 7)
+ yes
+<Peaker> Yep, great..
+<_Mikey> sorry
+ I just did that in ghci
+ I don't know why I left that out XD
+<Peaker> Now this is a bit trickier -- can you use "fmap" to add the contents of two Maybe values?
+ Say,   plusMaybes :: Maybe Int -> Maybe Int -> Maybe Int         can plusMaybe be built from fmap and (+) ?
+<_Mikey> my gut says yes
+<Peaker> Note "fmap" can only apply a function inside the Maybe,   it never looks at two Maybes and chooses how to combine the Nothing/Just of both into a Nothing/Just
+<_Mikey> so my plusMaybe function's primary job is to decide what to do with two Nothings
+ one of each
+ and too Justs
+ s/too/two
+<Peaker> well, one of its jobs, not necessarily "primary"
+ but it's something that fmap cannot really do
+<_Mikey> ok
+<Peaker> so just write plusMaybes directly, without use of Maybe
+<_Mikey> plusMaybe Nothing Nothing = Nothing   <- don't start like this
+<Peaker> you can start like that
+ (later you can improve)
+<-- dylukes has quit (Quit: dylukes)
+<_Mikey> plusMaybe Nothing Just x = Just x
+ sorry
+ plusMaybe Nothing (Just x) = Just x
+ plusMaybe (Just x) Nothing = Just x
+<Peaker> Well, that's one sane definition :) But not the one I was aiming at :)
+ Let's say we need both to be Just
+<_Mikey> plusMaybe (Just x) (Just y) = Just (x+y)
+<Peaker> your definition is slightly weird
+ why is the result wrapped in a Maybe?
+<_Mikey> I'm sure :D
+<Peaker> if you always return Just something
+ The fact the result is in Maybe -- assuming the type is sane, means it would return Nothing in some cases
+<_Mikey> hmm
+ you mean a function taking to values /= Nothing could return a Nothing?
+<Peaker> oh, sorry
+ I failed to notice that top case :)
+ forget the last things I said
+<_Mikey> ahh ok
+<Peaker> your function is completely sane
+ but let's use a slightly different one
+ where both need to be Just to have a Just result
+<_Mikey> so Nothing (Just x) = nothing?
+ for this example
+
