@@ -10,6 +10,14 @@
 --25 - 26 - 27 - 28 - 29 - 30
 -- |    |    |    |    |    |
 --31 - 32 - 33 - 34 - 35 - 36
+Adjacency List Automation
+size = 6
+range 1-size^2
+left v-1 (not avaiable if v(mod)size =1)
+right v+1 (not available if v(mod)size = 0 ((not including 0 use range)))
+down v+size (not available if v>(size^2-size)
+up v-size (not available if v<=size)
+
 
 --1[2,7]
 --2[1,8,3]

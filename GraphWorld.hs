@@ -1,4 +1,4 @@
-module GridWorld where
+module GraphWorld where
 import Data.Array
 import Data.Graph
 import qualified AntRepresent as Ant 
@@ -69,6 +69,15 @@ graph = fstTrip $ graphFromEdges edgesToBuild2
 graphfunc = sndTrip $ graphFromEdges edgesToBuild2
 graphfuncVert = trdTrip $ graphFromEdges edgesToBuild2
 
+-- takes a graph for use with betterlist ofwhatisatvert
+-- the second value returned from graph from Edges is the function that allows us to get values by Vertex x
+betterGraphfunc x = sndTrip $ graphFromEdges x
+
+--GraphFromEdges Result
+bleep = graphFromEdges edgesToBuild2
+
+superGraphFunc gr = sndTrip gr
+
 --check to see if processing is needed
 --processCheck = any (/=Nothing) listOfWhatIsAtVert 
 
@@ -76,7 +85,10 @@ graphfuncVert = trdTrip $ graphFromEdges edgesToBuild2
 whatIsAtVert x = fstTrip $ graphfunc x
 --using map to generate a list of what the nodes contain, grab the max size of the graph array using bounds
 --listOfWhatIsAtVert :: Array Vertex e -> [[Int]]
-listOfWhatIsAtVert graph = map whatIsAtVert [0..(snd $ bounds graph)]
+listOfWhatIsAtVert x = map whatIsAtVert [0..(snd $ bounds x)]
+
+whatIsAtVert' gr x = fstTrip $ betterGraphfunc gr $ x
+listOfWhatIsAtVert' gr x = map (whatIsAtVert' gr) [0..(snd $ bounds x)]
 
 --splittedVertlist1 x = fst $ splitAt x listOfWhatIsAtVert
 --splittedVertlist2 x = snd $ splitAt x listOfWhatIsAtVert
@@ -100,11 +112,18 @@ brokenUpGraph z = map graphfunc (vertices z)
 --verticesConntected:: Graph -> [[Int]] -- was defaulting to Integers before I put this!
 verticesConntected graph = map trdTrip (brokenUpGraph graph)
 
---updateGraph :: Int -> Int -> Array Vertex [Vertex] -> [([Int], Vertex, [Int])]
+updateGraph :: Int -> Int -> Array Vertex [Vertex] -> [([Char], Vertex, [Int])]
 updateGraph x y graph = zip3 (modifiedWhatIsAtVert x y (listOfWhatIsAtVert graph)) (vertices graph)  (verticesConntected graph)
 
 updateGraph' x y graph = graphFromEdges$ zip3 (modifiedWhatIsAtVert x y (listOfWhatIsAtVert graph)) (vertices graph)  (verticesConntected graph)
  
 
+-- THE SWAP
+-- listOfWhatIsAtVert graph or listOfWhatIsAtVert' edgesToBuild2 graph
+-- let d = updateGraph 1 3 graph
+-- let e = graphFromEdges d
+-- let f = fst Trip e
+-- listOfWhatIsAtVert' d f
 
-
+-- legalEdges
+legalEdges gr v = trdTrip $ superGraphFunc gr $ v
