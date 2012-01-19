@@ -13,12 +13,25 @@ trdTrip (x,y,z) = z
 
 squares =  array (1,100) [(i, i*i) | i <- [1..100]]
 
+-- Adjacency List Automation
+-- size = 6
+-- range 1-size^2
+-- left v-1 (not avaiable if v(mod)size =1)
+-- right v+1 (not available if v(mod)size = 0 ((not including 0 use range)))
+-- down v+size (not available if v>(size^2-size)
+-- up v-size (not available if v<=size)
+siz = 6
+sizSmalls = 3
+sizeLarge = 6
+
+keyList = [1..siz]
+--adjKeyList a = [genUp,genDown,genLeft,genRight]
+
+--genUp
 
 -- graphFromEdges :: Ord key => [(node,key,[key])] ->(Graph,Vertex->(node,key,[key]),key->Maybe Vertex)
 
-siz = 6
-sizSmall = 3
-sizeLarge = 6
+
 --original value x  = Small 5 - Large 8
 
 --down
