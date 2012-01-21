@@ -1,6 +1,6 @@
 module AntRepresent where
 
---Representation of an ANT
+--Representation of an AntOld
 
 type LocX = Double
 type LocY = Double
@@ -39,32 +39,35 @@ data Vector = Vector {
 --data BodyCurrPher = BodyCurrPher (PherType,PherStrength)
 --	deriving(Show)
 
-data Ant = Ant Location Vector
+data Ant = Ant Int Direction
         deriving(Show,Eq)
 
-getAntLocation :: Ant -> Location
-getAntLocation (Ant l _) = l
+data AntOld = AntOld Location Vector
+        deriving(Show,Eq)
 
-getAntVector :: Ant -> Vector
-getAntVector (Ant _ v) = v
+getAntOldLocation :: AntOld -> Location
+getAntOldLocation (AntOld l _) = l
+
+getAntOldVector :: AntOld -> Vector
+getAntOldVector (AntOld _ v) = v
 
 
 --A complex 
---amy = Ant (Location 0.0,0.1,0.5) (Vector 0.0,0.4,0.0)  (BodyCurrPher 3,10.0)
-amy2 :: Ant
-amy2 = Ant (Location 0 1) (Vector North 2)
+--amy = AntOld (Location 0.0,0.1,0.5) (Vector 0.0,0.4,0.0)  (BodyCurrPher 3,10.0)
+amy2 :: AntOld
+amy2 = AntOld (Location 0 1) (Vector North 2)
 
-moveAntUp:: Ant -> Ant
-moveAntUp (Ant x y) = Ant (moveUp x) y
+moveAntOldUp:: AntOld -> AntOld
+moveAntOldUp (AntOld x y) = AntOld (moveUp x) y
 
-moveAntDown:: Ant -> Ant
-moveAntDown (Ant x y) = Ant (moveDown x) y
+moveAntOldDown:: AntOld -> AntOld
+moveAntOldDown (AntOld x y) = AntOld (moveDown x) y
 
-moveAntRight:: Ant -> Ant
-moveAntRight (Ant x y) = Ant (moveRight x) y
+moveAntOldRight:: AntOld -> AntOld
+moveAntOldRight (AntOld x y) = AntOld (moveRight x) y
 
-moveAntLeft:: Ant -> Ant
-moveAntLeft (Ant x y) = Ant (moveLeft x) y
+moveAntOldLeft:: AntOld -> AntOld
+moveAntOldLeft (AntOld x y) = AntOld (moveLeft x) y
 
 moveUp :: Location -> Location
 moveUp (Location x y) = Location x (y+1)

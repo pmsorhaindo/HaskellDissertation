@@ -1,6 +1,7 @@
 module World where
 import Data.Array
 import Data.Graph
+import Data.List (intercalate)
 import qualified AntRepresent as Ant
 
 --Utils deconstructing 3 tuples with pattern matching
@@ -10,13 +11,54 @@ trdTrip (x,y,z) = z
 
 
 -- Adjacency List Automation
+type Size = Int
+type Point = Int
 -- size = 6
 -- range 1-size^2
--- left v-1 (not avaiable if v(mod)size =1)
--- right v+1 (not available if v(mod)size = 0 ((not including 0 use range)))
--- down v+size (not available if v>(size^2-size)
--- up v-size (not available if v<=size)
 
+-- TODO secure these functions with better testing on numbers added AdjRight still allows ridiculos -ve numbers
+-- left v-1 (not avaiable if v(mod)size =1)
+getAdjLeft:: Size->[Int]->Point->[Int]
+getAdjLeft size currentAdj pos
+                                | pos`mod`size /= 1 = currentAdj
+                                | otherwise         = (pos-1):currentAdj
+
+-- right v+1 (not available if v(mod)size = 0 ((not including 0 use range)))
+getAdjRight:: Size->[Int]->Point->[Int]
+getAdjRight size currentAdj pos
+                                | pos`mod`size /= 0 || pos /= 0 = currentAdj
+                                | otherwise                     = (pos+1):currentAdj
+
+-- down v+size (not available if v>(size^2-size)
+getAdjDown:: Size->[Int]->Point->[Int]
+getAdjDown size currentAdj pos
+                                | pos > (size^2-size) = currentAdj
+                                | otherwise           = (pos+size):currentAdj
+
+-- up v-size (not available if v<=size)
+getAdjUp:: Size->[Int]->Point->[Int]
+getAdjUp size currentAdj pos
+                                | (pos-size) <= 0    = currentAdj
+                                | otherwise          = (pos-size):currentAdj
+
+
+--1  - 2  - 3  - 4  - 5  - 6
+-- |    |    |    |    |    |
+--7  - 8  - 9  - 10 - 11 - 12
+-- |    |    |    |    |    |
+--13 - 14 - 15 - 16 - 17 - 18
+-- |    |    |    |    |    |
+--19 - 20 - 21 - 22 - 23 - 24
+-- |    |    |    |    |    |
+--25 - 26 - 27 - 28 - 29 - 30
+-- |    |    |    |    |    |
+--31 - 32 - 33 - 34 - 35 - 36
+--This function nearly took forever but thanks to LYAH's awesome explanation on $ (function application I bust it out in a train journey :D
+--adjListForVertex :: Point->Size->[Int]
+adjListForVertex size pos = concat $ map ($pos) [(getAdjUp size []),(getAdjLeft size []),(getAdjDown size []),(getAdjRight size [])]
+
+
+adjListForNewGraph size = map (adjListForVertex size) [0..size^2]
 
 --test world sizes possiply should be of power two for expantion
 wsize = 6
@@ -31,6 +73,13 @@ keyList = [1..wsize*wsize]
 
 edgesForTestGraph :: [([Char], Int, [Int])]
 edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
+
+edgesForTestAGraph :: [(Maybe Ant.Ant, Int, [Int])]
+edgesForTestAGraph = [(Just(Ant.Ant 1 Ant.South),1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+
+edgesForTestPGraph :: [(Integer, Int, [Int])]
+edgesForTestPGraph = [(0,1,[2,4]),(0,2,[1,5,3]),(0,3,[2,6]),(0,4,[1,7,15]),(0,5,[2,4,8,6]),(0,6,[3,5,9]),(0,7,[4,8]),(0,8,[7,5,9]),(0,9,[8,6])]
+
 
 graphTuple :: [(node, Int, [Int])] -> (Graph, Vertex -> (node, Int, [Int]), Int -> Maybe Vertex)
 graphTuple edges    = graphFromEdges edges
@@ -69,13 +118,49 @@ brokenUpGraph z = map (sndTrip z) (vertices $ fstTrip z)
 adjVertsFromCombo z = map trdTrip (brokenUpGraph z)
 
 --updateGraph :: Int -> Int -> Array Vertex [Vertex] -> [([Char], Vertex, [Int])]
-updateGraph x y z = zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) (vertices $ fstTrip z)  (adjVertsFromCombo z)
+--now changed to return Graph Tuple
+updateGraph x y z = graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) (vertices $ fstTrip z)  (adjVertsFromCombo z)
 
 --If it connects
-updateGraph':: Int-> Int-> (Graph, Int -> (node, Int, [Int]), t)-> [(node, Vertex, [Int])]
+--updateGraph':: Int-> Int-> (Graph, Int -> (node, Int, [Int]), t)-> [(node, Vertex, [Int])]
+-- now changed to return Graph Tuple
+updateGraph' :: Int -> Int -> (Graph, Int -> (node, Int, [Int]), t) -> Maybe (Graph, Vertex
+        -> (node, Vertex, [Vertex]), Vertex -> Maybe Vertex)
 updateGraph' x y z
-        | y `elem` (legalEdges z $ x-1) = zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) (vertices $ fstTrip z)  (adjVertsFromCombo z)
-        | otherwise                     = []
+        | y `elem` (legalEdges z $ x-1) = Just (graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) (vertices $ fstTrip z)  (adjVertsFromCombo z))
+        | otherwise                     = Nothing
 
 -- legalEdges
 legalEdges graphT v = trdTrip $ sndTrip graphT $ v
+
+--apply something to every node in the graph At the same time possible use of `par` here?
+--let epic = graphFromEdges $ zip3 (map (+1) $ map fstTrip $ brokenUpGraph a) (vertices $ fstTrip a) (adjVertsFromCombo a) -- increases by one
+forEachNode graphT x = graphFromEdges $ zip3 (map (x) (map (fstTrip) (brokenUpGraph a))) (vertices $ fstTrip graphT)  (adjVertsFromCombo graphT)
+
+--increase if off
+
+
+
+--recurrsive (end condition iterator reaches size of graph bounds
+--run a function on a graph first element - return a graph
+--run a function on returned graph second element - return a graph.
+--till last element - return a graph.
+
+eachSuccNode graphT iterator = do 
+                                 putStr $ (show origGraph) ++ "\n" ++ (show $ brokenUpGraph newGraph) ++ "\n"
+                                 nxt <- eachSuccNode newGraph (iterator+1)
+                                 putStr "Next!"
+                                 where
+                                    origGraph           = brokenUpGraph graphT
+                                    newGraph            = updateGraph iterator (iterator+1) graphT
+                                    --result              = listOfWhatIsAtVert' (updateGraph 1 3 graph) updaListOfNodes
+
+
+
+
+
+
+
+--globals
+a = graphTuple edgesForTestPGraph
+
