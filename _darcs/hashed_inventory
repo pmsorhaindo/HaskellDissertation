@@ -1,4 +1,4 @@
-pristine:0000005097-5e055d0de076dd4abb9446f62e81637cb340bcb1f93c7027f774e7c8ebca3ce7
+pristine:0000005097-7cf9f090361b65468a6e8ea77e8cc01d49115811bbc34235132733c31818e727
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -64,3 +64,13 @@ pmsorhaindo@gmail.com**20120116201528
  Ignore-this: ac69a3507bc1847d2975a9147e4187e3
 ] 
 hash: 0008129298-a52b1cf2994be5ac0de73ad488c1577f8e515ed037ce7be599dd78a60d27bf55
+[getting better adjacency control
+pmsorhaindo@gmail.com**20120121201701
+ Ignore-this: 706923fffa75f342daa3cc067d7b95e0
+] 
+hash: 0000006610-a7599a0ed4faa25ceb55f1aabd048261e2989e234470bc921a9f7fa16c9dea5a
+[Tested Adj Gen Funcs
+pmsorhaindo@gmail.com**20120121204335
+ Ignore-this: b540d19df4047bb5030facdf913164dc
+] 
+hash: 0000001688-fb08e9ffa547db740081c990a25be03fe8ac53b49104e31c115a3027aaff4c8c

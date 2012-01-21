@@ -17,29 +17,29 @@ type Point = Int
 -- range 1-size^2
 
 -- TODO secure these functions with better testing on numbers added AdjRight still allows ridiculos -ve numbers
--- left v-1 (not avaiable if v(mod)size =1)
+-- left v-1 (not avaiable if v(mod)size =1) TESTED
 getAdjLeft:: Size->[Int]->Point->[Int]
 getAdjLeft size currentAdj pos
-                                | pos`mod`size /= 1 = currentAdj
+                                | (pos <= 0 || pos > size^2 ) || pos`mod`size == 1 = currentAdj
                                 | otherwise         = (pos-1):currentAdj
 
--- right v+1 (not available if v(mod)size = 0 ((not including 0 use range)))
+-- right v+1 (not available if v(mod)size = 0 ((not including 0 use range))) TESTED
 getAdjRight:: Size->[Int]->Point->[Int]
 getAdjRight size currentAdj pos
-                                | pos`mod`size /= 0 || pos /= 0 = currentAdj
+                                | (pos <= 0 || pos > size^2 ) || pos`mod`size == 0 = currentAdj
                                 | otherwise                     = (pos+1):currentAdj
 
--- down v+size (not available if v>(size^2-size)
+-- down v+size (not available if v>(size^2-size) TESTED
 getAdjDown:: Size->[Int]->Point->[Int]
 getAdjDown size currentAdj pos
-                                | pos > (size^2-size) = currentAdj
-                                | otherwise           = (pos+size):currentAdj
+                                | pos > (size^2-size) || pos <= 0 = currentAdj
+                                | otherwise                       = (pos+size):currentAdj
 
--- up v-size (not available if v<=size)
+-- up v-size (not available if v<=size) TESTED
 getAdjUp:: Size->[Int]->Point->[Int]
 getAdjUp size currentAdj pos
-                                | (pos-size) <= 0    = currentAdj
-                                | otherwise          = (pos-size):currentAdj
+                                | (pos-size) <= 0 || pos > size^2 = currentAdj
+                                | otherwise                       = (pos-size):currentAdj
 
 
 --1  - 2  - 3  - 4  - 5  - 6
