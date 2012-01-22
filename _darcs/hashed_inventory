@@ -1,4 +1,4 @@
-pristine:0000005097-7cf9f090361b65468a6e8ea77e8cc01d49115811bbc34235132733c31818e727
+pristine:c23f2a6cf93e02dd368326fd2d774fef3d1c35c07b56a7098c21e492c9650917
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -74,3 +74,8 @@ pmsorhaindo@gmail.com**20120121204335
  Ignore-this: b540d19df4047bb5030facdf913164dc
 ] 
 hash: 0000001688-fb08e9ffa547db740081c990a25be03fe8ac53b49104e31c115a3027aaff4c8c
+[bug fix in the forEachNode function works on new dynamic Graphs
+pmsorhaindo@gmail.com**20120122142033
+ Ignore-this: bc0b34bb5e638f284c13b512cdb7d18a
+] 
+hash: 0000002028-879a87521567a504e24b2dd7808501df0f3bea277affbb282b20c4ec9330023f
