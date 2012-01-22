@@ -125,8 +125,7 @@ legalEdges graphT v = trdTrip $ sndTrip graphT $ v
 
 --apply something to every node in the graph At the same time possible use of `par` here?
 --let epic = graphFromEdges $ zip3 (map (+1) $ map fstTrip $ brokenUpGraph a) (vertices $ fstTrip a) (adjVertsFromCombo a) -- increases by one
-forEachNode graphT x = graphFromEdges $ zip3 (map (x) (map (fstTrip) (brokenUpGraph graphT))) (vertices $ fstTrip graphT)  (adjVertsFromCombo graphT)
---BUG variable graphT left as a which was a smaller graph defined in globals... HEADACHE :/
+forEachNode graphT x = graphFromEdges $ zip3 (map (x) (map (fstTrip) (brokenUpGraph a))) (vertices $ fstTrip graphT)  (adjVertsFromCombo graphT)
 
 --increase if odd
 ifOdd x
