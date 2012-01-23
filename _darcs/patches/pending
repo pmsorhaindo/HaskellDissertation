@@ -1,7 +1,2 @@
 {
-addfile ./HelloWorld.
-adddir ./pNanoSolver
-addfile ./pNanoSolver/Benchmark.hs
-addfile ./pNanoSolver/Main.hs
-addfile ./pNanoSolver/Nonogram.hs
 }

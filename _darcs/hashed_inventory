@@ -1,4 +1,4 @@
-pristine:fb1d64da7ff5101553fb45385ca0c65ed1384898e6ffb573e90287f76253e474
+pristine:f158c2ebf556f4b368b3de46e4c60b88876f3217c10df62ae666854d6b75b57a
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -99,3 +99,8 @@ pmsorhaindo@gmail.com**20120123130536
  Ignore-this: d396d295977648c5c0635bfa092fbf48
 ] 
 hash: 0000001755-a027c7cca25d3a31e258aa7f538b6087a002900803819c6d5908ebff56822c12
+['nearly got a moveAnt Function but its hanging atm'
+pmsorhaindo@gmail.com**20120123145142
+ Ignore-this: 93c035bb4280ed07acd33089c9eb1445
+] 
+hash: 0017605258-78c800ef92a5f644ffe04b07d307a79717f82ec1d3402b48f2c75a804a2170b9

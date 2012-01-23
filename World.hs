@@ -66,7 +66,7 @@ edgesForTestGraph :: [([Char], Int, [Int])]
 edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
 
 edgesForTestAGraph :: [(Maybe Ant, Int, [Int])]
-edgesForTestAGraph = [(Just(Ant 1 South 1),1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+edgesForTestAGraph = [(Just(Ant 1 North 1),1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
 
 edgesForTestPGraph :: [(Integer, Int, [Int])]
 edgesForTestPGraph = [(0,1,[2,4]),(0,2,[1,5,3]),(0,3,[2,6]),(0,4,[1,7,15]),(0,5,[2,4,8,6]),(0,6,[3,5,9]),(0,7,[4,8]),(0,8,[7,5,9]),(0,9,[8,6])]
@@ -135,7 +135,6 @@ ifOdd x
         | x`mod`2 == 0 = x
 
 
-
 --recurrsive (end condition iterator reaches size of graph bounds
 --run a function on a graph first element - return a graph
 --run a function on returned graph second element - return a graph.
@@ -164,14 +163,16 @@ listOfNodesWithAntsIn graphT = [vert | (ant,vert,_) <-xs , ant /= Nothing ]
 processAntsInGraph graphT procList = map (procAntAtNode graphT) procList
 
 --Once an Ant is known to be at a Node it can be extracted with this function.
-getAntFromNode graphT node = (ant,node,adjList)
-                        where (Just ant,node,adjList) = sndTrip graphT $ (node-1) -- node-1 = Vertex
 
-isAntAtNode graphT node =  not $ isNothing presence 
-                        where  (presence,_,_) = sndTrip graphT $ (node-1)
+getAntFromNode graphT nd = (ant,key,adjList)
+                        where (Just ant,key,adjList) = sndTrip graphT $ (nd-1) -- node-1 = Vertex
+
+isAntAtNode graphT nd =  not $ isNothing presence 
+                        where  (presence,_,_) = sndTrip graphT $ (nd-1)
 
 
 -- Calculates the Maybe Target Node
+calcTargetNode :: Size -> (Ant, Point, t) -> [Int]
 calcTargetNode siz antNode 
                | direction == North = getAdjUp siz [] pos
                | direction == South = getAdjDown siz [] pos
@@ -180,20 +181,22 @@ calcTargetNode siz antNode
                         where direction = dir $ fstTrip antNode
                               pos       = sndTrip antNode
 
-moveAnt graphT node
+-- ONLY PUT ANTS INTO THIS FUNCTION
+-- If provided with an AntNode will move the antNode if Ant can move.
+moveAnt :: (Graph, Int -> (Maybe Ant, Int, [Int]), t) -> Int -> [Char]
+moveAnt graphT nd
         | targetV == [] = "staying still"
         | isAntAtNode graphT (head targetV) == False = "Moving"
         | otherwise = "staying still"
-                where targetV = (calcTargetNode (snd $ bounds $ fstTrip graphT) (getAntFromNode graphT node))
-                      
-
+                where targetV = (calcTargetNode (truncate (sqrt(fromIntegral(snd $ bounds $ fstTrip graphT)+1))) (getAntFromNode graphT nd))
+                                where maxNodeOfGraph = (snd $ bounds $ fstTrip graphT)+1
 --Process an Ant
 --TODO
 --note keys are 1 based Vertex's are 0 based... the death of me 'twill be!
 -- Get Ant from Vert %% (ant,node,adjList) = sndTrip graphT $ (vert-1) -DONE
 -- Determine Ants dir n' targetVert %%  - DONE!
 -- Calculate what is at target Vert (Realized this could be an isAntAtNode func) - Done
-------- If Nothing (Now If False) SwapNode;recalculate dir - CODING
+------- If Nothing (Now If False) SwapNode;recalculate dir - Doneish (Stays still if no node to move to
 ------- If Ant (Now If True) chill in Square (RECALCULATE dir)
 
 procAntAtNode graphT vert = undefined
