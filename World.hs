@@ -164,14 +164,26 @@ listOfNodesWithAntsIn graphT = [vert | (ant,vert,_) <-xs , ant /= Nothing ]
 -- Proccess Ants at a listOfNodes - listOfNodesWithAntsIn can be used to make sure no Maybe's fall into the fromJust func.
 processAntsInGraph graphT procList = map (procAntAtNode graphT) procList
 
+--Once an Ant is known to be at a Node it can be extracted with this function.
+getAntFromNode graphT vert = (ant,node,adjList)
+                        where (Just ant,node,adjList) = sndTrip graphT $ (vert-1)
+
+
+dir $ fstTrip antNode
+sndTrip antNode
+calcTargetNode | = getAdjUp 3 [] -- 3 is a quickfix this needs to be the widthOfWorld 
+               | = getAdjDown
+               | = getAdjLeft
+               | = getAdjRight
+
 --Process an Ant
 --TODO
--- Get Ant from Vert
--- Determine Ants dir
+--note keys are 1 based Vertex's are 0 based... the death of me 'twill be!
+-- Get Ant from Vert %% (ant,node,adjList) = sndTrip graphT $ (vert-1) -DONE
+-- Determine Ants dir n' targetVert %%  - CODING
 -- Calculate what is at target Vert
 ------- If Nothing SwapNode
 ------- If Ant chill in Square (RECALCULATE dir)
-
 procAntAtNode graphT vert = undefined
 
 

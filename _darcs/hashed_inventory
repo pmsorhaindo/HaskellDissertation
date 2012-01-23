@@ -1,4 +1,4 @@
-pristine:e8cf874eef9db8ef853004519afe877463b442753de15abf0b1633054c2f1fa7
+pristine:ff9abfeefaac59a27964874c11f5a0536741955660328f69f85c77b336e146c5
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -84,3 +84,8 @@ pmsorhaindo@gmail.com**20120122181724
  Ignore-this: b86888860aa551beb079a16f3698a07c
 ] 
 hash: 0000005952-98853af5a8e802551ad69c8b62e090e276dcdf687dbdccf52233c7318c35f617
+['extracting processable nodes from Graph and basics of an algorithm to process Ant nodes'
+pmsorhaindo@gmail.com**20120123115541
+ Ignore-this: 860d4ef185051a28db6cc25bc0ae0c0c
+] 
+hash: 0000004664-3f1a0a563050adf0c21acf84a76643f46e2bbb3b3bf659efeb5f74fd907ba7cd
