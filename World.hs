@@ -1,7 +1,7 @@
 module World where
 import Data.Array
 import Data.Graph
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, isNothing)
 import AntRepresent
 
 --Utils deconstructing 3 tuples with pattern matching
@@ -164,10 +164,11 @@ listOfNodesWithAntsIn graphT = [vert | (ant,vert,_) <-xs , ant /= Nothing ]
 processAntsInGraph graphT procList = map (procAntAtNode graphT) procList
 
 --Once an Ant is known to be at a Node it can be extracted with this function.
-getAntFromNode graphT vert = (ant,node,adjList)
-                        where (Just ant,node,adjList) = sndTrip graphT $ (vert-1)
+getAntFromNode graphT node = (ant,node,adjList)
+                        where (Just ant,node,adjList) = sndTrip graphT $ (node-1) -- node-1 = Vertex
 
-
+isAntAtNode graphT node =  not $ isNothing presence 
+                        where  (presence,_,_) = sndTrip graphT $ (node-1)
 
 
 -- Calculates the Maybe Target Node
@@ -179,14 +180,22 @@ calcTargetNode siz antNode
                         where direction = dir $ fstTrip antNode
                               pos       = sndTrip antNode
 
+moveAnt graphT node
+        | targetV == [] = "staying still"
+        | isAntAtNode graphT (head targetV) == False = "Moving"
+        | otherwise = "staying still"
+                where targetV = (calcTargetNode (snd $ bounds $ fstTrip graphT) (getAntFromNode graphT node))
+                      
+
 --Process an Ant
 --TODO
 --note keys are 1 based Vertex's are 0 based... the death of me 'twill be!
 -- Get Ant from Vert %% (ant,node,adjList) = sndTrip graphT $ (vert-1) -DONE
 -- Determine Ants dir n' targetVert %%  - DONE!
--- Calculate what is at target Vert (Realized this could be an isAnt At Node func)
-------- If Nothing SwapNode
-------- If Ant chill in Square (RECALCULATE dir)
+-- Calculate what is at target Vert (Realized this could be an isAntAtNode func) - Done
+------- If Nothing (Now If False) SwapNode;recalculate dir - CODING
+------- If Ant (Now If True) chill in Square (RECALCULATE dir)
+
 procAntAtNode graphT vert = undefined
 
 
