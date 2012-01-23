@@ -1,4 +1,4 @@
-pristine:f158c2ebf556f4b368b3de46e4c60b88876f3217c10df62ae666854d6b75b57a
+pristine:dc47ae29e04162dd9a8cefe766aa63ed965dcf792990c213f41a5a7769c158eb
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -104,3 +104,8 @@ pmsorhaindo@gmail.com**20120123145142
  Ignore-this: 93c035bb4280ed07acd33089c9eb1445
 ] 
 hash: 0017605258-78c800ef92a5f644ffe04b07d307a79717f82ec1d3402b48f2c75a804a2170b9
+['movement now works aslong as ant is passed
+pmsorhaindo@gmail.com**20120123175519
+ Ignore-this: b2be657861ae176200d24f9331eea71b
+] 
+hash: 0000002365-9e2e209d328c1964efcbd74b7252250d9eb426477e907a40d1c6b1658680cd8d

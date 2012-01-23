@@ -2,6 +2,7 @@ module World where
 import Data.Array
 import Data.Graph
 import Data.Maybe (fromJust, isNothing)
+import Control.Monad (liftM)
 import AntRepresent
 
 --Utils deconstructing 3 tuples with pattern matching
@@ -13,6 +14,7 @@ trdTrip (x,y,z) = z
 -- Adjacency List Automation
 type Size = Int
 type Point = Int
+type GraphTuple = (Array Vertex [Vertex], Int -> (Maybe Ant, Point, [Point]), Point -> Maybe Vertex)
 -- size = 6
 -- range 1-size^2
 
@@ -57,16 +59,13 @@ keyList size = [1..size^2]
 -- let a = graphFromEdges $ zip3 [1..36] (keyList 6) (adjListForNewGraph 6)
 buildEmptyWorld size = graphFromEdges $ zip3 (replicate (size^2) 0) (keyList size) (adjListForNewGraph size)
 
-
 -- graphFromEdges :: Ord key => [(node,key,[key])] ->(Graph,Vertex->(node,key,[key]),key->Maybe Vertex)
-
-
 
 edgesForTestGraph :: [([Char], Int, [Int])]
 edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
 
 edgesForTestAGraph :: [(Maybe Ant, Int, [Int])]
-edgesForTestAGraph = [(Just(Ant 1 North 1),1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+edgesForTestAGraph = [(Just(Ant 1 South 1),1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
 
 edgesForTestPGraph :: [(Integer, Int, [Int])]
 edgesForTestPGraph = [(0,1,[2,4]),(0,2,[1,5,3]),(0,3,[2,6]),(0,4,[1,7,15]),(0,5,[2,4,8,6]),(0,6,[3,5,9]),(0,7,[4,8]),(0,8,[7,5,9]),(0,9,[8,6])]
@@ -159,8 +158,8 @@ addAnt graphT pos = graphFromEdges $ zip3 (preList ++ [Just(Ant 1 East 1)] ++ su
 listOfNodesWithAntsIn graphT = [vert | (ant,vert,_) <-xs , ant /= Nothing ] 
                         where xs = brokenUpGraph graphT 
 
--- Proccess Ants at a listOfNodes - listOfNodesWithAntsIn can be used to make sure no Maybe's fall into the fromJust func.
-processAntsInGraph graphT procList = map (procAntAtNode graphT) procList
+--Proccess Ants at a listOfNodes - listOfNodesWithAntsIn can be used to make sure no Maybe's fall into the fromJust func.
+--processAntsInGraph graphT procList = map (procAntAtNode graphT) procList
 
 --Once an Ant is known to be at a Node it can be extracted with this function.
 
@@ -181,16 +180,7 @@ calcTargetNode siz antNode
                         where direction = dir $ fstTrip antNode
                               pos       = sndTrip antNode
 
--- ONLY PUT ANTS INTO THIS FUNCTION
--- If provided with an AntNode will move the antNode if Ant can move.
-moveAnt :: (Graph, Int -> (Maybe Ant, Int, [Int]), t) -> Int -> [Char]
-moveAnt graphT nd
-        | targetV == [] = "staying still"
-        | isAntAtNode graphT (head targetV) == False = "Moving"
-        | otherwise = "staying still"
-                where targetV = (calcTargetNode (truncate (sqrt(fromIntegral(snd $ bounds $ fstTrip graphT)+1))) (getAntFromNode graphT nd))
-                                where maxNodeOfGraph = (snd $ bounds $ fstTrip graphT)+1
---Process an Ant
+--Move an Ant
 --TODO
 --note keys are 1 based Vertex's are 0 based... the death of me 'twill be!
 -- Get Ant from Vert %% (ant,node,adjList) = sndTrip graphT $ (vert-1) -DONE
@@ -199,8 +189,36 @@ moveAnt graphT nd
 ------- If Nothing (Now If False) SwapNode;recalculate dir - Doneish (Stays still if no node to move to
 ------- If Ant (Now If True) chill in Square (RECALCULATE dir)
 
-procAntAtNode graphT vert = undefined
+-- ONLY PUT ANTS INTO THIS FUNCTION
+-- If provided with an AntNode will move the antNode if Ant can move.
 
+moveAnt :: GraphTuple -> Int -> GraphTuple
+moveAnt graphT nd
+        | targetV == [] = graphT
+        | not (isAntAtNode graphT (head targetV)) = updateGraph nd (head targetV) graphT --isAntAtNode graphT (head targetV)
+        | otherwise = graphT
+                where targetV = (calcTargetNode (truncate (sqrt(fromIntegral(snd $ bounds $ fstTrip graphT)+1))) (getAntFromNode graphT nd))
+                                where maxNodeOfGraph = (snd $ bounds $ fstTrip graphT)+1
+
+-- Process an Ant
+-- Sense Surroundings [NESW]
+-- Decide on Best Action (factoring in last action?) Set Dir
+-- Move - Done!
+procAntAtNode graphT nd = do 
+                           --pherLevels <- senseSur-- still needed for recalculation of Dir.. ect
+                           --makeDecision pherLevels
+                           --setDir
+                           let graphT2 = moveAnt graphT nd
+                           graphT2
+
+senseSur :: GraphTuple -> Int -> [(Direction,Int)]
+senseSur = undefined
+
+makeDecision :: [(Direction,Int)] -> Direction
+makeDecision pLevels = undefined
+
+setDir :: GraphTuple -> GraphTuple
+setDir = undefined
 
 --globals
 a = graphTuple edgesForTestAGraph
