@@ -110,7 +110,7 @@ adjVertsFromCombo z = map trdTrip (brokenUpGraph z)
 
 --updateGraph :: Int -> Int -> Array Vertex [Vertex] -> [([Char], Vertex, [Int])]
 --now changed to return Graph Tuple
-updateGraph x y z = graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) (vertices $ fstTrip z)  (adjVertsFromCombo z)
+updateGraph x y z = graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) ([1..])  (adjVertsFromCombo z)
 
 --If it connects
 --updateGraph':: Int-> Int-> (Graph, Int -> (node, Int, [Int]), t)-> [(node, Vertex, [Int])]
@@ -118,7 +118,7 @@ updateGraph x y z = graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUp
 updateGraph' :: Int -> Int -> (Graph, Int -> (node, Int, [Int]), t) -> Maybe (Graph, Vertex
         -> (node, Vertex, [Vertex]), Vertex -> Maybe Vertex)
 updateGraph' x y z
-        | y `elem` (legalEdges z $ x-1) = Just (graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) (vertices $ fstTrip z)  (adjVertsFromCombo z))
+        | y `elem` (legalEdges z $ x-1) = Just (graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) ([1..])  (adjVertsFromCombo z))
         | otherwise                     = Nothing
 
 -- legalEdges
@@ -126,7 +126,7 @@ legalEdges graphT v = trdTrip $ sndTrip graphT $ v
 
 --apply something to every node in the graph At the same time possible use of `par` here?
 --let epic = graphFromEdges $ zip3 (map (+1) $ map fstTrip $ brokenUpGraph a) (vertices $ fstTrip a) (adjVertsFromCombo a) -- increases by one
-forEachNode graphT x = graphFromEdges $ zip3 (map (x) (map (fstTrip) (brokenUpGraph graphT))) (vertices $ fstTrip graphT)  (adjVertsFromCombo graphT)
+forEachNode graphT x = graphFromEdges $ zip3 (map (x) (map (fstTrip) (brokenUpGraph graphT))) ([1..])  (adjVertsFromCombo graphT)
 --BUG variable graphT left as a which was a smaller graph defined in globals... HEADACHE :/
 
 --increase if odd
@@ -146,16 +146,19 @@ eachSuccNode graphT iterator = do
                                  nxt <- eachSuccNode newGraph (iterator+1)
                                  putStr "Next!"
                                  where
-                                    origGraph           = brokenUpGraph graphT
-                                    newGraph            = updateGraph iterator (iterator+1) graphT
-                                    --result              = listOfWhatIsAtVert' (updateGraph 1 3 graph) updaListOfNodes
+                                    origGraph = brokenUpGraph graphT
+                                    newGraph  = updateGraph iterator (iterator+1) graphT
+                                    --result  = listOfWhatIsAtVert' (updateGraph 1 3 graph) updaListOfNodes
 
 
-
-
+-- Adds an Ant to a node (pos) of a given graph (graphT)
+addAnt graphT pos = graphFromEdges $ zip3 (preList ++ [Just(Ant.Ant 1 Ant.East 1)] ++ sufList) ([1..]) (adjVertsFromCombo graphT)
+        where preList | pos < 1 = []
+                      | otherwise = take (pos-1) (listOfNodes $ brokenUpGraph graphT)
+              sufList = drop pos (listOfNodes $ brokenUpGraph graphT)
 
 
 
 --globals
-a = graphTuple edgesForTestPGraph
+a = graphTuple edgesForTestAGraph
 

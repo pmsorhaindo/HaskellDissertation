@@ -61,7 +61,7 @@ solve branch width = solve'
                                 then return [[]]
                                 else Nothing
                 | null rd = do
-                        ps <- foldM (learnCellAt White) partial [column .. width - 1]
+                        ps <- foldM (learnCellAt White) partials [column .. width - 1]
                         rows <- solve' 0 rds ps
                         return $ replicate (width - column) White : rows
                 | otherwise = branch place skip
