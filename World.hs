@@ -1,7 +1,6 @@
 module World where
 import Data.Array
 import Data.Graph
-import Data.List (intercalate)
 import Data.Maybe (fromJust)
 import AntRepresent
 
@@ -169,19 +168,23 @@ getAntFromNode graphT vert = (ant,node,adjList)
                         where (Just ant,node,adjList) = sndTrip graphT $ (vert-1)
 
 
-dir $ fstTrip antNode
-sndTrip antNode
-calcTargetNode | = getAdjUp 3 [] -- 3 is a quickfix this needs to be the widthOfWorld 
-               | = getAdjDown
-               | = getAdjLeft
-               | = getAdjRight
+
+
+-- Calculates the Maybe Target Node
+calcTargetNode siz antNode 
+               | direction == North = getAdjUp siz [] pos
+               | direction == South = getAdjDown siz [] pos
+               | direction == West  = getAdjLeft siz [] pos
+               | direction == East  = getAdjRight siz [] pos
+                        where direction = dir $ fstTrip antNode
+                              pos       = sndTrip antNode
 
 --Process an Ant
 --TODO
 --note keys are 1 based Vertex's are 0 based... the death of me 'twill be!
 -- Get Ant from Vert %% (ant,node,adjList) = sndTrip graphT $ (vert-1) -DONE
--- Determine Ants dir n' targetVert %%  - CODING
--- Calculate what is at target Vert
+-- Determine Ants dir n' targetVert %%  - DONE!
+-- Calculate what is at target Vert (Realized this could be an isAnt At Node func)
 ------- If Nothing SwapNode
 ------- If Ant chill in Square (RECALCULATE dir)
 procAntAtNode graphT vert = undefined

@@ -1,7 +1,6 @@
 module World where
 import Data.Array
 import Data.Graph
-import Data.List (intercalate)
 import Data.Maybe (fromJust)
 import AntRepresent
 
@@ -164,15 +163,27 @@ listOfNodesWithAntsIn graphT = [vert | (ant,vert,_) <-xs , ant /= Nothing ]
 -- Proccess Ants at a listOfNodes - listOfNodesWithAntsIn can be used to make sure no Maybe's fall into the fromJust func.
 processAntsInGraph graphT procList = map (procAntAtNode graphT) procList
 
---Once an Ant is known to be at a Vertex it can be extracted with this function.
-getAntFromVert graphT vert = (ant,node,adjList)
+--Once an Ant is known to be at a Node it can be extracted with this function.
+getAntFromNode graphT vert = (ant,node,adjList)
                         where (Just ant,node,adjList) = sndTrip graphT $ (vert-1)
+
+
+
+
+-- Calculates the Maybe Target Node
+calcTargetNode siz antNode 
+               | direction == North = getAdjUp siz [] pos
+               | direction == South = getAdjDown siz [] pos
+               | direction == West  = getAdjLeft siz [] pos
+               | direction == East  = getAdjRight siz [] pos
+                        where direction = dir $ fstTrip antNode
+                              pos       = sndTrip antNode
 
 --Process an Ant
 --TODO
 --note keys are 1 based Vertex's are 0 based... the death of me 'twill be!
--- Get Ant from Vert %% (ant,node,adjList) = sndTrip graphT $ (vert-1)
--- Determine Ants dir n' targetVert %% 
+-- Get Ant from Vert %% (ant,node,adjList) = sndTrip graphT $ (vert-1) -DONE
+-- Determine Ants dir n' targetVert %%  - CODING
 -- Calculate what is at target Vert
 ------- If Nothing SwapNode
 ------- If Ant chill in Square (RECALCULATE dir)
