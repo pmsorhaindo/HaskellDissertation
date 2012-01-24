@@ -2,6 +2,7 @@ module World where
 import Data.Array
 import Data.Graph
 import Data.Maybe (fromJust, isNothing)
+import Data.List (maximumBy)
 import Control.Monad (liftM)
 import AntRepresent
 
@@ -208,7 +209,7 @@ moveAnt graphT nd
 -- Move - Done!
 procAntAtNode nd graphT = do 
                            --pherLevels <- senseSur-- still needed for recalculation of Dir.. ect
-                           --makeDecision pherLevels
+                           --makeDecision pherLevels - DONE
                            -- <- setDir
                            let graphT2 = moveAnt graphT nd
                            graphT2
@@ -222,7 +223,8 @@ senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromInte
                                 | x < nd = (North, (fstTrip $ (sndTrip graphT) (x-1)))
 
 makeDecision :: [(Direction,Int)] -> Direction
-makeDecision pLevels = undefined
+makeDecision pLevels = fst (maximumBy highestPher pLevels)
+                where highestPher x y = (snd x) `compare` (snd y) 
 
 setDir :: GraphATuple -> Point -> Direction -> GraphATuple
 setDir = undefined

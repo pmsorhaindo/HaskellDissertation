@@ -2,6 +2,7 @@ module World where
 import Data.Array
 import Data.Graph
 import Data.Maybe (fromJust, isNothing)
+import Data.List (maximumBy)
 import Control.Monad (liftM)
 import AntRepresent
 
@@ -216,13 +217,14 @@ procAntAtNode nd graphT = do
 --senseSur :: GraphPTuple -> Int -> [(Direction,Int)]
 senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromIntegral(snd $ bounds $ fstTrip graphT)+1))) nd)
                 where directionize x
-                                | x == nd+1 = (East, (fstTrip $ (sndTrip graphT) x)) -- Sort out function composition to make neater.
-                                | x == nd-1 = (West, (fstTrip $ (sndTrip graphT) x))
-                                | x > nd = (South, (fstTrip $ (sndTrip graphT) x))
-                                | x < nd = (North, (fstTrip $ (sndTrip graphT) x))
+                                | x == nd+1 = (East, (fstTrip $ (sndTrip graphT) (x-1))) -- Sort out function composition to make neater.
+                                | x == nd-1 = (West, (fstTrip $ (sndTrip graphT) (x-1)))
+                                | x > nd = (South, (fstTrip $ (sndTrip graphT) (x-1)))
+                                | x < nd = (North, (fstTrip $ (sndTrip graphT) (x-1)))
 
 makeDecision :: [(Direction,Int)] -> Direction
-makeDecision pLevels = undefined
+makeDecision pLevels = fst (maximumBy highestPher pLevels)
+                where highestPher x y = (snd x) `compare` (snd y) 
 
 setDir :: GraphATuple -> Point -> Direction -> GraphATuple
 setDir = undefined

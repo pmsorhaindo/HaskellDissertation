@@ -1,4 +1,4 @@
-pristine:7cda8840ec2c4a80a9122593a711d34b65c01560ca4a854e94ea5b8a0737d4d1
+pristine:5deb0792bd72e77fb235ae9d2a8c66849d9b61d31eda13d047dec3d9d74f72b9
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -114,3 +114,8 @@ pmsorhaindo@gmail.com**20120123205948
  Ignore-this: 1ac16efbc0cadef774b866260c8abe05
 ] 
 hash: 0000003254-7723c367c7a1274539370e2e2aec98964838e2331fb2405711592ba375df4d4b
+[working sense surroundings function! Go me!
+pmsorhaindo@gmail.com**20120124021100
+ Ignore-this: 9681f3dd1467df25566c39b4aa7b51c1
+] 
+hash: 0000002790-32bb66c7d2b1244e0ebc3968dd5776831ce47e5e9b8bba9606cf54a65d99b8a8
