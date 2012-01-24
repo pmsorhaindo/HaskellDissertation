@@ -237,8 +237,8 @@ setDir graphT nd newDir = addExistingAnt graphT nd (modif $ fstTrip $ getAntFrom
                 where modif x = Just (Ant (antId x) newDir (pherLevel x)) 
 
 -- function to process the whole Quadrant.
---processQuadrant :: GraphATuple -> GraphPTuple -> GraphATuple
-processQuadrant graphAT graphPT = do    
+processAQuadrant :: GraphATuple -> GraphPTuple -> GraphATuple
+processAQuadrant graphAT graphPT = do    
                                    let nodesToProcess = listOfNodesWithAntsIn graphAT
                                    let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess
                                    graphAT'

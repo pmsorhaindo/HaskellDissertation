@@ -1,4 +1,4 @@
-pristine:017b428d68e623efcbf8912c5beeaab50bdf256c243b04972f273057bf92ee13
+pristine:cffc19cbf48c6850284e637a069f66a6bfd9f4f2aa186244b11b9ac30665ce96
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -129,3 +129,8 @@ pmsorhaindo@gmail.com**20120124114704
  Ignore-this: 76c9012904a79277656ff527a9a624e7
 ] 
 hash: 0000003005-6fcb9551a81ac41603f6589b422c87bd0b27fa12ef27327b3be5b14cde5908a6
+[clean up and process Quandrant function begins
+pmsorhaindo@gmail.com**20120124173738
+ Ignore-this: cf4f0ac316ea70a5276609e319f3c528
+] 
+hash: 0047133242-0c57159068adf8f08cc349c48b9b8e2a4795592cccaa4cb075a4415bde6b9d1e

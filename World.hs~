@@ -236,12 +236,16 @@ setDir :: GraphATuple -> Point -> Direction -> GraphATuple
 setDir graphT nd newDir = addExistingAnt graphT nd (modif $ fstTrip $ getAntFromNode graphT nd) -- Not to be called it there isn't an ant at the node getAntFromNode will have a fit.
                 where modif x = Just (Ant (antId x) newDir (pherLevel x)) 
 
+-- function to process the whole Quadrant.
+processAQuadrant :: GraphATuple -> GraphPTuple -> GraphATuple
+processAQuadrant graphAT graphPT iter = do    
+                                   let nodesToProcess = listOfNodesWithAntsIn graphAT
+                                   let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess
+                                   graphAT'
 
---processQuadrant :: GraphATuple -> GraphPTuple -> GraphATuple
-processQuadrant graphAT graphPT = do    
-                                   putStrLn "Here"
-                                
---listOfNodesWithAntsIn
+-- processPhers
+-- transPherToAnt
+-- transAntToPher
 
 
 --globals
