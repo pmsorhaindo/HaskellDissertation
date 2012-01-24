@@ -16,6 +16,7 @@ trdTrip (x,y,z) = z
 type Size = Int
 type Point = Int
 
+---- graphFromEdges :: Ord key => [(node,key,[key])] ->(Graph,Vertex->(node,key,[key]),key->Maybe Vertex)
 type GraphATuple = (Array Vertex [Vertex], Int -> (Maybe Ant, Point, [Point]), Point -> Maybe Vertex)
 type GraphPTuple = (Graph, Vertex -> (Double, Int, [Int]), Int -> Maybe Vertex)
 
@@ -46,11 +47,9 @@ getAdjUp size currentAdj pos
                                 | (pos-size) <= 0 || pos > size^2 = currentAdj
                                 | otherwise                       = (pos-size):currentAdj
 
-
 --This function nearly took forever but thanks to LYAH's awesome explanation on $ (function application I bust it out in a train journey :D
 --adjListForVertex :: Point->Size->[Int]
 adjListForVertex size pos = concat $ map ($pos) [(getAdjUp size []),(getAdjLeft size []),(getAdjDown size []),(getAdjRight size [])]
-
 
 adjListForNewGraph size = map (adjListForVertex size) [1..size^2]
 
@@ -61,8 +60,7 @@ keyList size = [1..size^2]
 -- let a = graphFromEdges $ zip3 [1..36] (keyList 6) (adjListForNewGraph 6)
 buildEmptyWorld size = graphFromEdges $ zip3 (replicate (size^2) 0) (keyList size) (adjListForNewGraph size)
 
--- graphFromEdges :: Ord key => [(node,key,[key])] ->(Graph,Vertex->(node,key,[key]),key->Maybe Vertex)
-
+--TEST GRAPHS
 edgesForTestGraph :: [([Char], Int, [Int])]
 edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
 
@@ -154,6 +152,11 @@ addAnt graphT pos = graphFromEdges $ zip3 (preList ++ [Just(Ant 1 East 1)] ++ su
         where preList | pos < 1 = []
                       | otherwise = take (pos-1) (listOfNodes $ brokenUpGraph graphT)
               sufList = drop pos (listOfNodes $ brokenUpGraph graphT)
+--Allows a prexisting Ant to be placed in a graph.
+addExistingAnt graphT pos passedAnt = graphFromEdges $ zip3 (preList ++ [passedAnt] ++ sufList) ([1..]) (adjVertsFromCombo graphT)
+        where preList | pos < 1 = []
+                      | otherwise = take (pos-1) (listOfNodes $ brokenUpGraph graphT)
+              sufList = drop pos (listOfNodes $ brokenUpGraph graphT)
 
 --list Of nodes that need Processing
 listOfNodesWithAntsIn graphT = [vert | (ant,vert,_) <-xs , ant /= Nothing ] 
@@ -161,17 +164,15 @@ listOfNodesWithAntsIn graphT = [vert | (ant,vert,_) <-xs , ant /= Nothing ]
 
 --Proccess Ants at a listOfNodes - listOfNodesWithAntsIn can be used to make sure no Maybe's fall into the fromJust func.
 --NEEDS TO BE A FOLD!!!
---processAntsInGraph :: GraphPTuple -> GraphATuple -> [Int] -> GraphATuple
+processAntsInGraph :: GraphPTuple -> GraphATuple -> [Int] -> GraphATuple
 processAntsInGraph graphPT graphAT procList = foldr (procAntAtNode graphPT) graphAT procList
 
 --Once an Ant is known to be at a Node it can be extracted with this function.
-
 getAntFromNode graphT nd = (ant,key,adjList)
                         where (Just ant,key,adjList) = sndTrip graphT $ (nd-1) -- node-1 = Vertex
 
 isAntAtNode graphT nd =  not $ isNothing presence 
                         where  (presence,_,_) = sndTrip graphT $ (nd-1)
-
 
 -- Calculates the Maybe Target Node
 calcTargetNode :: Size -> (Ant, Point, t) -> [Int]
@@ -228,8 +229,8 @@ makeDecision pLevels = fst (maximumBy highestPher pLevels)
                 where highestPher x y = (snd x) `compare` (snd y) 
 
 setDir :: GraphATuple -> Point -> Direction -> GraphATuple
-setDir = undefined
-
+setDir graphT nd newDir = addExistingAnt graphT nd (modif $ fstTrip $ getAntFromNode graphT nd) -- Not to be called it there isn't an ant at the node getAntFromNode will have a fit.
+                where modif x = Just (Ant (antId x) newDir (pherLevel x))  
 --globals
 a = graphTuple edgesForTestAGraph
 b = graphTuple edgesForTestPGraph
