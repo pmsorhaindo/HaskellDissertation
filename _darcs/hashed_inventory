@@ -1,4 +1,4 @@
-pristine:dc47ae29e04162dd9a8cefe766aa63ed965dcf792990c213f41a5a7769c158eb
+pristine:7cda8840ec2c4a80a9122593a711d34b65c01560ca4a854e94ea5b8a0737d4d1
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -109,3 +109,8 @@ pmsorhaindo@gmail.com**20120123175519
  Ignore-this: b2be657861ae176200d24f9331eea71b
 ] 
 hash: 0000002365-9e2e209d328c1964efcbd74b7252250d9eb426477e907a40d1c6b1658680cd8d
+[single processing of Ant in Graph nearly complete, time to work on mapping the function across all processable nodes.
+pmsorhaindo@gmail.com**20120123205948
+ Ignore-this: 1ac16efbc0cadef774b866260c8abe05
+] 
+hash: 0000003254-7723c367c7a1274539370e2e2aec98964838e2331fb2405711592ba375df4d4b

@@ -14,9 +14,10 @@ trdTrip (x,y,z) = z
 -- Adjacency List Automation
 type Size = Int
 type Point = Int
-type GraphTuple = (Array Vertex [Vertex], Int -> (Maybe Ant, Point, [Point]), Point -> Maybe Vertex)
--- size = 6
--- range 1-size^2
+type PherLevel = Double
+
+type GraphATuple = (Array Vertex [Vertex], Int -> (Maybe Ant, Point, [Point]), Point -> Maybe Vertex)
+type GraphPTuple = (Array Vertex [Vertex], Int -> (PherLevel, Point, [Point]), Point -> Maybe Vertex)
 
 --adjKeyList a = [genUp,genDown,genLeft,genRight] --need a list of these lists for each key in keyList
 -- TODO secure these functions with better testing on numbers added AdjRight still allows ridiculos -ve numbers
@@ -108,14 +109,13 @@ brokenUpGraph z = map (sndTrip z) (vertices $ fstTrip z)
 adjVertsFromCombo z = map trdTrip (brokenUpGraph z)
 
 --updateGraph :: Int -> Int -> Array Vertex [Vertex] -> [([Char], Vertex, [Int])]
---now changed to return Graph Tuple
+updateGraph :: Int -> Int -> GraphATuple -> GraphATuple
 updateGraph x y z = graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) ([1..])  (adjVertsFromCombo z)
 
 --If it connects
 --updateGraph':: Int-> Int-> (Graph, Int -> (node, Int, [Int]), t)-> [(node, Vertex, [Int])]
 -- now changed to return Graph Tuple
-updateGraph' :: Int -> Int -> (Graph, Int -> (node, Int, [Int]), t) -> Maybe (Graph, Vertex
-        -> (node, Vertex, [Vertex]), Vertex -> Maybe Vertex)
+updateGraph' :: Int -> Int -> GraphATuple -> Maybe GraphATuple
 updateGraph' x y z
         | y `elem` (legalEdges z $ x-1) = Just (graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) ([1..])  (adjVertsFromCombo z))
         | otherwise                     = Nothing
@@ -159,7 +159,9 @@ listOfNodesWithAntsIn graphT = [vert | (ant,vert,_) <-xs , ant /= Nothing ]
                         where xs = brokenUpGraph graphT 
 
 --Proccess Ants at a listOfNodes - listOfNodesWithAntsIn can be used to make sure no Maybe's fall into the fromJust func.
---processAntsInGraph graphT procList = map (procAntAtNode graphT) procList
+--NEEDS TO BE A FOLD!!!
+processAntsInGraph :: GraphATuple -> [Int] -> GraphATuple
+processAntsInGraph graphT procList = foldr procAntAtNode graphT procList
 
 --Once an Ant is known to be at a Node it can be extracted with this function.
 
@@ -192,32 +194,37 @@ calcTargetNode siz antNode
 -- ONLY PUT ANTS INTO THIS FUNCTION
 -- If provided with an AntNode will move the antNode if Ant can move.
 
-moveAnt :: GraphTuple -> Int -> GraphTuple
+moveAnt :: GraphATuple -> Int -> GraphATuple
 moveAnt graphT nd
         | targetV == [] = graphT
         | not (isAntAtNode graphT (head targetV)) = updateGraph nd (head targetV) graphT --isAntAtNode graphT (head targetV)
         | otherwise = graphT
-                where targetV = (calcTargetNode (truncate (sqrt(fromIntegral(snd $ bounds $ fstTrip graphT)+1))) (getAntFromNode graphT nd))
-                                where maxNodeOfGraph = (snd $ bounds $ fstTrip graphT)+1
+                where targetV = (calcTargetNode (truncate (sqrt(fromIntegral maxNodeOfGraph))) (getAntFromNode graphT nd))
+                         where maxNodeOfGraph = (snd $ bounds $ fstTrip graphT)+1
 
 -- Process an Ant
 -- Sense Surroundings [NESW]
 -- Decide on Best Action (factoring in last action?) Set Dir
 -- Move - Done!
-procAntAtNode graphT nd = do 
+procAntAtNode nd graphT = do 
                            --pherLevels <- senseSur-- still needed for recalculation of Dir.. ect
                            --makeDecision pherLevels
-                           --setDir
+                           -- <- setDir
                            let graphT2 = moveAnt graphT nd
                            graphT2
 
-senseSur :: GraphTuple -> Int -> [(Direction,Int)]
-senseSur = undefined
+--senseSur :: GraphPTuple -> Int -> [(Direction,Int)]
+senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromIntegral(snd $ bounds $ fstTrip graphT)+1))) nd)
+                where directionize x
+                                | x == nd+1 = (East, (fstTrip $ (sndTrip graphT) (x-1))) -- Sort out function composition to make neater.
+                                | x == nd-1 = (West, (fstTrip $ (sndTrip graphT) (x-1)))
+                                | x > nd = (South, (fstTrip $ (sndTrip graphT) (x-1)))
+                                | x < nd = (North, (fstTrip $ (sndTrip graphT) (x-1)))
 
 makeDecision :: [(Direction,Int)] -> Direction
 makeDecision pLevels = undefined
 
-setDir :: GraphTuple -> GraphTuple
+setDir :: GraphATuple -> Point -> Direction -> GraphATuple
 setDir = undefined
 
 --globals
