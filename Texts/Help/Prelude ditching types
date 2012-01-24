@@ -1,0 +1,68 @@
+<_Mikey> oh
+<-- applicative has quit (Ping timeout: 265 seconds)
+--> obcode (~obcode@p5B071105.dip0.t-ipconnect.de) has joined #haskell
+<-- parcs has quit (Ping timeout: 240 seconds)
+ mirari has quit (Client Quit)
+ hajimehoshi has quit (Remote host closed the connection)
+--> Eduard_Munteanu (~Eduard_Mu@188.25.244.129) has joined #haskell
+ bytbox (~s@129.2.129.227) has joined #haskell
+ RogueSha1ow (~adam@adsl-76-236-190-116.dsl.klmzmi.sbcglobal.net) has joined #haskell
+<hpaste> “_Mikey” pasted “newMaybeJustNothingType” at http://hpaste.org/54028
+--> psii (~psii@HSI-KBW-095-208-057-037.hsi5.kabel-badenwuerttemberg.de) has joined #haskell
+<_Mikey> oh
+ cool
+ that isn't vaild haskell is it?
+<dmwit> Looks like valid Haskell to me.
+<_Mikey> hmm
+ but it when I :l it
+<dmwit> You'll have to be careful to disambiguate the new "Just" from the old "Just".
+--> letrec (46248cd4@gateway/web/freenode/ip.70.36.140.212) has joined #haskell
+<dmwit> For example, by importing the Prelude qualified.
+<-- pcalcado has quit (Remote host closed the connection)
+<_Mikey> how does one do that?
+<dmwit> "import qualified Prelude"
+ or perhaps
+ "import qualified Prelude as P"
+<_Mikey> and that will override default Prelude?
+--> mrsolo (~mrsolo@64.125.181.73) has joined #haskell
+<dmwit> Then "Just" will be your new Just, and "Prelude.Just" or "P.Just" will be the old one.
+ No, no overrides.
+<-- edwardk has quit (Quit: Computer has gone to sleep.)
+<dmwit> Everything is still as it was in the Prelude.
+--> jkldafjklad (~paulh@189-14-ftth.onsnetstudenten.nl) has joined #haskell
+<dmwit> The names for things in the Prelude are just longer. =)
+<_Mikey> I see
+<dmwit> In Haskell, you don't get do-overs. No mutation.
+<_Mikey> so if I wanted to use something like
+ fst
+ I have to do P.fst ?
+<dmwit> Yes.
+ You can get around that, too. =)
+--> junsuijin (~junsuijin@c-76-17-174-68.hsd1.mn.comcast.net) has joined #haskell
+<dmwit> You can add an additional line like
+<_Mikey> oooh!
+<dmwit> "import Prelude hiding (Just)"
+--> anRch (~markmilli@nmd.sbx07436.cambrma.wayport.net) has joined #haskell
+<dmwit> And then all the usual Prelude names (except Just) will be available without qualifiers.
+<_Mikey> ok, this is quite insightful
+ I'm looking at a function..
+<-- CyberGarp (~spgarbet@209-20-77-72.slicehost.net) has left #haskell
+<hpaste> “_Mikey” annotated “newMaybeJustNothingType” with “newMaybeJustNothingType (annotation)” at http://hpaste.org/54028#a54029
+<-- mohsenn has quit (Ping timeout: 240 seconds)
+<_Mikey> its returning nothing when the balance will go lower than the reserve
+ its from the realworldhaskell book
+--> edwardk (~edwardk@17.45.135.11) has joined #haskell
+<-- edwardk has quit (Changing host)
+--> edwardk (~edwardk@pdpc/supporter/professional/edwardk) has joined #haskell
+<_Mikey> however I'm thinking..
+what if I want to use Nothing to catch something else
+<-- paper_cc has quit (Ping timeout: 260 seconds)
+<_Mikey> can I make my own sort of maybeNothingJust types to sort of send messages around?
+--> Itkovian_ (~Itkovian@178-116-50-180.access.telenet.be) has joined #haskell
+<dmwit> Absolutely. There's nothing magical about Maybe; it's just a definition in a library that happens to be useful sometimes.
+--> hgolden (~hgolden@pdpc/supporter/active/hgolden) has joined #haskell
+<dmwit> Making new data types is super cheap in Haskell, and strongly recommended.
+<-- julmuri has quit (Quit: ( www.nnscript.com :: NoNameScript 4.22 :: www.esnation.com ))
+<dino-> So, what should I do if I have basically broken my entire ghc installation by forcing a reinst of it via my distro's packaging?
+<_Mikey> cool.
+ cheers dmwit!

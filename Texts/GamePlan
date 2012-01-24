@@ -1,0 +1,49 @@
+Ant Simulation Tasks.
+
+Mainline that creates a graph
+Mainline that creates and prints a graph
+Mainline that creates a graph and prints the dfs of a graph
+Mainline that creates a graph, "copies" the graph, then prints both the original and the copy
+
+Mainline that creates a graph and takes two set vertices, using these two vertices creates another graph with nodes at the two given vertices swapped. 
+Mainline that does the same as the above but only allows vertex values where the first value is a valid "key" and the second value in the "list of keys of nodes this node should have edges to."
+Creates a graph and maps this function across all nodes in the graph this would produce a new graph as each node is updated.
+Creates a graph and maps across it as done previously, but only operating on nodes with Ant types present.
+
+Change the type held by the node to hold Maybe Ant, Maybe Pheromone.
+Adjust swapNodes function only swap the Ant value held in the node.
+Create a function which decrements the value of every node's Maybe Pheromone or leaves it as Nothing if < 0 or Nothing.
+Create a function which decrements the value of every node's Maybe Ant.Pheromone or leaves it as Nothing if < 0 or Nothing.
+Create a function which selects a key from a list of keys with edges to a particular key, where the key selected has the highest pheromone level.
+Adjust the swap nodes function to pick a value based on the Pheromone level checking function above.
+
+Add type Maybe Food to the type held by each node in the graph in some sort of tuple structutre.
+Add an Ant.Pheromone increase function when checking for Ants and Food in the same node, before increasing the value of an Ant's Pheromone.
+Adjust the swapNodes (now swapAnts as the rest of the node's values stays the same) function to increment the value of the Maybe Pheromone in the node if the Ant occupying the node has a Pheremone level > 0. 
+
+Move graph into Software Transactional Memory. need to do more reading on this... http://research.microsoft.com/en-us/um/people/simonpj/papers/stm/beautiful.pdf
+Parallel Map each function over the graph using par.
+
+
+vertsToBuild2 = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
+
+
+(g, f) = graphFromEdges' edgesToBuild2
+
+graphFromEdges' :: Ord key => [(node, key, [key])] -> (Graph, Vertex -> (node, key, [key]))
+
+
+buildNewGraph  :: Ord key => (Graph, Vertex -> (node, key, [key])) -> (Graph, Vertex -> (node, key, [key]))
+
+swapNodes :: Ord key => (Graph, Vertex -> (node, key, [key])) -> (Vertex, Vertex) -> (Graph, Vertex -> (node, key, [key]))
+swapNodes (g, f) = (g, f')
+   where
+      f' = ...
+
+
+9:24 Aidan: http://www.haskell.org/haskellwiki/The_Monad.Reader/Issue5/Practical_Graph_Handling
+9:28 Aidan: type Graph = Table [Vertex]Source
+9:30 Aidan: a = array (1,100) ((1,1) : [(i, i * a!(i-1)) | i <- [2..100]])
+9:31 Aidan: http://www.python.org/dev/peps/pep-0202/
+9:34 Aidan: Lazy Depth-First Search and Linear Graph Algorithms in Haskell, by David King and John Launchbury.
+9:35 Aidan: http://www.google.co.uk/url?sa=t&rct=j&q=lazy%20depth-first%20search%20and%20linear%20graph%20algorithms%20in%20haskell&source=web&cd=1&ved=0CCEQFjAA&url=http%3A%2F%2Fciteseerx.ist.psu.edu%2Fviewdoc%2Fdownload%3Fdoi%3D10.1.1.52.7441%26rep%3Drep1%26type%3Dpdf&ei=RajxTrv8F4Pf8APDv7G8AQ&usg=AFQjCNHcmbneOORdYm0GhGh-c5KKyPeF_w&cad=rja

@@ -1,0 +1,5 @@
+--file: first steps in Haskell
+--lines beginning with "--" are comments.
+
+main = interact wordCount
+	where WordCount input = show (length(lines input) ++ "\n"

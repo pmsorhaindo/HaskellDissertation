@@ -11,7 +11,6 @@ fstTrip (x,y,z) = x
 sndTrip (x,y,z) = y
 trdTrip (x,y,z) = z
 
-
 -- Adjacency List Automation
 type Size = Int
 type Point = Int
@@ -54,6 +53,7 @@ adjListForVertex size pos = concat $ map ($pos) [(getAdjUp size []),(getAdjLeft 
 adjListForNewGraph size = map (adjListForVertex size) [1..size^2]
 
 --list of Nodes -- start list of empty nodes size od size^2
+keyList :: Int -> [Int]
 keyList size = [1..size^2]
 
 --Build a new Graph 6 and 36 need replacing with a variable graph size and graph size^2
@@ -83,14 +83,14 @@ nodeAtVert :: (Ord key) => [(node, key, [key])] -> Vertex -> node
 nodeAtVert x y = fstTrip $ graphfunc x y
 
 --for Edge Structure x, map the find nodeAtVert function across all the nodes in the graph.
+listOfNodes :: Ord key => [(node, key, [key])] -> [node]
 listOfNodes x = map (nodeAtVert x) [0..(snd $ bounds (graph x))]
-
 
 --list splitting functions take the first and second half, repsectively , of the list y when split at x.
 splittedVertlist1 x y = fst $ splitAt x y
 splittedVertlist2 x y = snd $ splitAt x y
 
---swapNodes :: Int -> Int -> [Int] -> [Int]
+swapNodes :: Int -> Int -> [a] -> [a]
 swapNodes x y z = (init $ splittedVertlist1 x z) ++ [(last $ splittedVertlist1 y z)]  ++ (init $ splittedVertlist1 (y-x) (splittedVertlist2 x z)) ++ [(last $ splittedVertlist1 x z)] ++ (splittedVertlist2 (y-x) (splittedVertlist2 x z))
 
 -- broken down for debugging
@@ -101,13 +101,13 @@ lpart4 x z = (last $ splittedVertlist1 x z) -- was tail ;/ (superfail)
 lpart5 x y z = (splittedVertlist2 (y-x) (splittedVertlist2 x z))
 -- yay works tested for edge cases too
 
---brokenUpGraph :: (Graph, Vertex -> b, t) -> [b]
+brokenUpGraph :: (Graph, Vertex -> b, t) -> [b]
 brokenUpGraph z = map (sndTrip z) (vertices $ fstTrip z)
 
 --When provided a Graph combo Tuple returns the list of adjacent verts list
+adjVertsFromCombo :: (Graph, Vertex -> (t, t1, b), t2) -> [b]
 adjVertsFromCombo z = map trdTrip (brokenUpGraph z)
 
---updateGraph :: Int -> Int -> Array Vertex [Vertex] -> [([Char], Vertex, [Int])]
 updateGraph :: Int -> Int -> GraphATuple -> GraphATuple
 updateGraph x y z = graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) ([1..])  (adjVertsFromCombo z)
 
@@ -120,10 +120,13 @@ updateGraph' x y z
         | otherwise                     = Nothing
 
 -- legalEdges
+legalEdges :: GraphATuple -> Int -> [Int]
 legalEdges graphT v = trdTrip $ sndTrip graphT $ v
+
 
 --apply something to every node in the graph At the same time possible use of `par` here?
 --let epic = graphFromEdges $ zip3 (map (+1) $ map fstTrip $ brokenUpGraph a) (vertices $ fstTrip a) (adjVertsFromCombo a) -- increases by one
+--forEachNode :: GraphATuple -> (t -> node) -> GraphATuple
 forEachNode graphT x = graphFromEdges $ zip3 (map (x) (map (fstTrip) (brokenUpGraph graphT))) ([1..])  (adjVertsFromCombo graphT)
 --BUG variable graphT left as a which was a smaller graph defined in globals... HEADACHE :/
 
@@ -132,33 +135,32 @@ ifOdd x
         | x`mod`2 == 1 = (x+2)
         | x`mod`2 == 0 = x
 
-
---recurrsive (end condition iterator reaches size of graph bounds
---run a function on a graph first element - return a graph
---run a function on returned graph second element - return a graph.
---till last element - return a graph.
-
+--Effectively maps a function across the graph. printing Each Graph as it goes.
+eachSuccNode :: GraphATuple -> Int -> IO ()
 eachSuccNode graphT iterator = do
                                  putStr $ (show origGraph) ++ "\n" ++ (show $ brokenUpGraph newGraph) ++ "\n"
                                  nxt <- eachSuccNode newGraph (iterator+1)
                                  putStr "Next!"
                                  where
                                     origGraph = brokenUpGraph graphT
-                                    newGraph  = updateGraph iterator (iterator+1) graphT
-                                    --result  = listOfWhatIsAtVert' (updateGraph 1 3 graph) updaListOfNodes
+                                    newGraph  = updateGraph iterator (iterator+1) graphT -- swaps the nodes with the next node (currently goes out of bounds)
 
 -- Adds an Ant to a node (pos) of a given graph (graphT)
+addAnt :: GraphATuple -> Int -> GraphATuple
 addAnt graphT pos = graphFromEdges $ zip3 (preList ++ [Just(Ant 1 East 1)] ++ sufList) ([1..]) (adjVertsFromCombo graphT)
         where preList | pos < 1 = []
                       | otherwise = take (pos-1) (listOfNodes $ brokenUpGraph graphT)
               sufList = drop pos (listOfNodes $ brokenUpGraph graphT)
 --Allows a prexisting Ant to be placed in a graph.
+
+--addExistingAnt :: GraphATuple -> Int -> t -> GraphATuple
 addExistingAnt graphT pos passedAnt = graphFromEdges $ zip3 (preList ++ [passedAnt] ++ sufList) ([1..]) (adjVertsFromCombo graphT)
         where preList | pos < 1 = []
                       | otherwise = take (pos-1) (listOfNodes $ brokenUpGraph graphT)
               sufList = drop pos (listOfNodes $ brokenUpGraph graphT)
 
 --list Of nodes that need Processing
+listOfNodesWithAntsIn :: Eq a => (Graph, Vertex -> (Maybe a, t1, t2), t) -> [t1]
 listOfNodesWithAntsIn graphT = [vert | (ant,vert,_) <-xs , ant /= Nothing ] 
                         where xs = brokenUpGraph graphT 
 
@@ -168,9 +170,11 @@ processAntsInGraph :: GraphPTuple -> GraphATuple -> [Int] -> GraphATuple
 processAntsInGraph graphPT graphAT procList = foldr (procAntAtNode graphPT) graphAT procList
 
 --Once an Ant is known to be at a Node it can be extracted with this function.
+--getAntFromNode :: Num a => (t, a -> (Maybe t2, t3, t4), t1) -> a -> (Ant, Int, [Int])
 getAntFromNode graphT nd = (ant,key,adjList)
                         where (Just ant,key,adjList) = sndTrip graphT $ (nd-1) -- node-1 = Vertex
 
+isAntAtNode :: GraphATuple -> Int -> Bool
 isAntAtNode graphT nd =  not $ isNothing presence 
                         where  (presence,_,_) = sndTrip graphT $ (nd-1)
 
@@ -216,7 +220,7 @@ procAntAtNode graphPT nd graphAT = do
                            let graphT2 = moveAnt graphAT' nd
                            graphT2
 
---senseSur :: GraphPTuple -> Int -> [(Direction,Int)]
+senseSur :: GraphPTuple -> Int -> [(Direction,Double)]
 senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromIntegral(snd $ bounds $ fstTrip graphT)+1))) nd)
                 where directionize x
                                 | x == nd+1 = (East, (fstTrip $ (sndTrip graphT) (x-1))) -- Sort out function composition to make neater.
@@ -231,6 +235,21 @@ makeDecision pLevels = fst (maximumBy highestPher pLevels)
 setDir :: GraphATuple -> Point -> Direction -> GraphATuple
 setDir graphT nd newDir = addExistingAnt graphT nd (modif $ fstTrip $ getAntFromNode graphT nd) -- Not to be called it there isn't an ant at the node getAntFromNode will have a fit.
                 where modif x = Just (Ant (antId x) newDir (pherLevel x)) 
+
+-- function to process the whole Quadrant.
+--processQuadrant :: GraphATuple -> GraphPTuple -> GraphATuple
+processQuadrant graphAT graphPT = do    
+                                   let nodesToProcess = listOfNodesWithAntsIn graphAT
+                                   let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess
+                                   graphAT'
+
+-- processPhers
+-- transPherToAnt
+-- transAntToPher
+
+
 --globals
 a = graphTuple edgesForTestAGraph
 b = graphTuple edgesForTestPGraph
+
+
