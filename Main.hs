@@ -1,41 +1,35 @@
-import ListWorld
-import SimDefine
-import Control.Monad.Writer  
-import Control.Monad.RWS
-import Control.Monad.State
-import System.Random
+-- | This module produces an executable for the Ant Colony simulation, and
+--   details the simulation loop.
+--
+module Main
+    ( main
+    ) where
 
-genRandoms :: IO [Int]
-genRandoms = do { g <- getStdGen; return $ randomRs (1, 100) g}
+import World
+import Data.Foldable (forM_)
 
+
+-- | Main function
+--
+main :: IO ()
 main = do
-    --Initialize the world
-        numbers <- genRandoms
-        putStr $ "The world's size is " ++ show worldSize ++ "\n"
-
-        --generateSurface initialWorldSize
-        --x >>= createAntLoop 3
-        --nums <- genRandoms
-        --generateAnts startAntAmount
-
-        let antList = createAntLoop 3
-        putStr $ show antList ++ "\n"
-        --generateFood
-        let foodList = createFoodLoop 2
-        
-        let worldInit = generateWorld numbers
-        simLoop worldInit
-
-simLoop :: World -> IO()
-simLoop = do
-
---Caluclate next move
-        --calculateNextMove :: [Ants] -> [Ants]
---Generate Collision List
-        --collidingAnts :: [Ants] -> [Ants]
-
-        --x >>= nums!!2
-        --putStr (read x)
-        putStr "Simulation RUNNING!.\n"
-        simLoop
-    
+        forM_ (iterate (`processAQuadrant` b) a) (print . brokenUpGraph)
+        {-putStrLn $ show (brokenUpGraph a)
+        let c = processAQuadrant a b
+        putStrLn $ "\n" ++ show (brokenUpGraph c)
+        let d = processAQuadrant c b
+        putStrLn $ "\n" ++ show (brokenUpGraph d)
+        let e = processAQuadrant d b
+        putStrLn $ "\n" ++ show (brokenUpGraph e)
+        let f = processAQuadrant e b
+        putStrLn $ "\n" ++ show (brokenUpGraph d)
+        let g = processAQuadrant f b
+        putStrLn $ "\n" ++ show (brokenUpGraph g)
+        let h = processAQuadrant g b
+        putStrLn $ "\n" ++ show (brokenUpGraph h)
+        let i = processAQuadrant h b
+        putStrLn $ "\n" ++ show (brokenUpGraph i)
+        let j = processAQuadrant i b
+        putStrLn $ "\n" ++ show (brokenUpGraph j)
+        let k = processAQuadrant j b
+        putStrLn $ "\n" ++ show (brokenUpGraph k)-}

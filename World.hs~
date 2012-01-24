@@ -236,20 +236,30 @@ setDir :: GraphATuple -> Point -> Direction -> GraphATuple
 setDir graphT nd newDir = addExistingAnt graphT nd (modif $ fstTrip $ getAntFromNode graphT nd) -- Not to be called it there isn't an ant at the node getAntFromNode will have a fit.
                 where modif x = Just (Ant (antId x) newDir (pherLevel x)) 
 
--- function to process the whole Quadrant.
+-- | Function to process the whole Quadrant.
 processAQuadrant :: GraphATuple -> GraphPTuple -> GraphATuple
-processAQuadrant graphAT graphPT iter = do    
+processAQuadrant graphAT graphPT = do    
                                    let nodesToProcess = listOfNodesWithAntsIn graphAT
                                    let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess
                                    graphAT'
 
--- processPhers
--- transPherToAnt
--- transAntToPher
-
+-- | TODO
+processPhers :: GraphPTuple -> GraphPTuple
+processPhers = undefined
+-- | TODO
+transPherToAnt :: GraphATuple -> GraphPTuple -> GraphATuple
+transPherToAnt graphAT graphPTuple = undefined --do
+                                      --let nodesToProcess = listOfNodesWithAntsIn graphAT
+                                      --TODO
+-- | TODO
+transAntToPher :: GraphPTuple -> GraphATuple -> GraphPTuple
+transAntToPher = undefined -- TODO
 
 --globals
-a = graphTuple edgesForTestAGraph
-b = graphTuple edgesForTestPGraph
+a_ = graphTuple edgesForTestAGraph
+b_ = graphTuple edgesForTestPGraph
 
+size = 3
+a = graphTuple edgesForTestAGraph -- TODO update so the graph builds with variable size
+b = graphFromEdges $ zip3 (replicate (size^2) 0) (keyList size) (adjListForNewGraph size) :: 
 
