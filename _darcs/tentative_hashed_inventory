@@ -1,4 +1,4 @@
-pristine:fb1d64da7ff5101553fb45385ca0c65ed1384898e6ffb573e90287f76253e474
+pristine:874f583dfb65cd1fda3add0f694d58415a273686d42526de4d0f1570b6375717
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -99,3 +99,28 @@ pmsorhaindo@gmail.com**20120123130536
  Ignore-this: d396d295977648c5c0635bfa092fbf48
 ] 
 hash: 0000001755-a027c7cca25d3a31e258aa7f538b6087a002900803819c6d5908ebff56822c12
+['nearly got a moveAnt Function but its hanging atm'
+pmsorhaindo@gmail.com**20120123145142
+ Ignore-this: 93c035bb4280ed07acd33089c9eb1445
+] 
+hash: 0017605258-78c800ef92a5f644ffe04b07d307a79717f82ec1d3402b48f2c75a804a2170b9
+['movement now works aslong as ant is passed
+pmsorhaindo@gmail.com**20120123175519
+ Ignore-this: b2be657861ae176200d24f9331eea71b
+] 
+hash: 0000002365-9e2e209d328c1964efcbd74b7252250d9eb426477e907a40d1c6b1658680cd8d
+[single processing of Ant in Graph nearly complete, time to work on mapping the function across all processable nodes.
+pmsorhaindo@gmail.com**20120123205948
+ Ignore-this: 1ac16efbc0cadef774b866260c8abe05
+] 
+hash: 0000003254-7723c367c7a1274539370e2e2aec98964838e2331fb2405711592ba375df4d4b
+[working sense surroundings function! Go me!
+pmsorhaindo@gmail.com**20120124021100
+ Ignore-this: 9681f3dd1467df25566c39b4aa7b51c1
+] 
+hash: 0000002790-32bb66c7d2b1244e0ebc3968dd5776831ce47e5e9b8bba9606cf54a65d99b8a8
+[got the Ants a function to decide which decision to make based on levels on the phermone map
+pmsorhaindo@gmail.com**20120124100929
+ Ignore-this: ac8ceb1d238721190b29439ba327f3c7
+] 
+hash: 0000000545-0ad0e6447c76e8b1d947842b0c25d8263c3f59007a7ba4ec5fda161e5b0bb93f

@@ -1,4 +1,4 @@
-pristine:5deb0792bd72e77fb235ae9d2a8c66849d9b61d31eda13d047dec3d9d74f72b9
+pristine:874f583dfb65cd1fda3add0f694d58415a273686d42526de4d0f1570b6375717
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -119,3 +119,8 @@ pmsorhaindo@gmail.com**20120124021100
  Ignore-this: 9681f3dd1467df25566c39b4aa7b51c1
 ] 
 hash: 0000002790-32bb66c7d2b1244e0ebc3968dd5776831ce47e5e9b8bba9606cf54a65d99b8a8
+[got the Ants a function to decide which decision to make based on levels on the phermone map
+pmsorhaindo@gmail.com**20120124100929
+ Ignore-this: ac8ceb1d238721190b29439ba327f3c7
+] 
+hash: 0000000545-0ad0e6447c76e8b1d947842b0c25d8263c3f59007a7ba4ec5fda161e5b0bb93f

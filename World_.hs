@@ -15,10 +15,10 @@ trdTrip (x,y,z) = z
 -- Adjacency List Automation
 type Size = Int
 type Point = Int
+type PherLevel = Double
 
 type GraphATuple = (Array Vertex [Vertex], Int -> (Maybe Ant, Point, [Point]), Point -> Maybe Vertex)
-type GraphPTuple = (Graph, Vertex -> (Double, Int, [Int]), Int -> Maybe Vertex)
-
+type GraphPTuple = (Array Vertex [Vertex], Int -> (PherLevel, Point, [Point]), Point -> Maybe Vertex)
 
 --adjKeyList a = [genUp,genDown,genLeft,genRight] --need a list of these lists for each key in keyList
 -- TODO secure these functions with better testing on numbers added AdjRight still allows ridiculos -ve numbers
@@ -69,7 +69,7 @@ edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),(
 edgesForTestAGraph :: [(Maybe Ant, Int, [Int])]
 edgesForTestAGraph = [(Just(Ant 1 South 1),1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
 
-edgesForTestPGraph :: [(Double, Int, [Int])]
+edgesForTestPGraph :: [(Integer, Int, [Int])]
 edgesForTestPGraph = [(0,1,[2,4]),(0,2,[1,5,3]),(0,3,[2,6]),(0,4,[1,7,15]),(0,5,[2,4,8,6]),(0,6,[3,5,9]),(0,7,[4,8]),(0,8,[7,5,9]),(0,9,[8,6])]
 
 
@@ -161,8 +161,8 @@ listOfNodesWithAntsIn graphT = [vert | (ant,vert,_) <-xs , ant /= Nothing ]
 
 --Proccess Ants at a listOfNodes - listOfNodesWithAntsIn can be used to make sure no Maybe's fall into the fromJust func.
 --NEEDS TO BE A FOLD!!!
-processAntsInGraph :: GraphPTuple -> GraphATuple -> [Int] -> GraphATuple
-processAntsInGraph graphPT graphAT procList = foldr (procAntAtNode graphPT) graphAT procList
+processAntsInGraph :: GraphATuple -> GraphPTuple -> [Int] -> GraphATuple
+processAntsInGraph graphAT graphPT procList = foldr (procAntAtNode graphAT graphPT) procList
 
 --Once an Ant is known to be at a Node it can be extracted with this function.
 
@@ -207,13 +207,14 @@ moveAnt graphT nd
 -- Sense Surroundings [NESW] DONE
 -- Decide on Best Action (factoring in last action?) Set Dir DONE
 -- Move - Done!
-procAntAtNode :: GraphPTuple -> Int -> GraphATuple -> GraphATuple
-procAntAtNode graphPT nd graphAT = do 
-                           let pherLevels = senseSur graphPT nd -- still needed for recalculation of Dir.. ect
-                           let newDir = makeDecision pherLevels -- DONE
-                           let graphAT' = setDir graphAT nd newDir
-                           let graphT2 = moveAnt graphAT' nd
-                           graphT2
+--procAntAtNode :: GraphATuple -> GraphPTuple -> Int -> GraphATuple
+procAntAtNode graphAT graphPT nd = undefined
+--procAntAtNode graphAT graphPT nd = do 
+                           --let pherLevels = senseSur graphPT nd -- still needed for recalculation of Dir.. ect
+                           --let newDir = makeDecision pherLevels -- DONE
+                           --let graphAT' = setDir graphAT nd newDir
+                           --let graphT2 = moveAnt graphAT' nd
+                           --graphT2
 
 --senseSur :: GraphPTuple -> Int -> [(Direction,Int)]
 senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromIntegral(snd $ bounds $ fstTrip graphT)+1))) nd)
@@ -232,4 +233,4 @@ setDir = undefined
 
 --globals
 a = graphTuple edgesForTestAGraph
-b = graphTuple edgesForTestPGraph
+
