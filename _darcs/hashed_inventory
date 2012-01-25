@@ -1,4 +1,4 @@
-pristine:cffc19cbf48c6850284e637a069f66a6bfd9f4f2aa186244b11b9ac30665ce96
+pristine:0bebbf5f1bb7a87daa0afb54b7278542815fee5400edba1b579a7a2cdc22e55a
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -134,3 +134,8 @@ pmsorhaindo@gmail.com**20120124173738
  Ignore-this: cf4f0ac316ea70a5276609e319f3c528
 ] 
 hash: 0047133242-0c57159068adf8f08cc349c48b9b8e2a4795592cccaa4cb075a4415bde6b9d1e
+[just found out about foldable monad things
+pmsorhaindo@gmail.com**20120124203634
+ Ignore-this: 531d3aa54c6540e5da3f812b11674b38
+] 
+hash: 0000001472-678350caeef6e6f91037555416bbddb47437cd30686b48be4edcc213836a2f2f

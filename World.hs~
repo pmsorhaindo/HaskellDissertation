@@ -3,26 +3,31 @@ import Data.Array
 import Data.Graph
 import Data.Maybe (fromJust, isNothing)
 import Data.List (maximumBy)
-import Control.Monad (liftM)
+import Control.Monad (liftM2)
+import Test.QuickCheck
+import Test.HUnit
 import AntRepresent
 
---Utils deconstructing 3 tuples with pattern matching
+-- | Utils deconstructing 3 tuples with pattern matching
 fstTrip (x,y,z) = x 
 sndTrip (x,y,z) = y
 trdTrip (x,y,z) = z
 
--- Adjacency List Automation
+-- | Adjacency List Automation
 type Size = Int
 type Point = Int
 
----- graphFromEdges :: Ord key => [(node,key,[key])] ->(Graph,Vertex->(node,key,[key]),key->Maybe Vertex)
+-- | graphFromEdges :: Ord key => [(node,key,[key])] ->(Graph,Vertex->(node,key,[key]),key->Maybe Vertex)
+-- making this value easily readable
 type GraphATuple = (Array Vertex [Vertex], Int -> (Maybe Ant, Point, [Point]), Point -> Maybe Vertex)
+-- | similar to GraphATuple but holding pheremone levels.
 type GraphPTuple = (Graph, Vertex -> (Double, Int, [Int]), Int -> Maybe Vertex)
 
 
 --adjKeyList a = [genUp,genDown,genLeft,genRight] --need a list of these lists for each key in keyList
 -- TODO secure these functions with better testing on numbers added AdjRight still allows ridiculos -ve numbers
 -- left v-1 (not avaiable if v(mod)size =1) TESTED
+-- | This function gets the adjacent node value given the Quadrant width
 getAdjLeft:: Size->[Int]->Point->[Int]
 getAdjLeft size currentAdj pos
                                 | (pos <= 0 || pos > size^2 ) || pos`mod`size == 1 = currentAdj
@@ -261,5 +266,26 @@ b_ = graphTuple edgesForTestPGraph
 
 size = 3
 a = graphTuple edgesForTestAGraph -- TODO update so the graph builds with variable size
-b = graphFromEdges $ zip3 (replicate (size^2) 0) (keyList size) (adjListForNewGraph size) :: 
+b = graphFromEdges $ zip3 (replicate (size^2) 0) (keyList size) (adjListForNewGraph size) :: GraphPTuple
+
+
+--- Tests
+
+tests = TestList $ map TestCase
+        [assertEqual "" 1 1
+        ]
+
+newtype Is = Is Int
+        deriving (Show)
+
+instance Arbitrary Is where
+        arbitrary = do
+                     i <- suchThat (arbitrary :: Gen Int) (not . null)
+                     return $ Is i
+
+prop_keyList c1 = (length (keyList c1) == c1^2)
+
+runTests = do
+            runTestTT tests
+            quickCheck prop_keyList
 

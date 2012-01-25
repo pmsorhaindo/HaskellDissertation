@@ -11,8 +11,12 @@ import Data.Foldable (forM_)
 
 -- | Main function
 --
+
+ayy = forM_ (iterate (`processAQuadrant` b) a) (print . brokenUpGraph)
+
 main :: IO ()
 main = do
+        --creates an infinite list where the first item is calculated by applying the function on the secod argument, the second item by applying the function on the previous result and so on
         forM_ (iterate (`processAQuadrant` b) a) (print . brokenUpGraph)
         {-putStrLn $ show (brokenUpGraph a)
         let c = processAQuadrant a b
@@ -21,15 +25,4 @@ main = do
         putStrLn $ "\n" ++ show (brokenUpGraph d)
         let e = processAQuadrant d b
         putStrLn $ "\n" ++ show (brokenUpGraph e)
-        let f = processAQuadrant e b
-        putStrLn $ "\n" ++ show (brokenUpGraph d)
-        let g = processAQuadrant f b
-        putStrLn $ "\n" ++ show (brokenUpGraph g)
-        let h = processAQuadrant g b
-        putStrLn $ "\n" ++ show (brokenUpGraph h)
-        let i = processAQuadrant h b
-        putStrLn $ "\n" ++ show (brokenUpGraph i)
-        let j = processAQuadrant i b
-        putStrLn $ "\n" ++ show (brokenUpGraph j)
-        let k = processAQuadrant j b
-        putStrLn $ "\n" ++ show (brokenUpGraph k)-}
+        ... ect-}
