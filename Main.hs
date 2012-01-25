@@ -12,13 +12,15 @@ import Data.Foldable (forM_)
 -- | Main function
 --
 
-ayy = forM_ (iterate (`processAQuadrant` b) a) (print . brokenUpGraph)
+--type check
+temp = forM_ (iterate (`processAQuadrant` b) a) (print . brokenUpGraph)
 
 main :: IO ()
 main = do
         --creates an infinite list where the first item is calculated by applying the function on the secod argument, the second item by applying the function on the previous result and so on
         forM_ (iterate (`processAQuadrant` b) a) (print . brokenUpGraph)
-        {-putStrLn $ show (brokenUpGraph a)
+       
+         {-putStrLn $ show (brokenUpGraph a)
         let c = processAQuadrant a b
         putStrLn $ "\n" ++ show (brokenUpGraph c)
         let d = processAQuadrant c b

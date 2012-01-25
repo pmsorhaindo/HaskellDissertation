@@ -8,6 +8,9 @@ import Test.QuickCheck
 import Test.HUnit
 import AntRepresent
 
+
+--Test-Framework .... to automate the testing
+
 -- | Utils deconstructing 3 tuples with pattern matching
 fstTrip (x,y,z) = x 
 sndTrip (x,y,z) = y
@@ -70,7 +73,7 @@ edgesForTestGraph :: [([Char], Int, [Int])]
 edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
 
 edgesForTestAGraph :: [(Maybe Ant, Int, [Int])]
-edgesForTestAGraph = [(Just(Ant 1 South 1),1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+edgesForTestAGraph = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Just(Ant 1 South 1),9,[8,6])]
 
 edgesForTestPGraph :: [(Double, Int, [Int])]
 edgesForTestPGraph = [(0,1,[2,4]),(0,2,[1,5,3]),(0,3,[2,6]),(0,4,[1,7,15]),(0,5,[2,4,8,6]),(0,6,[3,5,9]),(0,7,[4,8]),(0,8,[7,5,9]),(0,9,[8,6])]
@@ -95,7 +98,7 @@ listOfNodes x = map (nodeAtVert x) [0..(snd $ bounds (graph x))]
 splittedVertlist1 x y = fst $ splitAt x y
 splittedVertlist2 x y = snd $ splitAt x y
 
-swapNodes :: Int -> Int -> [a] -> [a]
+swapNodes :: Int -> Int -> [a] -> [a] -- huge bummer finding this bug... x < y or fail
 swapNodes x y z = (init $ splittedVertlist1 x z) ++ [(last $ splittedVertlist1 y z)]  ++ (init $ splittedVertlist1 (y-x) (splittedVertlist2 x z)) ++ [(last $ splittedVertlist1 x z)] ++ (splittedVertlist2 (y-x) (splittedVertlist2 x z))
 
 -- broken down for debugging
@@ -260,7 +263,7 @@ transPherToAnt graphAT graphPTuple = undefined --do
 transAntToPher :: GraphPTuple -> GraphATuple -> GraphPTuple
 transAntToPher = undefined -- TODO
 
---globals
+-- | Globals
 a_ = graphTuple edgesForTestAGraph
 b_ = graphTuple edgesForTestPGraph
 
@@ -269,8 +272,7 @@ a = graphTuple edgesForTestAGraph -- TODO update so the graph builds with variab
 b = graphFromEdges $ zip3 (replicate (size^2) 0) (keyList size) (adjListForNewGraph size) :: GraphPTuple
 
 
---- Tests
-
+-- | Tests
 tests = TestList $ map TestCase
         [assertEqual "" 1 1
         ]
@@ -280,7 +282,8 @@ newtype Is = Is Int
 
 instance Arbitrary Is where
         arbitrary = do
-                     i <- (arbitrary :: Gen Int)
+                     --i <- (arbitrary :: Gen Int)
+                     i <- choose(0,100)
                      return $ Is i
 
 prop_keyList c1 = (length (keyList c1) == c1^2)

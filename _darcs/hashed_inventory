@@ -1,4 +1,4 @@
-pristine:0bebbf5f1bb7a87daa0afb54b7278542815fee5400edba1b579a7a2cdc22e55a
+pristine:94a3daf1955e451d4d04949702eb3c43bc66f82d6065857206a408a1dc4180af
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -139,3 +139,8 @@ pmsorhaindo@gmail.com**20120124203634
  Ignore-this: 531d3aa54c6540e5da3f812b11674b38
 ] 
 hash: 0000001472-678350caeef6e6f91037555416bbddb47437cd30686b48be4edcc213836a2f2f
+[Starts of Haddock documentation and quickCheck
+pmsorhaindo@gmail.com**20120125015207
+ Ignore-this: 55d4cc26595e132949af4bccc3def322
+] 
+hash: 0000001395-dd5896b00d75c927dde01d44331c837aeb43a1459651595e42f66cbb9b3eae87
