@@ -1,4 +1,4 @@
-pristine:94a3daf1955e451d4d04949702eb3c43bc66f82d6065857206a408a1dc4180af
+pristine:7687f00a51c73ab8b7f2a87211e2500a245af4d189d4fe7dc0594e3d2926a80d
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -144,3 +144,8 @@ pmsorhaindo@gmail.com**20120125015207
  Ignore-this: 55d4cc26595e132949af4bccc3def322
 ] 
 hash: 0000001395-dd5896b00d75c927dde01d44331c837aeb43a1459651595e42f66cbb9b3eae87
+[Found the exception bug feels so good I have to push before the fix!
+pmsorhaindo@gmail.com**20120125110536
+ Ignore-this: c1be9a35acd52097d75044adc4056a16
+] 
+hash: 0000001200-5f513bd6d99d4ae63f359954b261eb8620ca38662f530a9f1278344452b06d42

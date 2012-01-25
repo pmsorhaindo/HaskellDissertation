@@ -13,7 +13,7 @@ instance Show Direction where
 
 data Ant = Ant {
          antId        :: Int
-        ,dir       :: Direction
+        ,antDir       :: Direction
         ,pherLevel :: Double
         }
         deriving(Eq)

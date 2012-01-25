@@ -1,0 +1,8 @@
+Monad-par 
+
+ runPar $ do
+      fx <- pval (f x)  -- start evaluating (f x)
+      gx <- pval (g x)  -- start evaluating (g x)
+      a <- get fx       -- wait for fx
+      b <- get gx       -- wait for gx
+      return (a,b)      -- return results

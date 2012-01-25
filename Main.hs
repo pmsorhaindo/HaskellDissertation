@@ -6,6 +6,7 @@ module Main
     ) where
 
 import World
+import Quadrant
 import Data.Foldable (forM_)
 
 
