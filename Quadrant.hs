@@ -28,6 +28,16 @@ type GraphPTuple = (Graph, Vertex -> (Double, Int, [Int]), Int -> Maybe Vertex)
 -- let a = graphFromEdges $ zip3 [1..36] (keyList 6) (adjListForNewGraph 6)
 buildEmptyWorld size = graphFromEdges $ zip3 (replicate (size^2) 0) (keyList size) (adjListForNewGraph size)
 
+emptyAntQuadrant = graphFromEdges $ zip3 nodes keys adjList :: GraphATuple
+        where nodes   = (replicate (width^2) Nothing)
+              keys    = (keyList width)
+              adjList = (adjListForNewGraph width)
+
+emptyPherQuadrant = graphFromEdges $ zip3 nodes keys adjList :: GraphPTuple
+        where nodes   = (replicate (width^2) 0)
+              keys    = (keyList width)
+              adjList = (adjListForNewGraph width)
+
 --TEST GRAPHS
 edgesForTestGraph :: [([Char], Int, [Int])]
 edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
@@ -71,7 +81,7 @@ lpart4 x z = (last $ splittedVertlist1 x z) -- was tail ;/ (superfail)
 lpart5 x y z = (splittedVertlist2 (y-x) (splittedVertlist2 x z))
 -- yay works tested for edge cases too
 
-brokenUpGraph :: (Graph, Vertex -> b, t) -> [b]
+--brokenUpGraph :: (Graph, Vertex -> b, t) -> [b]
 brokenUpGraph z = map (sndTrip z) (vertices $ fstTrip z)
 
 --When provided a Graph combo Tuple returns the list of adjacent verts list
@@ -200,7 +210,9 @@ senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromInte
                                 | x > nd = (South, (fstTrip $ (sndTrip graphT) (x-1)))
                                 | x < nd = (North, (fstTrip $ (sndTrip graphT) (x-1)))
 
---increaseSense --TODO
+-- | increaseSense --TODO
+increaseSense :: [(Direction,Double)] -> [(Direction,Double)]
+increaseSense = undefined
 
 makeDecision :: [(Direction,Double)] -> Direction
 makeDecision pLevels = fst (maximumBy highestPher pLevels)
@@ -217,17 +229,15 @@ processAQuadrant graphAT graphPT = do
                                    let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess
                                    graphAT'
 
-
 -- | Export graph Edge for stitching
 --getEdge :: GraphATuple -> Direction -> Size -> [a]
-getEdge graphAT getDir
+getAEdge graphAT getDir
         | getDir == North = zip (map f [1 .. size]) [1..size]
         | getDir == West  = zip (map f [size,size+size .. size^2]) [size,size+size .. size^2]
         | getDir == East  = zip (map f [1,size+1 .. (size^2-(size-1))]) [1,size+1 .. (size^2-(size-1))]
         | getDir == South = zip (map f [(size^2-(size-1)) .. (size^2)]) [(size^2-(size-1)) .. (size^2)]
                where size = truncate (sqrt(fromIntegral ((snd $ bounds $ fstTrip graphAT) + 1))) :: Int
                      f    = getWhatIsAtNode graphAT
-
 
 -- | TODO
 processPhers :: GraphPTuple -> GraphPTuple
@@ -242,11 +252,11 @@ transAntToPher :: GraphPTuple -> GraphATuple -> GraphPTuple
 transAntToPher = undefined -- TODO
 
 -- | Globals
-a_ = graphTuple edgesForTestAGraph
-b_ = graphTuple edgesForTestPGraph
+a'' = graphTuple edgesForTestAGraph
+b'' = graphTuple edgesForTestPGraph
 
 width = 3
-a = graphTuple edgesForTestAGraph -- TODO update so the graph builds with variable size
+a = graphFromEdges $ zip3 (replicate (width^2) Nothing) (keyList width) (adjListForNewGraph width) :: GraphATuple
 b = graphFromEdges $ zip3 (replicate (width^2) 0) (keyList width) (adjListForNewGraph width) :: GraphPTuple
 
 

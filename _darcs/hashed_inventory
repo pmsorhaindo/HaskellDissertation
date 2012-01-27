@@ -1,4 +1,4 @@
-pristine:7687f00a51c73ab8b7f2a87211e2500a245af4d189d4fe7dc0594e3d2926a80d
+pristine:8757cfc6e14ca54cdd082062c1af2c965a1cddab9fa58312e1eee18ae6e30c94
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -149,3 +149,8 @@ pmsorhaindo@gmail.com**20120125110536
  Ignore-this: c1be9a35acd52097d75044adc4056a16
 ] 
 hash: 0000001200-5f513bd6d99d4ae63f359954b261eb8620ca38662f530a9f1278344452b06d42
+[restructuring to allow for a world to hold multiple Quadrants (Graphs).
+pmsorhaindo@gmail.com**20120125152249
+ Ignore-this: a4868aca911bf0324ba3e39b15d1f716
+] 
+hash: 0000014434-4bd423d0f4db5b9eb29a50ce5f781f6a9cdd9c780216542447646d67a390f920

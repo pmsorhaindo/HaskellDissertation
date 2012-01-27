@@ -7,6 +7,7 @@ module Main
 
 import World
 import Quadrant
+import AntRepresent -- this is just so I can call directions with out Qualifying them in ghci
 import Data.Foldable (forM_)
 
 
@@ -14,7 +15,7 @@ import Data.Foldable (forM_)
 --
 
 --type check
-temp = forM_ (iterate (`processAQuadrant` b) a) (print . brokenUpGraph)
+temp = forM_ (iterate (`processAQuadrant` b_) a_) (print . brokenUpGraph)
 
 main :: IO ()
 main = do
