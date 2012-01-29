@@ -1,4 +1,4 @@
-pristine:ae1004820505f1e2946a258e00a90b02bb0b7c99207d3a54f01f2379ceb2db4a
+pristine:555742564fff319177301bacd43f1a4de3c3261a8ebae528c2edf70a5e78180f
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -164,3 +164,8 @@ pmsorhaindo@gmail.com**20120129094307
  Ignore-this: dc51443d5931c2b178b3225b33ac74b7
 ] 
 hash: 0000000878-52030f049299c179ead20151f89dab07ef79f94675c570cee1897205d4c6a6eb
+[have a direction node tuple List for the World to stitch nodes up
+pmsorhaindo@gmail.com**20120129103156
+ Ignore-this: 5e87284dac089d066d2d726153262490
+] 
+hash: 0000000783-b3b2e607bbc749c2e50b94453a28102f6d76718fc0cbcd6c9b2eb8443c8551ee

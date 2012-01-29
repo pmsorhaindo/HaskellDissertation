@@ -25,7 +25,8 @@ worldWidth = 3 -- this calls for the generation of 9 Ant Worlds and Pheremone Ma
 antWorld = graphFromEdges $ zip3 (listOfAntQuadrants) (keyList worldWidth) (adjListForNewGraph worldWidth)
 pherWorld = graphFromEdges $ zip3 (listOfPherQuadrants) (keyList worldWidth) (adjListForNewGraph worldWidth)
 
-listOfAntQuadrants = replicate (worldWidth^2) emptyAntQuadrant
+--listOfAntQuadrants = replicate (worldWidth^2) emptyAntQuadrant
+listOfAntQuadrants = replicate (worldWidth^2) a''
 
 listOfPherQuadrants = replicate (worldWidth^2) emptyPherQuadrant
 
@@ -47,21 +48,23 @@ getAQuadEdge nd edgDir = getAEdge (getAntQuad nd antWorld) edgDir
 --D|E|F|G
 
 --Get All the stitchupable edges 
---stitchEdges :: [(Int, Int)] -> [(Int, Int)]
-stitchEdges xs = nubBy (\x y -> x == y || swap x == y) xs
+stitchEdges :: GraphAWTuple -> [(Int, Int)]
+stitchEdges world = nubBy (\x y -> x == y || swap x == y) (edges $ fstTrip $ world)
 -- nubBy allows me to remove duplicates from a list like nub but with nubBy I can describe how duplicates 
-
-
-processWorld :: GraphAWTuple -> GraphAWTuple
-processWorld = undefined -- TODO the big loop
 
 stitchUpEdges :: GraphAWTuple -> GraphAWTuple
 stitchUpEdges world = undefined --stitchEdges edges $ fstTrip world -- more serially stuffs
 
---stitchUpEdge :: GraphAWTuple -> (Int,Int) -> GraphAWTuple
-stitchUpEdge world quadPair = do
-                               let a = dirsNeeded quadPair
-                               a
+--stitchUpEdge :: GraphAWTuple -> GraphPWorld -> ((Int,Direction),(Int,Direction)) -> GraphAWTuple
+stitchUpEdge world pherWorld quadPair = do
+                                let edge1 = getAQuadEdge (fst $ fst $ quadPair)
+                                let edge2 = getAQuadEdge (snd $ fst $ quadPair)
+                                --x:xs = -- if x = nothing and other list x = nothing do nothing
+                                       -- if x = ant and other list x = nothing (<<get all nodes>> for x first list and process)
+                                       -- if x = ant and other list x = ants processed one after the other
+                                       -- note : if an ant moves in the direction of this function the next 
+                                --x:[] =
+                                --[]   =
 
                         
 --increment vert tuple to get nodes
@@ -73,19 +76,21 @@ stitchUpEdge world quadPair = do
 -- flags
 -- Ant pools
 
+dirsNeeded :: (Int, Int) -> ((Int, Direction), (Int, Direction))
 dirsNeeded quadTuple
    | snd quadTuple == fst quadTuple+1 = ((fst quadTuple,West),(snd quadTuple,East))
    | fst quadTuple == snd quadTuple+1 = ((fst quadTuple,East),(snd quadTuple,West))
    | fst quadTuple > snd quadTuple    = ((fst quadTuple,South),(snd quadTuple,North))
    | fst quadTuple < snd quadTuple    = ((fst quadTuple,North),(snd quadTuple,South))
 
+
+
 processQuadrants :: GraphAWTuple -> GraphAWTuple
 processQuadrants = undefined -- TODO parallel stuffs
 
 
---for each element of the list fold delete the swapped element of list over list. if reach the end of list return list. 
-
-
+processWorld :: GraphAWTuple -> GraphAWTuple
+processWorld = undefined -- TODO the big loop
 
 
 
