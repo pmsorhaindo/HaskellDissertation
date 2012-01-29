@@ -69,15 +69,15 @@ stitchUpEdge world quadPair = do
 -- get the edges for those directions from the nodes
 -- process ants at Edges
 
---Other methods
+-- Other methods
 -- flags
 -- Ant pools
 
-dirsNeeded (x,y)
-        | y == x+1 = ((x,West),(y,East))
-        | x == y+1 = ((x,East),(y,West))
-        | x > y    = ((x,South),(y,North))
-        | x < y    = ((x,North),(y,(South))
+dirsNeeded quadTuple
+   | snd quadTuple == fst quadTuple+1 = ((fst quadTuple,West),(snd quadTuple,East))
+   | fst quadTuple == snd quadTuple+1 = ((fst quadTuple,East),(snd quadTuple,West))
+   | fst quadTuple > snd quadTuple    = ((fst quadTuple,South),(snd quadTuple,North))
+   | fst quadTuple < snd quadTuple    = ((fst quadTuple,North),(snd quadTuple,South))
 
 processQuadrants :: GraphAWTuple -> GraphAWTuple
 processQuadrants = undefined -- TODO parallel stuffs

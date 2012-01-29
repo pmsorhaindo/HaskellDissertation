@@ -47,7 +47,7 @@ getAQuadEdge nd edgDir = getAEdge (getAntQuad nd antWorld) edgDir
 --D|E|F|G
 
 --Get All the stitchupable edges 
-stitchEdges :: [(Int, Int)] -> [(Int, Int)]
+--stitchEdges :: [(Int, Int)] -> [(Int, Int)]
 stitchEdges xs = nubBy (\x y -> x == y || swap x == y) xs
 -- nubBy allows me to remove duplicates from a list like nub but with nubBy I can describe how duplicates 
 
@@ -60,22 +60,24 @@ stitchUpEdges world = undefined --stitchEdges edges $ fstTrip world -- more seri
 
 --stitchUpEdge :: GraphAWTuple -> (Int,Int) -> GraphAWTuple
 stitchUpEdge world quadPair = do
-                               dirsNeeded quadPair
+                               let a = dirsNeeded quadPair
+                               a
+
                         
 --increment vert tuple to get nodes
 -- get the direction needed from each node.
 -- get the edges for those directions from the nodes
 -- process ants at Edges
 
---Other methods
+-- Other methods
 -- flags
 -- Ant pools
 
-dirsNeeded (x,y)
-        | y == x+1 = ((x,West),(y,East))
-        | x == y+1 = ((x,East),(y,West))
-        | x > y    = ((x,South),(y,North))
-        | x < y    = ((x,North),(y,(South))
+dirsNeeded quadTuple
+   | snd quadTuple == fst quadTuple+1 = ((fst quadTuple,West),(snd quadTuple,East))
+   | fst quadTuple == snd quadTuple+1 = ((fst quadTuple,East),(snd quadTuple,West))
+   | fst quadTuple > snd quadTuple    = ((fst quadTuple,South),(snd quadTuple,North))
+   | fst quadTuple < snd quadTuple    = ((fst quadTuple,North),(snd quadTuple,South))
 
 processQuadrants :: GraphAWTuple -> GraphAWTuple
 processQuadrants = undefined -- TODO parallel stuffs
