@@ -56,10 +56,14 @@ processWorld :: GraphAWTuple -> GraphAWTuple
 processWorld = undefined -- TODO the big loop
 
 stitchUpEdges :: GraphAWTuple -> GraphAWTuple
-stitchUpEdges world = --stitchEdges edges $ fstTrip world -- more serially stuffs
+stitchUpEdges world = undefined --stitchEdges edges $ fstTrip world -- more serially stuffs
 
-stitchUpEdge :: GraphAWTuple -> (Int,Int) -> GraphAWTuple
-stitchUpEdges world = undefined
+--stitchUpEdge :: GraphAWTuple -> (Int,Int) -> GraphAWTuple
+stitchUpEdge world quadPair = do
+                               let a = dirsNeeded quadPair
+                               a
+
+                        
 --increment vert tuple to get nodes
 -- get the direction needed from each node.
 -- get the edges for those directions from the nodes
@@ -68,6 +72,12 @@ stitchUpEdges world = undefined
 --Other methods
 -- flags
 -- Ant pools
+
+dirsNeeded (x,y)
+        | y == x+1 = ((x,West),(y,East))
+        | x == y+1 = ((x,East),(y,West))
+        | x > y    = ((x,South),(y,North))
+        | x < y    = ((x,North),(y,(South))
 
 processQuadrants :: GraphAWTuple -> GraphAWTuple
 processQuadrants = undefined -- TODO parallel stuffs

@@ -1,4 +1,4 @@
-pristine:8757cfc6e14ca54cdd082062c1af2c965a1cddab9fa58312e1eee18ae6e30c94
+pristine:64e81a4d28d074f9538fe2e759600e18cb5d00f5c573fe7fe48b68c0dccdb20c
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -154,3 +154,8 @@ pmsorhaindo@gmail.com**20120125152249
  Ignore-this: a4868aca911bf0324ba3e39b15d1f716
 ] 
 hash: 0000014434-4bd423d0f4db5b9eb29a50ce5f781f6a9cdd9c780216542447646d67a390f920
+[got a list of edges in the world that need processing
+pmsorhaindo@gmail.com**20120127221818
+ Ignore-this: 4c35bbb7a88c2644110d5fc1d93b9c88
+] 
+hash: 0047151792-8020db155350bb10d65c7251d1295b1e448eae8613c5dac9e91cb57f8007e06f
