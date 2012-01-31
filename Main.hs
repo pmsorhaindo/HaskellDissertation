@@ -21,12 +21,7 @@ main :: IO ()
 main = do
         --creates an infinite list where the first item is calculated by applying the function on the secod argument, the second item by applying the function on the previous result and so on
         forM_ (iterate (`processAQuadrant` b) a) (print . brokenUpGraph)
+
+        --evaluate $ deep $ map solve grids ‘ using ‘ parList rseq
+
        
-         {-putStrLn $ show (brokenUpGraph a)
-        let c = processAQuadrant a b
-        putStrLn $ "\n" ++ show (brokenUpGraph c)
-        let d = processAQuadrant c b
-        putStrLn $ "\n" ++ show (brokenUpGraph d)
-        let e = processAQuadrant d b
-        putStrLn $ "\n" ++ show (brokenUpGraph e)
-        ... ect-}

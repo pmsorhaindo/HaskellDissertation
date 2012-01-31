@@ -11,6 +11,7 @@ import Quadrant
 import GraphOps
 
 type GraphAWTuple = (Graph, Vertex -> (GraphATuple, Int, [Int]), Int -> Maybe Vertex)
+type GraphPWTuple = (Graph, Vertex -> (GraphPTuple, Int, [Int]), Int -> Maybe Vertex)
 --Test-Framework .... to automate the testing
 
 --Build a new Graph 6 and 36 need replacing with a variable graph size and graph size^2
@@ -55,11 +56,12 @@ stitchEdges world = nubBy (\x y -> x == y || swap x == y) (edges $ fstTrip $ wor
 stitchUpEdges :: GraphAWTuple -> GraphAWTuple
 stitchUpEdges world = undefined --stitchEdges edges $ fstTrip world -- more serially stuffs
 
---stitchUpEdge :: GraphAWTuple -> GraphPWorld -> ((Int,Direction),(Int,Direction)) -> GraphAWTuple
-stitchUpEdge world pherWorld quadPair = do
-                                let edge1 = getAQuadEdge (fst $ fst $ quadPair)
-                                let edge2 = getAQuadEdge (snd $ fst $ quadPair)
-                                edge1
+stitchUpEdge :: GraphAWTuple -> GraphPWTuple -> ((Int,Direction),(Int,Direction)) -> GraphAWTuple
+stitchUpEdge world pherWorld quadPair = undefined -- do
+                                --let edge1 = getAQuadEdge (fst $ fst $ quadPair)
+                                --let edge2 = getAQuadEdge (snd $ fst $ quadPair)
+                                --edge1
+                                
                                 --x:xs = -- if x = nothing and other list x = nothing do nothing
                                        -- if x = ant and other list x = nothing (<<get all nodes>> for x first list and process)
                                        -- if x = ant and other list x = ants processed one after the other
@@ -67,7 +69,9 @@ stitchUpEdge world pherWorld quadPair = do
                                 --x:[] =
                                 --[]   =
 
-                        
+--singleStitch aWorld pWorld 
+
+                       
 --increment vert tuple to get nodes
 -- get the direction needed from each node.
 -- get the edges for those directions from the nodes
