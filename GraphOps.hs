@@ -14,6 +14,9 @@ fstTrip (x,y,z) = x
 sndTrip (x,y,z) = y
 trdTrip (x,y,z) = z
 
+graph edges         = fstTrip $ graphFromEdges edges
+graphfunc edges     = sndTrip $ graphFromEdges edges
+graphfuncVert edges = trdTrip $ graphFromEdges edges
 
 -- | Adjacency List Automation
 
@@ -50,6 +53,15 @@ adjListForNewGraph size = map (adjListForVertex size) [1..size^2]
 -- | List of Nodes -- start list of empty nodes size od size^2
 keyList :: Int -> [Int]
 keyList size = [1..size^2]
+
+-- | returns the node at vertex y from given edge structure x
+nodeAtVert :: (Ord key) => [(node, key, [key])] -> Vertex -> node
+nodeAtVert x y = fstTrip $ graphfunc x y
+
+-- | for Edge Structure x, map the find nodeAtVert function across all the nodes in the graph.
+listOfNodes :: Ord key => [(node, key, [key])] -> [node]
+listOfNodes x = map (nodeAtVert x) [0..(snd $ bounds (graph x))]
+
 
 
 -- | Tests

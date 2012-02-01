@@ -56,14 +56,6 @@ graph edges         = fstTrip $ graphFromEdges edges
 graphfunc edges     = sndTrip $ graphFromEdges edges
 graphfuncVert edges = trdTrip $ graphFromEdges edges
 
---returns the node at vertex y from given edge structure x
-nodeAtVert :: (Ord key) => [(node, key, [key])] -> Vertex -> node
-nodeAtVert x y = fstTrip $ graphfunc x y
-
---for Edge Structure x, map the find nodeAtVert function across all the nodes in the graph.
-listOfNodes :: Ord key => [(node, key, [key])] -> [node]
-listOfNodes x = map (nodeAtVert x) [0..(snd $ bounds (graph x))]
-
 --list splitting functions take the first and second half, repsectively , of the list y when split at x.
 splittedVertlist1 x y = fst $ splitAt x y
 splittedVertlist2 x y = snd $ splitAt x y
@@ -214,6 +206,16 @@ senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromInte
 increaseSense :: [(Direction,Double)] -> [(Direction,Double)]
 increaseSense = undefined
 
+procEdgeAntAtNode :: GraphPTuple -> Int -> (Direction,Double) -> GraphATuple -> GraphATuple
+procEdgeAntAtNode graphPT nd additionalPher graphAT = do 
+                           let pherLevels = senseSur graphPT nd -- still needed for recalculation of Dir.. ect
+                           let completeLevels = pherLevels:additionalPher
+                           let newDir = makeDecision pherLevels -- DONE
+                           let graphAT' = setDir graphAT nd newDir
+                           let graphT2 = moveAnt graphAT' nd
+                           graphT2
+
+
 makeDecision :: [(Direction,Double)] -> Direction
 makeDecision pLevels = fst (maximumBy highestPher pLevels)
                 where highestPher x y = (snd x) `compare` (snd y) 
@@ -238,6 +240,15 @@ getAEdge graphAT getDir
         | getDir == South = zip (map f [(size^2-(size-1)) .. (size^2)]) [(size^2-(size-1)) .. (size^2)]
                where size = truncate (sqrt(fromIntegral ((snd $ bounds $ fstTrip graphAT) + 1))) :: Int
                      f    = getWhatIsAtNode graphAT
+
+--getPEdge :: GraphPTuple -> Direction -> Size -> [a]
+getPEdge graphPT getDir
+        | getDir == North = zip (map f [1 .. size]) [1..size]
+        | getDir == West  = zip (map f [size,size+size .. size^2]) [size,size+size .. size^2]
+        | getDir == East  = zip (map f [1,size+1 .. (size^2-(size-1))]) [1,size+1 .. (size^2-(size-1))]
+        | getDir == South = zip (map f [(size^2-(size-1)) .. (size^2)]) [(size^2-(size-1)) .. (size^2)]
+               where size = truncate (sqrt(fromIntegral ((snd $ bounds $ fstTrip graphPT) + 1))) :: Int
+                     f    = getWhatIsAtNode graphPT
 
 -- | TODO
 processPhers :: GraphPTuple -> GraphPTuple
