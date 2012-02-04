@@ -74,10 +74,13 @@ stitchUpEdge world pherWorld quadPair = do
                                 let edgeP2 = getAQuadEdge (fst $ snd $ quadPair) (snd $ snd $ quadPair)
                                 
                                 let edgeA3 = edgePointsWithAntsIn edgeA1
-                                [ants] -> quadrant -> []
-                                let x =
-                            
+                                --process with edgeP2
+                                --[ants] -> quadrant -> []
+                                
                                 let edgeA4 = edgePointsWithAntsIn edgeA2
+                                --process with edgeP1
+                                
+                            
                                 edgeA3
                                 
                                 --x:xs = -- if x = nothing and other list x = nothing do nothing

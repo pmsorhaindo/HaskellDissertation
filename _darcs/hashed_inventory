@@ -1,4 +1,4 @@
-pristine:8b2a5c1cb93912913e0e0b142ba976fa19936346649647502c5bbf18ef3b4b25
+pristine:7a7ea3c34a553e328145138155b4e37021c754b539125b56b61659e6043f4416
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -179,3 +179,8 @@ pmsorhaindo@gmail.com**20120131160157
  Ignore-this: 68efd1c04e084160fec07f63fe2e7bf4
 ] 
 hash: 0000001544-6dfcae0b068e90bfef29cbde08aae87319bc02df6c0dc970c98ac89eb085d5e0
+[changes and tweaks emphasis being on stitching
+pmsorhaindo@gmail.com**20120201210444
+ Ignore-this: 9c658d4416477f80b1e0eaf9c57cbf74
+] 
+hash: 0000006230-6cb92d8862cba4f9292e37172d875cfa3b5fe09d2795744a9d9ca5ddc4e56e9d

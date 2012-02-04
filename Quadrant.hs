@@ -141,6 +141,9 @@ listOfNodesWithAntsIn graphT = [vert | (ant,vert,_) <-xs , ant /= Nothing ]
 processAntsInGraph :: GraphPTuple -> GraphATuple -> [Int] -> GraphATuple
 processAntsInGraph graphPT graphAT procList = foldr (procAntAtNode graphPT) graphAT procList
 
+--processEdgeAntsGraph :: GraphPTuple -> GraphATuple -> [EdgeAntsToProcess] -> [AdditionalPherInfo] ->[nodeAvailability] -> GraphATuple
+processEdgeAntsGraph graphPT graphAT procList extraPher ndAvail = foldr (procAntAtNode graphPT) graphAT procList
+
 --Once an Ant is known to be at a Node it can be extracted with this function.
 --getAntFromNode :: Num a => (t, a -> (Maybe t2, t3, t4), t1) -> a -> (Ant, Int, [Int])
 getAntFromNode graphT nd = (ant,key,adjList)
@@ -186,6 +189,7 @@ moveAnt graphT nd
 -- Sense Surroundings [NESW] DONE
 -- Decide on Best Action (factoring in last action?) Set Dir DONE
 -- Move - Done!
+
 procAntAtNode :: GraphPTuple -> Int -> GraphATuple -> GraphATuple
 procAntAtNode graphPT nd graphAT = do 
                            let pherLevels = senseSur graphPT nd -- still needed for recalculation of Dir.. ect
@@ -206,20 +210,40 @@ senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromInte
 increaseSense :: [(Direction,Double)] -> [(Direction,Double)]
 increaseSense = undefined
 
-procEdgeAntAtNode :: GraphPTuple -> Int -> (Direction,Double) -> GraphATuple -> GraphATuple
-procEdgeAntAtNode graphPT nd additionalPher graphAT = do 
+procEdgeAntAtNode :: GraphPTuple -> Int -> [(Direction,Double)] -> [(Maybe Ant, Int)] -> GraphATuple -> GraphATuple
+procEdgeAntAtNode graphPT nd additionalPher additionalAnt graphAT = do 
                            let pherLevels = senseSur graphPT nd -- still needed for recalculation of Dir.. ect
-                           let completeLevels = pherLevels:additionalPher
-                           let newDir = makeDecision pherLevels -- DONE
+                           let completeLevels = additionalPher:pherLevels
+                           let transferDir = fst additionaPher
+                           let newDir = makeDecision pherLevels
+                           
+                           if newDir == transferDir then
+
+                           else
+
                            let graphAT' = setDir graphAT nd newDir
                            let graphT2 = moveAnt graphAT' nd
                            graphT2
 
+--THE ALGORITHM
+{-forEachAnt get PherLevels
 
+add this to the extra passed PherLevel
+
+make a move.
+ifMove is out of Quadrant
+Check if there is an Ant opposite
+        if so Check nextDir of Ant
+                if moving away process that if it moves away successfully move current processing ant to that ants old space (if processing an alternate ant remove it from its respective procList)
+                if ant wants to move in the opposite direction deny both ants and process them with their other values.
+        else if Nothing move Ant-}
+
+-- | Arranges the Pheremone list to hold
 makeDecision :: [(Direction,Double)] -> Direction
 makeDecision pLevels = fst (maximumBy highestPher pLevels)
                 where highestPher x y = (snd x) `compare` (snd y) 
 
+-- | Change an Ants current direction at a given node to a given direction.
 setDir :: GraphATuple -> Point -> Direction -> GraphATuple
 setDir graphT nd newDir = addExistingAnt graphT nd (modif $ fstTrip $ getAntFromNode graphT nd) -- Not to be called it there isn't an ant at the node getAntFromNode will have a fit.
                 where modif x = Just (Ant (antId x) newDir (pherLevel x)) 
