@@ -210,33 +210,68 @@ senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromInte
 increaseSense :: [(Direction,Double)] -> [(Direction,Double)]
 increaseSense = undefined
 
-procEdgeAntAtNode :: GraphPTuple -> Int -> [(Direction,Double)] -> [(Maybe Ant, Int)] -> GraphATuple -> GraphATuple
-procEdgeAntAtNode graphPT nd additionalPher additionalAnt graphAT = do 
-                           let pherLevels = senseSur graphPT nd -- still needed for recalculation of Dir.. ect
-                           let completeLevels = additionalPher:pherLevels
-                           let transferDir = fst additionaPher
-                           let newDir = makeDecision pherLevels
-                           
-                           if newDir == transferDir then
+procEdgeAntAtNode :: GraphPTuple -> Int -> (Direction,Double) -> (Maybe Ant, Int) -> GraphATuple -> GraphATuple -> GraphATuple
+procEdgeAntAtNode graphPT nd additionalPher additionalAnt nextGraphAT graphAT = undefined
 
-                           else
 
-                           let graphAT' = setDir graphAT nd newDir
-                           let graphT2 = moveAnt graphAT' nd
-                           graphT2
 
---THE ALGORITHM
-{-forEachAnt get PherLevels
 
-add this to the extra passed PherLevel
 
-make a move.
-ifMove is out of Quadrant
-Check if there is an Ant opposite
-        if so Check nextDir of Ant
-                if moving away process that if it moves away successfully move current processing ant to that ants old space (if processing an alternate ant remove it from its respective procList)
-                if ant wants to move in the opposite direction deny both ants and process them with their other values.
-        else if Nothing move Ant-}
+{- Better Algorithm
+
+pherGraphs pherEdge antEdge antGraphs position
+
+Take position of the Curr AntEdge (if position >size) if /= empty (and not on the noProcessList)
+        SensSur
+        IncreaseSense -> moveOutDir
+        MakeDecision -> newDir
+        if newDir /= moveOutDir then
+                process currAnt
+                update noProcessList
+                update AntEdge (currAnt = Nothing)
+                --Process AdjAnt
+                SensSur
+                IncreaseSense -> moveOutDir'
+                MakeDecision -> newDir'
+                if newDir' /= moveDir' then
+                        process adjAnt
+                        update noProcessList
+                        update AntEdge (adjAnt = Nothing)
+                else
+                        check antEdge (to see if currAnt moved)
+                        if Nothing then
+                                addAnt to CurrGraph
+                                removeAnt from AdjGraph
+                                update noProcessList
+                                update EdgeLists (both curr and adj)
+                        else
+                                process without increasedSense
+                                update noProcessList
+                                update edgeList
+        else
+                check edgeList to see if free space
+                if Nothing then
+                        addAnt to adjGraph
+                        removeAnt from CurrGraph
+                        update no ProcessList
+                        UpdateEdgeList (both curr and adj)
+                else
+                        if adjAnt in noProcessList then
+                                process currAnt sans increaseSense
+                        else
+                                --Process AdjAnt
+                                --IncreaseSense -> moveOutDir'
+                                --MakeDecision -> newDir'
+                                --if newDir' == moveOutDir' then --leaving out because already know that the other ant is there.
+                                
+                                process AdjAnt sans increaseDir
+                                update Edge List
+                                update noProcess List 
+                                process currAnt moving to adjGraph
+                                update edgeList
+                                update no Process List                                               
+                                
+-}
 
 -- | Arranges the Pheremone list to hold
 makeDecision :: [(Direction,Double)] -> Direction

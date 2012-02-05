@@ -1,0 +1,40 @@
+Stitch up Algorithm attmepts
+
+
+--THE ALGORITHM
+forEachAnt get PherLevels
+
+add this to the extra passed PherLevel
+
+make a move.
+ifMove is out of Quadrant
+Check if there is an Ant opposite
+        if so Check nextDir of Ant
+                if moving away process that if it moves away successfully move current processing ant to that ants old space (if processing an alternate ant remove it from its respective procList)
+                if ant wants to move in the opposite direction deny both ants and process them with their other values.
+        else if Nothing move Ant
+
+
+procEdgeAntAtNode :: GraphPTuple -> Int -> (Direction,Double) -> (Maybe Ant, Int) -> GraphATuple -> GraphATuple -> GraphATuple
+procEdgeAntAtNode graphPT nd additionalPher additionalAnt nextGraphAT graphAT = undefined
+
+                           let pherLevels = senseSur graphPT nd -- still needed for recalculation of Dir.. ect
+                           let completeLevels = additionalPher:pherLevels
+                           let transferDir = fst additionaPher
+                           let newDir = makeDecision pherLevels
+                           
+                           if newDir == transferDir then
+                                if additionalAnt == Nothing then
+                                        --Add ant to new world
+                                        --change ant in current world to nothing
+                                else
+                                        --workOutWhereOtherAntWantsToGo
+                                        --if the ant is "coming at him bro"
+                                        -- figure if the other ant wants to move away or towards
+                                        --if away process other ant
+                                        -- if towards process this ant without the moving out option.
+                           else
+
+                           let graphAT' = setDir graphAT nd newDir
+                           let graphT2 = moveAnt graphAT' nd
+                           graphT2-}
