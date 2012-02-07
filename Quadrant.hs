@@ -219,10 +219,10 @@ procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- renam
         let aEdge = antEdge
         let npList = noProcessList
         if isJust fst$fst$pos!!antEdge then
-                let currAnt = fst$fst$pos!!aEdge
+                let currAnt = fst$fst$pos!!aEdge --FROMJUST?
                 let initSense = senseSur currPherGraph snd$fst$pos!!antEdge
                 let incrSense = snd$pos!!pherEdge : initSense
-                let currAntMoveOutDir = fst$snd$pos!!pherEdge
+                let currAntMoveOutDir = fst$snd$pos!!pherEdge --?
                 let currAntNewDir = makeDecision incrSense
                 if currAntNewDir /= currAntMoveOutDir then
                         let currAntGraph = procAntAtNode currPherGraph snd$fst$pos!!aEdge currAntTuple
@@ -230,14 +230,18 @@ procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- renam
                         let aEdge = getAEdge currAntGraph -- possibly inefficient (modify the list) instead of recalculating it.
                         --Process Adj
                         if isJust fst$snd$pos!!aEdge then
-                                let initSense = senseSur currPherGraph snd$fst$pos!!antEdge
-                                let incrSense = snd$pos!!pherEdge : initSense
+                                let adjAnt 
+                                let initSense = senseSur adjPherGraph snd$fst$pos!!antEdge
+                                let incrSense = fst$pos!!pherEdge : initSense
+                                let adjAntMoveOUtDir = snd$snd$pos!!antEdge --?
+                                let adjAntNewDir = makeDecision incrSense
+                                if adjAntNewDir /= adjAntMoveOutDir then
+                                        --
                                 
 
-
-
         else -- nothing in the currAGraph Processing AdjAnt
-                let adjAnt = fst$snd$pos!!aEdge
+                if isJust fst$snd$pos!!aEdge
+                        let adjAnt = fst$snd$pos!!aEdge
 
 --Implement in the Either Monad?
 
