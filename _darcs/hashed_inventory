@@ -1,4 +1,4 @@
-pristine:0957b7beb966e61feacefcfd70ba7d2e179ef7ef8da46dee684c00d421c1404c
+pristine:d68967571e6b6c8c28c3579ac0dee7873756c6842a93558bd4a1d69d5d6008ac
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -199,3 +199,13 @@ pmsorhaindo@gmail.com**20120207172857
  Ignore-this: dafcaf12965dbe0e31b0ea2c8a5d8fb
 ] 
 hash: 0000002379-3015d491a0280f246c7c0608511a525bd0bf1b984aa975d577b22b733934ca96
+[spotted a few bugs early :)
+pmsorhaindo@gmail.com**20120207175042
+ Ignore-this: 2e8a89f7fb857ab2e740a4a4f92ad167
+] 
+hash: 0000001290-b298b39a7782822f5911251199d653994a278c3d65152db8c280cbdf3b070f2a
+[this project needs to say hello to encapsulation/abstraction
+pmsorhaindo@gmail.com**20120207183420
+ Ignore-this: c4b34d7496bd7d2126481a4fcab0b938
+] 
+hash: 0000001803-8eb54e990f1222f5ff663c84a77d4107cb910c423ad9b4260e4b87e2cd662ce1

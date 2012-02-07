@@ -227,18 +227,36 @@ procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- renam
                 if currAntNewDir /= currAntMoveOutDir then
                         let currAntGraph = procAntAtNode currPherGraph snd$fst$pos!!aEdge currAntTuple
                         let npList movedTo -- TODO movedTo function (could be sent back from procAntNode as a tuple with the new Graph)
+                        -- only update one side of the npList
                         let aEdge = getAEdge currAntGraph -- possibly inefficient (modify the list) instead of recalculating it.
                         --Process Adj
                         if isJust fst$snd$pos!!aEdge then
-                                let adjAnt 
+                                let adjAnt = fst$snd$pos!!aEdge
                                 let initSense = senseSur adjPherGraph snd$fst$pos!!antEdge
                                 let incrSense = fst$pos!!pherEdge : initSense
                                 let adjAntMoveOUtDir = snd$snd$pos!!antEdge --?
                                 let adjAntNewDir = makeDecision incrSense
                                 if adjAntNewDir /= adjAntMoveOutDir then
-                                        --
-                                
-
+                                        let currAntGraph = procAntAtNode currPherGraph snd$fst$pos!!aEdge currAntTuple
+                                        let npList movedTo -- TODO movedTo function (see above.)
+                                        -- only update one side of the npList
+                                        let aEdge = getAEdge currAntGraph -- possibly inefficient (see above).
+                                else
+                                        --process adjAnt:
+                                        --check edge is empty (incase currAnt didn't move at all).
+                                        -- if empty move to it else do a limited move
+                                        --updateLists
+                else
+                        --check adjAnt
+                        --ifAdjAnt doesn't want to move out
+                                --process process AdjAnt
+                                --update Lists
+                                -- check Edge List (check ALL the things)
+                                -- if space for Curr Ant to move else limited move
+                        --else
+                                --One ant performs a limited move other stays still
+                                --CurrAnt does limited move.
+                
         else -- nothing in the currAGraph Processing AdjAnt
                 if isJust fst$snd$pos!!aEdge
                         let adjAnt = fst$snd$pos!!aEdge
