@@ -3,7 +3,7 @@ module Quadrant where
 -- | Package imports
 import Data.Array
 import Data.Graph
-import Data.Maybe (fromJust, isNothing)
+import Data.Maybe (fromJust, isNothing, isJust)
 import Data.List (maximumBy)
 import Test.QuickCheck
 import Test.HUnit
@@ -210,12 +210,36 @@ senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromInte
 increaseSense :: [(Direction,Double)] -> [(Direction,Double)]
 increaseSense = undefined
 
-procEdgeAntAtNode :: GraphPTuple -> Int -> (Direction,Double) -> (Maybe Ant, Int) -> GraphATuple -> GraphATuple -> GraphATuple
-procEdgeAntAtNode graphPT nd additionalPher additionalAnt nextGraphAT graphAT = undefined
+procEdgeAntAtNode :: (GraphPTuple,GraphPTuple) -> (GraphATuple,GraphATuple) -> Int -> ([Int],[Int]) -> [((Direction,Double),(Direction,Double))] -> [((Maybe Ant, Int),(Maybe Ant, Int))] -> ((GraphPTuple,GraphPTuple),(GraphATuple,GraphATuple),[((Maybe Ant, Int),(Maybe Ant, Int))],Int)
+procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- rename fst and snd to adj and curr to make more readable?
+        let currAntGraph = fst agPair
+        let currPherGraph = fst pgPair
+        let adjAntGraph = snd agPair
+        let adjPherGraph = snd pgPair
+        let aEdge = antEdge
+        let npList = noProcessList
+        if isJust fst$fst$pos!!antEdge then
+                let currAnt = fst$fst$pos!!aEdge
+                let initSense = senseSur currPherGraph snd$fst$pos!!antEdge
+                let incrSense = snd$pos!!pherEdge : initSense
+                let currAntMoveOutDir = fst$snd$pos!!pherEdge
+                let currAntNewDir = makeDecision incrSense
+                if currAntNewDir /= currAntMoveOutDir then
+                        let currAntGraph = procAntAtNode currPherGraph snd$fst$pos!!aEdge currAntTuple
+                        let npList movedTo -- TODO movedTo function (could be sent back from procAntNode as a tuple with the new Graph)
+                        let aEdge = getAEdge currAntGraph -- possibly inefficient (modify the list) instead of recalculating it.
+                        --Process Adj
+                        if isJust fst$snd$pos!!aEdge then
+                                let initSense = senseSur currPherGraph snd$fst$pos!!antEdge
+                                let incrSense = snd$pos!!pherEdge : initSense
+                                
 
 
 
+        else -- nothing in the currAGraph Processing AdjAnt
+                let adjAnt = fst$snd$pos!!aEdge
 
+--Implement in the Either Monad?
 
 {- Better Algorithm
 
