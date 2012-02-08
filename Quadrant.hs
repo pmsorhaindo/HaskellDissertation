@@ -218,6 +218,7 @@ procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- renam
         let adjPherGraph = snd pgPair
         let aEdge = antEdge
         let npList = noProcessList
+        let resutlingTuples -- ehh
         if isJust fst$fst$pos!!antEdge then
                 let currAnt = fst$fst$pos!!aEdge --FROMJUST?
                 let initSense = senseSur currPherGraph snd$fst$pos!!antEdge
@@ -241,25 +242,39 @@ procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- renam
                                         let npList movedTo -- TODO movedTo function (see above.)
                                         -- only update one side of the npList
                                         let aEdge = getAEdge currAntGraph -- possibly inefficient (see above).
+                                        let resutlingTuples -- ehh!
                                 else
-                                        --process adjAnt:
+                                        --process adjAnt
+                                        let adjAnt = fst$snd$pos!!aEdge
+                                        let initSense = senseSur adjPherGraph snd$fst$pos!!antEdge
+                                        let incrSense = fst$pos!!pherEdge : initSense
                                         --check edge is empty (incase currAnt didn't move at all).
                                         -- if empty move to it else do a limited move
                                         --updateLists
+                                        let resutlingTuples -- ehh!
                 else
-                        --check adjAnt
-                        --ifAdjAnt doesn't want to move out
-                                --process process AdjAnt
-                                --update Lists
-                                -- check Edge List (check ALL the things)
-                                -- if space for Curr Ant to move else limited move
-                        --else
-                                --One ant performs a limited move other stays still
-                                --CurrAnt does limited move.
-                
+                        if isJust fst$snd$pos!!aEdge then
+                                let adjAnt = fst$fst$pos!!aEdge --FROMJUST?
+                                let initSense = senseSur currPherGraph snd$snd$pos!!antEdge
+                                let incrSense = fst$pos!!pherEdge : initSense
+                                if 1 == 1 then--ifAdjAnt doesn't want to move out
+                                        --process process AdjAnt
+                                        --update Lists
+                                        -- check Edge List (check ALL the things)
+                                        -- if space for Curr Ant to move else limited move
+                                        let resutlingTuples -- ehh!
+                                --else
+                                        --One ant performs a limited move other stays still
+                                        --CurrAnt does limited move.
+                                        let resutlingTuples -- ehh!
+
         else -- nothing in the currAGraph Processing AdjAnt
                 if isJust fst$snd$pos!!aEdge
                         let adjAnt = fst$snd$pos!!aEdge
+                        let initSense = senseSur currPherGraph snd$snd$pos!!antEdge
+                        let incrSense = fst$pos!!pherEdge : initSense
+                        let resutlingTuples -- ehh!
+        resultingTuples
 
 --Implement in the Either Monad?
 
