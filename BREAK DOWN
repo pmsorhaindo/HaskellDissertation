@@ -1,0 +1,13 @@
+Current Ant     Adjacent Ant
+
+Nothing         Nothing = Do nothing Move on..
+
+Something       Nothing = Process Current as Normal
+
+Nothing         Something = Process Adjacent as Normal
+
+Something       Something = One stay still one take second best move.
+
+
+
+

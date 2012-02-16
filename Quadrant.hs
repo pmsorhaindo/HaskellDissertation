@@ -210,7 +210,10 @@ senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromInte
 increaseSense :: [(Direction,Double)] -> [(Direction,Double)]
 increaseSense = undefined
 
-procEdgeAntAtNode :: (GraphPTuple,GraphPTuple) -> (GraphATuple,GraphATuple) -> Int -> ([Int],[Int]) -> [((Direction,Double),(Direction,Double))] -> [((Maybe Ant, Int),(Maybe Ant, Int))] -> ((GraphPTuple,GraphPTuple),(GraphATuple,GraphATuple),[((Maybe Ant, Int),(Maybe Ant, Int))],Int)
+
+foo = undefined
+        
+--procEdgeAntAtNode :: (GraphPTuple,GraphPTuple) -> (GraphATuple,GraphATuple) -> Int -> ([Int],[Int]) -> [((Direction,Double),(Direction,Double))] -> [((Maybe Ant, Int),(Maybe Ant, Int))] -> ((GraphPTuple,GraphPTuple),(GraphATuple,GraphATuple),[((Maybe Ant, Int),(Maybe Ant, Int))],Int)
 procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- rename fst and snd to adj and curr to make more readable?
         let currAntGraph = fst agPair
         let currPherGraph = fst pgPair
@@ -218,14 +221,28 @@ procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- renam
         let adjPherGraph = snd pgPair
         let aEdge = antEdge
         let npList = noProcessList
-        let resutlingTuples -- ehh
-        if isJust fst$fst$pos!!antEdge then
-                let currAnt = fst$fst$pos!!aEdge --FROMJUST?
-                let initSense = senseSur currPherGraph snd$fst$pos!!antEdge
-                let incrSense = snd$pos!!pherEdge : initSense
-                let currAntMoveOutDir = fst$snd$pos!!pherEdge --?
-                let currAntNewDir = makeDecision incrSense
-                if currAntNewDir /= currAntMoveOutDir then
+        let resultingTuples = undefined
+
+        
+        if 1==1
+                 then foo
+                 else foo        
+
+        if isJust fst$fst$pos!!antEdge
+                then let a = do
+                                let currAnt = fst$fst$pos!!aEdge --FROMJUST?
+                                let initSense = senseSur currPherGraph snd$fst$pos!!antEdge
+                                let incrSense = snd$pos!!pherEdge : initSense
+                                let currAntMoveOutDir = fst$snd$pos!!pherEdge -- ?
+                                let currAntNewDir = makeDecision incrSense
+                                let resultingTuples = undefined
+                                ()
+                else b = do
+                                let resultingTuples = undefined
+                                ()
+        resultingTuples 
+
+                {-if currAntNewDir /= currAntMoveOutDir then
                         let currAntGraph = procAntAtNode currPherGraph snd$fst$pos!!aEdge currAntTuple
                         let npList movedTo -- TODO movedTo function (could be sent back from procAntNode as a tuple with the new Graph)
                         -- only update one side of the npList
@@ -274,7 +291,7 @@ procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- renam
                         let initSense = senseSur currPherGraph snd$snd$pos!!antEdge
                         let incrSense = fst$pos!!pherEdge : initSense
                         let resutlingTuples -- ehh!
-        resultingTuples
+        resultingTuples-}
 
 --Implement in the Either Monad?
 
@@ -352,7 +369,7 @@ processAQuadrant graphAT graphPT = do
                                    graphAT'
 
 -- | Export graph Edge for stitching
---getEdge :: GraphATuple -> Direction -> Size -> [a]
+--getEdge :: GraphATuple -> Direction -> Size -> [a] --TODO package the dir up with it.. ([a],Direction)
 getAEdge graphAT getDir
         | getDir == North = zip (map f [1 .. size]) [1..size]
         | getDir == West  = zip (map f [size,size+size .. size^2]) [size,size+size .. size^2]
@@ -361,7 +378,7 @@ getAEdge graphAT getDir
                where size = truncate (sqrt(fromIntegral ((snd $ bounds $ fstTrip graphAT) + 1))) :: Int
                      f    = getWhatIsAtNode graphAT
 
---getPEdge :: GraphPTuple -> Direction -> Size -> [a]
+--getPEdge :: GraphPTuple -> Direction -> Size -> [a] --TODO package the dir up with it.. ([a],Direction)
 getPEdge graphPT getDir
         | getDir == North = zip (map f [1 .. size]) [1..size]
         | getDir == West  = zip (map f [size,size+size .. size^2]) [size,size+size .. size^2]

@@ -1,4 +1,4 @@
-pristine:d68967571e6b6c8c28c3579ac0dee7873756c6842a93558bd4a1d69d5d6008ac
+pristine:942236d522053dc09a623163ebed867a7879985d58571d175d106905fd5ef9e5
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -209,3 +209,8 @@ pmsorhaindo@gmail.com**20120207183420
  Ignore-this: c4b34d7496bd7d2126481a4fcab0b938
 ] 
 hash: 0000001803-8eb54e990f1222f5ff663c84a77d4107cb910c423ad9b4260e4b87e2cd662ce1
+[won't compile massive function of fail stitch
+pmsorhaindo@gmail.com**20120208204527
+ Ignore-this: 80fd968fa0df1469fbbbefc4e8ee7cae
+] 
+hash: 0000002650-7eab9922e00c0ce95d92e924055be0d5db8ef2d15e57796205d6703e0f450eed
