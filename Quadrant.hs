@@ -215,6 +215,7 @@ foo = undefined
         
 --procEdgeAntAtNode :: (GraphPTuple,GraphPTuple) -> (GraphATuple,GraphATuple) -> Int -> ([Int],[Int]) -> [((Direction,Double),(Direction,Double))] -> [((Maybe Ant, Int),(Maybe Ant, Int))] -> ((GraphPTuple,GraphPTuple),(GraphATuple,GraphATuple),[((Maybe Ant, Int),(Maybe Ant, Int))],Int)
 procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- rename fst and snd to adj and curr to make more readable?
+        
         let currAntGraph = fst agPair
         let currPherGraph = fst pgPair
         let adjAntGraph = snd agPair
@@ -223,12 +224,25 @@ procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- renam
         let npList = noProcessList
         let resultingTuples = undefined
 
-        
-        if 1==1
-                 then foo
+        -- a = *currEdgePair!!pos
+        -- b = *adjEdgePair!!pos
+        if 1==1 -- *currEdgePair!!pos == Nothing && *adjEdgePair!!pos == Nothing
+                 then foo -- *skip this
                  else foo        
 
-        if isJust fst$fst$pos!!antEdge
+        if 2==2 -- a is Just && b isJust
+                 then foo
+                 else foo
+
+        if 3==3 -- if a isJust && b isNothing
+                 then foo
+                 else foo
+
+        if 4==4 -- if a isNothing && b isJust
+                 then foo
+                 else foo
+
+        {- if isJust fst$fst$pos!!antEdge
                 then let a = do
                                 let currAnt = fst$fst$pos!!aEdge --FROMJUST?
                                 let initSense = senseSur currPherGraph snd$fst$pos!!antEdge
@@ -240,7 +254,7 @@ procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- renam
                 else b = do
                                 let resultingTuples = undefined
                                 ()
-        resultingTuples 
+        resultingTuples -}
 
                 {-if currAntNewDir /= currAntMoveOutDir then
                         let currAntGraph = procAntAtNode currPherGraph snd$fst$pos!!aEdge currAntTuple

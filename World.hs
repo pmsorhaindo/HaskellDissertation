@@ -12,6 +12,15 @@ import GraphOps
 
 type GraphAWTuple = (Graph, Vertex -> (GraphATuple, Int, [Int]), Int -> Maybe Vertex)
 type GraphPWTuple = (Graph, Vertex -> (GraphPTuple, Int, [Int]), Int -> Maybe Vertex)
+
+data StitchableQuads = StitchableQuads {
+         antGraphs      :: (GraphATuple,GraphATuple)
+        ,pherGraphs     :: (GraphPTuple,GraphPTuple)
+        ,aEdgePair      :: ([(Maybe Ant, Int)],[(Maybe Ant, Int)])
+        ,pEdgePair      :: ([(Double,Int)],[(Double,Int)]) 
+        ,noProcList     :: ([Int],[Int])
+        }
+
 --Test-Framework .... to automate the testing
 
 --Build a new Graph 6 and 36 need replacing with a variable graph size and graph size^2
@@ -41,7 +50,7 @@ getAntQuad nd world = fstTrip ((sndTrip world) nd)
 getPherQuad :: Int -> GraphPWTuple -> GraphPTuple
 getPherQuad nd world = fstTrip ((sndTrip world) nd)
 
--- | gets the edge of the Graph at nd in the world  ::ghci getAQuadEdge 1 West|8
+-- | gets the edge of the Graph at nd in the world  ::ghci getAQuadEdge 1 West
 getAQuadEdge nd edgDir = getAEdge (getAntQuad nd antWorld) edgDir
 getPQuadEdge nd edgDir = getAEdge (getPherQuad nd pherWorld) edgDir
 
@@ -55,7 +64,7 @@ stitchEdges :: GraphAWTuple -> [(Int, Int)]
 stitchEdges world = nubBy (\x y -> x == y || swap x == y) (edges $ fstTrip $ world)
 -- nubBy allows me to remove duplicates from a list like nub but with nubBy I can describe how duplicates 
 
-dirsNeeded :: (Int, Int) -> ((Int, Direction), (Int, Direction))
+dirsNeeded :: (Int, Int) -> ((Int, Direction), (Int, Direction)) -- NEEDED TO GENERATE THE quadPairs used in stitchUpEdge
 dirsNeeded quadTuple
    | snd quadTuple == fst quadTuple+1 = ((fst quadTuple,West),(snd quadTuple,East))
    | fst quadTuple == snd quadTuple+1 = ((fst quadTuple,East),(snd quadTuple,West))
@@ -63,32 +72,36 @@ dirsNeeded quadTuple
    | fst quadTuple < snd quadTuple    = ((fst quadTuple,North),(snd quadTuple,South))
 
 
+genQuadPairs :: [(Int, Int)] -> [((Int, Direction), (Int, Direction))]
+genQuadPairs pairs = map dirsNeeded pairs
+
 stitchUpEdges :: GraphAWTuple -> GraphAWTuple
 stitchUpEdges world = undefined --stitchEdges edges $ fstTrip world -- more serially stuffs
 
 --stitchUpEdge :: GraphAWTuple -> GraphPWTuple -> ((Int,Direction),(Int,Direction)) -> GraphAWTuple
-stitchUpEdge world pherWorld quadPair = do
-                                let edgeA1 = getAQuadEdge (fst $ fst $ quadPair) (snd $ fst $ quadPair)
-                                let edgeA2 = getAQuadEdge (fst $ snd $ quadPair) (snd $ snd $ quadPair)                                
-                                let edgeP1 = getAQuadEdge (fst $ fst $ quadPair) (snd $ fst $ quadPair)
-                                let edgeP2 = getAQuadEdge (fst $ snd $ quadPair) (snd $ snd $ quadPair)
+stitchUpEdge antWorld pherWorld quadPair = do
                                 
-                                let edgeA3 = edgePointsWithAntsIn edgeA1
-                                --process with edgeP2
-                                --[ants] -> quadrant -> []
-                                
-                                let edgeA4 = edgePointsWithAntsIn edgeA2
-                                --process with edgeP1
-                                
-                            
-                                edgeA3
-                                
-                                --x:xs = -- if x = nothing and other list x = nothing do nothing
-                                       -- if x = ant and other list x = nothing (<<get all nodes>> for x first list and process)
-                                       -- if x = ant and other list x = ants processed one after the other
-                                       -- note : if an ant moves in the direction of this function the next 
-                                --x:[] =
-                                --[]   =
+                let ags = ((getAntQuad (fst $ fst quadPair) antWorld), (getAntQuad (fst$ snd quadPair) antWorld)) -- ant graph pair
+                let pgs = ((getPherQuad (fst $ fst quadPair) pherWorld), (getPherQuad (fst $ snd quadPair) pherWorld)) -- pher graph pair
+
+                let aep = ((getAEdge (fst ags) (snd $ fst quadPair)) , (getAEdge (snd ags) (snd $ snd quadPair))) --ant edge pair
+                let pep = ((getPEdge (fst pgs) (snd $ fst quadPair)) , (getPEdge (snd pgs) (snd $ snd quadPair))) -- pher edge pair
+
+                let noProcLines = ([],[])
+
+                let stitchable = StitchableQuads ags pgs aep pep noProcLines
+
+                stitchable
+                
+                -- x:xs = -- if x = nothing and other list x = nothing do nothing
+                       -- if x = ant and other list x = nothing (<<get all nodes>> for x first list and process)
+                       -- if x = ant and other list x = ants processed one after the other
+                       -- note : if an ant moves in the direction of this function the next 
+                -- x:[] =
+                -- []   =
+
+                -- quadPair shows the move out direction of each edge.
+
 --singleStitch aWorld pWorld 
 
 --based off listOfNodesWithAntsIn
