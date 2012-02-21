@@ -13,7 +13,7 @@ instance Show Direction where
 
 data Ant = Ant {
          antId        :: Int
-        ,dir       :: Direction
+        ,antDir       :: Direction
         ,pherLevel :: Double
         }
         deriving(Eq)
@@ -23,6 +23,10 @@ instance Show Ant where
 
 
 
+oppDir | North = South
+       | South = North
+       | East = West
+       | West = East
 
 
 --changeDir :: Vector -> Vector

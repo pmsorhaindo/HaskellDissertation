@@ -1,0 +1,125 @@
+old stuff
+
+        {- if isJust fst$fst$pos!!antEdge
+                then let a = do
+                                let currAnt = fst$fst$pos!!aEdge --FROMJUST?
+                                let initSense = senseSur currPherGraph snd$fst$pos!!antEdge
+                                let incrSense = snd$pos!!pherEdge : initSense
+                                let currAntMoveOutDir = fst$snd$pos!!pherEdge -- ?
+                                let currAntNewDir = makeDecision incrSense
+                                let resultingTuples = undefined
+                                ()
+                else b = do
+                                let resultingTuples = undefined
+                                ()
+        resultingTuples -}
+
+                {-if currAntNewDir /= currAntMoveOutDir then
+                        let currAntGraph = procAntAtNode currPherGraph snd$fst$pos!!aEdge currAntTuple
+                        let npList movedTo -- TODO movedTo function (could be sent back from procAntNode as a tuple with the new Graph)
+                        -- only update one side of the npList
+                        let aEdge = getAEdge currAntGraph -- possibly inefficient (modify the list) instead of recalculating it.
+                        --Process Adj
+                        if isJust fst$snd$pos!!aEdge then
+                                let adjAnt = fst$snd$pos!!aEdge
+                                let initSense = senseSur adjPherGraph snd$fst$pos!!antEdge
+                                let incrSense = fst$pos!!pherEdge : initSense
+                                let adjAntMoveOUtDir = snd$snd$pos!!antEdge --?
+                                let adjAntNewDir = makeDecision incrSense
+                                if adjAntNewDir /= adjAntMoveOutDir then
+                                        let currAntGraph = procAntAtNode currPherGraph snd$fst$pos!!aEdge currAntTuple
+                                        let npList movedTo -- TODO movedTo function (see above.)
+                                        -- only update one side of the npList
+                                        let aEdge = getAEdge currAntGraph -- possibly inefficient (see above).
+                                        let resutlingTuples -- ehh!
+                                else
+                                        --process adjAnt
+                                        let adjAnt = fst$snd$pos!!aEdge
+                                        let initSense = senseSur adjPherGraph snd$fst$pos!!antEdge
+                                        let incrSense = fst$pos!!pherEdge : initSense
+                                        --check edge is empty (incase currAnt didn't move at all).
+                                        -- if empty move to it else do a limited move
+                                        --updateLists
+                                        let resutlingTuples -- ehh!
+                else
+                        if isJust fst$snd$pos!!aEdge then
+                                let adjAnt = fst$fst$pos!!aEdge --FROMJUST?
+                                let initSense = senseSur currPherGraph snd$snd$pos!!antEdge
+                                let incrSense = fst$pos!!pherEdge : initSense
+                                if 1 == 1 then--ifAdjAnt doesn't want to move out
+                                        --process process AdjAnt
+                                        --update Lists
+                                        -- check Edge List (check ALL the things)
+                                        -- if space for Curr Ant to move else limited move
+                                        let resutlingTuples -- ehh!
+                                --else
+                                        --One ant performs a limited move other stays still
+                                        --CurrAnt does limited move.
+                                        let resutlingTuples -- ehh!
+
+        else -- nothing in the currAGraph Processing AdjAnt
+                if isJust fst$snd$pos!!aEdge
+                        let adjAnt = fst$snd$pos!!aEdge
+                        let initSense = senseSur currPherGraph snd$snd$pos!!antEdge
+                        let incrSense = fst$pos!!pherEdge : initSense
+                        let resutlingTuples -- ehh!
+        resultingTuples-}
+
+--Implement in the Either Monad?
+
+{- Better Algorithm
+
+pherGraphs pherEdge antEdge antGraphs position
+
+Take position of the Curr AntEdge (if position >size) if /= empty (and not on the noProcessList)
+        SensSur
+        IncreaseSense -> moveOutDir
+        MakeDecision -> newDir
+        if newDir /= moveOutDir then
+                process currAnt
+                update noProcessList
+                update AntEdge (currAnt = Nothing)
+                --Process AdjAnt
+                SensSur
+                IncreaseSense -> moveOutDir'
+                MakeDecision -> newDir'
+                if newDir' /= moveDir' then
+                        process adjAnt
+                        update noProcessList
+                        update AntEdge (adjAnt = Nothing)
+                else
+                        check antEdge (to see if currAnt moved)
+                        if Nothing then
+                                addAnt to CurrGraph
+                                removeAnt from AdjGraph
+                                update noProcessList
+                                update EdgeLists (both curr and adj)
+                        else
+                                process without increasedSense
+                                update noProcessList
+                                update edgeList
+        else
+                check edgeList to see if free space
+                if Nothing then
+                        addAnt to adjGraph
+                        removeAnt from CurrGraph
+                        update no ProcessList
+                        UpdateEdgeList (both curr and adj)
+                else
+                        if adjAnt in noProcessList then
+                                process currAnt sans increaseSense
+                        else
+                                --Process AdjAnt
+                                --IncreaseSense -> moveOutDir'
+                                --MakeDecision -> newDir'
+                                --if newDir' == moveOutDir' then --leaving out because already know that the other ant is there.
+                                
+                                process AdjAnt sans increaseDir
+                                update Edge List
+                                update noProcess List 
+                                process currAnt moving to adjGraph
+                                update edgeList
+                                update no Process List                                               
+                                
+-}
+

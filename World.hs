@@ -13,14 +13,6 @@ import GraphOps
 type GraphAWTuple = (Graph, Vertex -> (GraphATuple, Int, [Int]), Int -> Maybe Vertex)
 type GraphPWTuple = (Graph, Vertex -> (GraphPTuple, Int, [Int]), Int -> Maybe Vertex)
 
-data StitchableQuads = StitchableQuads {
-         antGraphs      :: (GraphATuple,GraphATuple)
-        ,pherGraphs     :: (GraphPTuple,GraphPTuple)
-        ,aEdgePair      :: ([(Maybe Ant, Int)],[(Maybe Ant, Int)])
-        ,pEdgePair      :: ([(Double,Int)],[(Double,Int)]) 
-        ,noProcList     :: ([Int],[Int])
-        }
-
 --Test-Framework .... to automate the testing
 
 --Build a new Graph 6 and 36 need replacing with a variable graph size and graph size^2
@@ -79,8 +71,12 @@ stitchUpEdges :: GraphAWTuple -> GraphAWTuple
 stitchUpEdges world = undefined --stitchEdges edges $ fstTrip world -- more serially stuffs
 
 --stitchUpEdge :: GraphAWTuple -> GraphPWTuple -> ((Int,Direction),(Int,Direction)) -> GraphAWTuple
-stitchUpEdge antWorld pherWorld quadPair = do
-                                
+stitchUpEdge antWorld pherWorld quadPair qsiz = do
+
+                let quadSize = qsiz                
+
+                let rel = ((snd $ fst quadPair), (snd $ snd quadPair))
+                
                 let ags = ((getAntQuad (fst $ fst quadPair) antWorld), (getAntQuad (fst$ snd quadPair) antWorld)) -- ant graph pair
                 let pgs = ((getPherQuad (fst $ fst quadPair) pherWorld), (getPherQuad (fst $ snd quadPair) pherWorld)) -- pher graph pair
 
@@ -89,7 +85,7 @@ stitchUpEdge antWorld pherWorld quadPair = do
 
                 let noProcLines = ([],[])
 
-                let stitchable = StitchableQuads ags pgs aep pep noProcLines
+                let stitchable = StitchableQuads quadSize rel ags pgs aep pep noProcLines
 
                 stitchable
                 

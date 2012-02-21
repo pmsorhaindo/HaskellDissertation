@@ -4,7 +4,7 @@ module Quadrant where
 import Data.Array
 import Data.Graph
 import Data.Maybe (fromJust, isNothing, isJust)
-import Data.List (maximumBy)
+import Data.List (maximumBy, sortBy)
 import Test.QuickCheck
 import Test.HUnit
 --Test-Framework .... to automate the testing -- TODO
@@ -12,6 +12,16 @@ import Test.HUnit
 -- | Personal imports
 import AntRepresent
 import GraphOps
+
+data StitchableQuads = StitchableQuads {
+         qSize          :: Int
+        ,relation       :: (Direction,Direction)
+        ,antGraphs      :: (GraphATuple,GraphATuple)
+        ,pherGraphs     :: (GraphPTuple,GraphPTuple)
+        ,aEdgePair      :: ([(Maybe Ant, Int)],[(Maybe Ant, Int)])
+        ,pEdgePair      :: ([(Double,Int)],[(Double,Int)]) 
+        ,noProcList     :: ([Int],[Int])
+        }
 
 -- | graphFromEdges :: Ord key => [(node,key,[key])] ->(Graph,Vertex->(node,key,[key]),key->Maybe Vertex)
 -- making this value easily readable
@@ -29,9 +39,9 @@ type GraphPTuple = (Graph, Vertex -> (Double, Int, [Int]), Int -> Maybe Vertex)
 buildEmptyWorld size = graphFromEdges $ zip3 (replicate (size^2) 0) (keyList size) (adjListForNewGraph size)
 
 emptyAntQuadrant = graphFromEdges $ zip3 nodes keys adjList :: GraphATuple
-        where nodes   = (replicate (width^2) Nothing)
-              keys    = (keyList width)
-              adjList = (adjListForNewGraph width)
+        where nodes   = replicate (width^2) Nothing
+              keys    = keyList width
+              adjList = adjListForNewGraph width
 
 emptyPherQuadrant = graphFromEdges $ zip3 nodes keys adjList :: GraphPTuple
         where nodes   = (replicate (width^2) 0)
@@ -213,161 +223,133 @@ increaseSense = undefined
 
 foo = undefined
         
---procEdgeAntAtNode :: (GraphPTuple,GraphPTuple) -> (GraphATuple,GraphATuple) -> Int -> ([Int],[Int]) -> [((Direction,Double),(Direction,Double))] -> [((Maybe Ant, Int),(Maybe Ant, Int))] -> ((GraphPTuple,GraphPTuple),(GraphATuple,GraphATuple),[((Maybe Ant, Int),(Maybe Ant, Int))],Int)
-procEdgeAntAtNode pgPair agPair pos noProcessList pherEdge antEdge = do -- rename fst and snd to adj and curr to make more readable?
-        
-        let currAntGraph = fst agPair
-        let currPherGraph = fst pgPair
-        let adjAntGraph = snd agPair
-        let adjPherGraph = snd pgPair
-        let aEdge = antEdge
-        let npList = noProcessList
+--procEdgeAntAtNode :: StitchableQuads -> Int -> StitchableQuads 
+procEdgeAntAtNode qs pos  = do -- rename fst and snd to adj and curr to make more readable?
+
+        let rel = relation qs 
+        let currAntGraph = fst $ antGraphs qs
+        let currPherGraph = fst $ pherGraphs qs
+        let adjAntGraph = snd $ antGraphs qs
+        let adjPherGraph = snd $ pherGraphs qs
+        let aEdge = aEdgePair qs
+        let pEdge = pEdgePair qs
+        let npList = noProcList qs
         let resultingTuples = undefined
 
-        -- a = *currEdgePair!!pos
-        -- b = *adjEdgePair!!pos
-        if 1==1 -- *currEdgePair!!pos == Nothing && *adjEdgePair!!pos == Nothing
-                 then foo -- *skip this
-                 else foo        
+        let currAnt = (fst $ (fst $ aEdge) !! pos)
+        let adjAnt = (fst $ (snd $ aEdge) !! pos)
+        
+        let x | (isNothing currAnt) && (isNothing adjAnt)= procEdgeAntAtNode qs (pos+1)
+              | (isJust currAnt) && (isNothing adjAnt) = loneEdgeAnt qs True pos
+              | (isNothing currAnt) && (isJust adjAnt) = loneEdgeAnt qs False pos
+              | (isJust currAnt) && (isJust adjAnt) = doubleEdgeAnt qs (pos+1)
 
-        if 2==2 -- a is Just && b isJust
-                 then foo
-                 else foo
+        if pos<10
+                then x
+                else qs
+        
 
-        if 3==3 -- if a isJust && b isNothing
-                 then foo
-                 else foo
+-- | Lone Edge Ant
+loneEdgeAnt :: StitchableQuads -> Bool -> Int -> StitchableQuads
+loneEdgeAnt qs isCurr pos = do
+                        let side | isCurr == True = fst
+                                 | otherwise = snd
+                        let oSide| isCurr == True = snd
+                                 | otherwise = fst
 
-        if 4==4 -- if a isNothing && b isJust
-                 then foo
-                 else foo
+                        --Move Ant -- tested with hand calculations
+                        let a = fromJust $ fst((side $ aEdgePair $ qs)!!pos) -- gets me my Ant
+                        let nd = nodeFromEdgeIndex side qs pos
+                        -- fetch sense from the graph the ant is in.
+                        let snse = senseSur (side $ pherGraphs qs) nd
+                        --increases sense to make use of the other graph.
+                        let isnse = ((side$relation qs), (fst(oSide (pEdgePair qs)!!pos))) :snse
+                        -- makes decision by prioritizing the phermone list
+                        let decisions = makeDecisions isnse
 
-        {- if isJust fst$fst$pos!!antEdge
-                then let a = do
-                                let currAnt = fst$fst$pos!!aEdge --FROMJUST?
-                                let initSense = senseSur currPherGraph snd$fst$pos!!antEdge
-                                let incrSense = snd$pos!!pherEdge : initSense
-                                let currAntMoveOutDir = fst$snd$pos!!pherEdge -- ?
-                                let currAntNewDir = makeDecision incrSense
-                                let resultingTuples = undefined
-                                ()
-                else b = do
-                                let resultingTuples = undefined
-                                ()
-        resultingTuples -}
+                        let moveOutDir = side $ relation qs -- if this direction is chosen, special swap needed
+                        let moveBackDir = oppDir (antDir a) -- if this direction is chosen change direction but don't move.
 
-                {-if currAntNewDir /= currAntMoveOutDir then
-                        let currAntGraph = procAntAtNode currPherGraph snd$fst$pos!!aEdge currAntTuple
-                        let npList movedTo -- TODO movedTo function (could be sent back from procAntNode as a tuple with the new Graph)
-                        -- only update one side of the npList
-                        let aEdge = getAEdge currAntGraph -- possibly inefficient (modify the list) instead of recalculating it.
-                        --Process Adj
-                        if isJust fst$snd$pos!!aEdge then
-                                let adjAnt = fst$snd$pos!!aEdge
-                                let initSense = senseSur adjPherGraph snd$fst$pos!!antEdge
-                                let incrSense = fst$pos!!pherEdge : initSense
-                                let adjAntMoveOUtDir = snd$snd$pos!!antEdge --?
-                                let adjAntNewDir = makeDecision incrSense
-                                if adjAntNewDir /= adjAntMoveOutDir then
-                                        let currAntGraph = procAntAtNode currPherGraph snd$fst$pos!!aEdge currAntTuple
-                                        let npList movedTo -- TODO movedTo function (see above.)
-                                        -- only update one side of the npList
-                                        let aEdge = getAEdge currAntGraph -- possibly inefficient (see above).
-                                        let resutlingTuples -- ehh!
-                                else
-                                        --process adjAnt
-                                        let adjAnt = fst$snd$pos!!aEdge
-                                        let initSense = senseSur adjPherGraph snd$fst$pos!!antEdge
-                                        let incrSense = fst$pos!!pherEdge : initSense
-                                        --check edge is empty (incase currAnt didn't move at all).
-                                        -- if empty move to it else do a limited move
-                                        --updateLists
-                                        let resutlingTuples -- ehh!
-                else
-                        if isJust fst$snd$pos!!aEdge then
-                                let adjAnt = fst$fst$pos!!aEdge --FROMJUST?
-                                let initSense = senseSur currPherGraph snd$snd$pos!!antEdge
-                                let incrSense = fst$pos!!pherEdge : initSense
-                                if 1 == 1 then--ifAdjAnt doesn't want to move out
-                                        --process process AdjAnt
-                                        --update Lists
-                                        -- check Edge List (check ALL the things)
-                                        -- if space for Curr Ant to move else limited move
-                                        let resutlingTuples -- ehh!
-                                --else
-                                        --One ant performs a limited move other stays still
-                                        --CurrAnt does limited move.
-                                        let resutlingTuples -- ehh!
+                        let qs = moveIt side qs moveOutDir moveBackDir nd decisions --swapNode --addToNoProc
 
-        else -- nothing in the currAGraph Processing AdjAnt
-                if isJust fst$snd$pos!!aEdge
-                        let adjAnt = fst$snd$pos!!aEdge
-                        let initSense = senseSur currPherGraph snd$snd$pos!!antEdge
-                        let incrSense = fst$pos!!pherEdge : initSense
-                        let resutlingTuples -- ehh!
-        resultingTuples-}
+                        procEdgeAntAtNode qs (pos+1)
 
---Implement in the Either Monad?
 
-{- Better Algorithm
+moveIt side qs mod mbd nd (dec:decs) = moveIt' side qs mod mbd nd (dec:decs)
+moveIt _ qs _ _ _ [] = qs
 
-pherGraphs pherEdge antEdge antGraphs position
+moveIt' side qs mod mbd nd (dec:decs) | mod == fst dec = checkForAntOut
+                                      | mbd == fst dec = flipAntAtNode side qs mbd nd
+                                      | otherwise = checkForAntIn side qs mod mbd nd (dec:decs) 
 
-Take position of the Curr AntEdge (if position >size) if /= empty (and not on the noProcessList)
-        SensSur
-        IncreaseSense -> moveOutDir
-        MakeDecision -> newDir
-        if newDir /= moveOutDir then
-                process currAnt
-                update noProcessList
-                update AntEdge (currAnt = Nothing)
-                --Process AdjAnt
-                SensSur
-                IncreaseSense -> moveOutDir'
-                MakeDecision -> newDir'
-                if newDir' /= moveDir' then
-                        process adjAnt
-                        update noProcessList
-                        update AntEdge (adjAnt = Nothing)
-                else
-                        check antEdge (to see if currAnt moved)
-                        if Nothing then
-                                addAnt to CurrGraph
-                                removeAnt from AdjGraph
-                                update noProcessList
-                                update EdgeLists (both curr and adj)
-                        else
-                                process without increasedSense
-                                update noProcessList
-                                update edgeList
-        else
-                check edgeList to see if free space
-                if Nothing then
-                        addAnt to adjGraph
-                        removeAnt from CurrGraph
-                        update no ProcessList
-                        UpdateEdgeList (both curr and adj)
-                else
-                        if adjAnt in noProcessList then
-                                process currAnt sans increaseSense
-                        else
-                                --Process AdjAnt
-                                --IncreaseSense -> moveOutDir'
-                                --MakeDecision -> newDir'
-                                --if newDir' == moveOutDir' then --leaving out because already know that the other ant is there.
-                                
-                                process AdjAnt sans increaseDir
-                                update Edge List
-                                update noProcess List 
-                                process currAnt moving to adjGraph
-                                update edgeList
-                                update no Process List                                               
-                                
--}
+flipAntAtNode side qs mbd nd = newQs qs
+        where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
+              quadSize qs = (qSize qs)
+              rel qs = (relation qs)
+              ags qs side = side (((setDir (fst$antGraphs qs) nd mbd),(snd$antGraphs qs)),
+                                 ((fst$antGraphs qs),(setDir (snd$antGraphs qs) nd mbd))) -- depending on which side the Ant is in
+                                                                                          -- a particular solution is chosen
+              pgs qs = (pherGraphs qs)
+              aep qs = (aEdgePair qs)
+              pep qs = (pEdgePair qs)
+              npl qs = (noProcList qs) -- NEEDS CHANGING
+-- (((setDir (fst$antGraphs qs) nd mbd),(snd$antGraphs qs)),(fst$antGraphs qs),((setDir (snd$antGraphs qs) nd mbd)))
+-- (((GraphATuple, GraphATuple),GraphATuple,GraphATuple) -> t0) -> t0
+
+checkForAntIn side qs mod mbd nd (dec:decs) = do
+                        let nxtNd = nextNode nd (fst dec) $ qSize qs
+                        if isAntAtNode (fst$antGraphs qs) nxtNd
+                                then moveIt side qs mod mbd nd decs
+                                else swapIn qs side nd nxtNd
+
+swapIn qs side nd1 nd2 = newQs qs
+                where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
+                      quadSize qs = (qSize qs)
+                      rel qs = (relation qs)
+                      ags qs side = side (((updateGraph nd1 nd2 (fst$antGraphs qs)),(snd$antGraphs qs)),
+                                         ((fst$antGraphs qs),((updateGraph nd1 nd2 (snd$antGraphs qs)))))--depending on which side the Ant is in
+                                                                                                        -- a particular solution is chosen
+                      pgs qs = (pherGraphs qs)
+                      aep qs = (aEdgePair qs)
+                      pep qs = (pEdgePair qs)
+                      npl qs = (noProcList qs)                   
+                        --updateGraph nd1 nd2 side$$antGraphs -> GraphATuple
+                        --(((updateGraph nd1 nd2 (fst$antGraphs)),(snd$antGraphs qs)),
+                        --                 ((fst$antGraphs qs),(updateGraph nd1 nd2 (fst$antGraphs))))
+                       
+checkForAntOut = undefined
+
+-- Y U NO WORK FOR ME :( - found that work around tho :D
+otherSide side | side == fst = snd
+               | side == snd = fst
+
+nextNode :: Int -> Direction -> Int -> Int
+nextNode nd dec siz | dec == North = nd - siz
+                    | dec == South = nd + siz
+                    | dec == East = nd + 1
+                    | dec == West = nd - 1 
+
+nodeFromEdgeIndex :: ((Direction, Direction) -> Direction) -> StitchableQuads -> Int -> Int
+nodeFromEdgeIndex side qs pos | (side $ relation qs) == North = (pos+1) -- edgepair index to node.
+                              | (side $ relation qs) == South = (pos+1) +((qSize qs)^2 - (qSize qs))
+                              | (side $ relation qs) == East = (qSize qs)*(pos)+1
+                              | (side $ relation qs) == West = (pos+1)*(qSize qs)
+
+-- | Double Edge Ant
+doubleEdgeAnt :: StitchableQuads -> Int -> StitchableQuads
+doubleEdgeAnt qs pos = do
+                --STUFF
+                --Move Ant
+                procEdgeAntAtNode qs (pos+1)
+
 
 -- | Arranges the Pheremone list to hold
 makeDecision :: [(Direction,Double)] -> Direction
 makeDecision pLevels = fst (maximumBy highestPher pLevels)
+                where highestPher x y = (snd x) `compare` (snd y) 
+
+makeDecisions :: [(Direction,Double)] -> [(Direction,Double)]
+makeDecisions pLevels = sortBy highestPher pLevels
                 where highestPher x y = (snd x) `compare` (snd y) 
 
 -- | Change an Ants current direction at a given node to a given direction.
@@ -376,7 +358,7 @@ setDir graphT nd newDir = addExistingAnt graphT nd (modif $ fstTrip $ getAntFrom
                 where modif x = Just (Ant (antId x) newDir (pherLevel x)) 
 
 -- | Function to process the whole Quadrant.
-processAQuadrant :: GraphATuple -> GraphPTuple -> GraphATuple
+processAQuadrant :: GraphATuple -> GraphPTuple -> GraphATuple 
 processAQuadrant graphAT graphPT = do    
                                    let nodesToProcess = listOfNodesWithAntsIn graphAT
                                    let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess

@@ -9,6 +9,7 @@ import World
 import Quadrant
 import AntRepresent -- this is just so I can call directions with out Qualifying them in ghci
 import GraphOps
+import ConsoleView
 import Data.Foldable (forM_)
 import Control.Parallel.Strategies
 import Control.Exception

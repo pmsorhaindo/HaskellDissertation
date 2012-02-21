@@ -23,6 +23,10 @@ instance Show Ant where
 
 
 
+oppDir x | x == North = South
+         | x == South = North
+         | x == East = West
+         | x == West = East
 
 
 --changeDir :: Vector -> Vector

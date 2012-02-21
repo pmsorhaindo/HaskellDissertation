@@ -10,5 +10,5 @@ data Food = Food {
         deriving(Show)
 
 harvestFood :: Food -> Food
-harvestFood food  = Food (loc food) ((quantity food)-1)
+harvestFood food  = Food (loc food) (quantity food-1)
 

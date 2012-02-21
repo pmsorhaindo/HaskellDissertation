@@ -15,7 +15,7 @@ data Surface = Wet Location | StableDry Location | UnstableDry Location
         | x GT maxX && y LT maxY         = StableDry (Location minX (y+1)) : genSurface (minX+1) (y+1) -}
 
 --newSurfs :: [(a,b)] -> [Surface]
-newSurfs ((x,y):xs) = (StableDry (Location x  y)): (newSurfs xs)
+newSurfs ((x,y):xs) = StableDry (Location x  y): newSurfs xs
 newSurfs _ = []
 
 --coords sizex 0 = zip [0..sizex] (take sizex $repeat 0)
