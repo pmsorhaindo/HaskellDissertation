@@ -219,9 +219,6 @@ senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromInte
 -- | increaseSense --TODO
 increaseSense :: [(Direction,Double)] -> [(Direction,Double)]
 increaseSense = undefined
-
-
-foo = undefined
         
 --procEdgeAntAtNode :: StitchableQuads -> Int -> StitchableQuads 
 procEdgeAntAtNode qs pos  = do -- rename fst and snd to adj and curr to make more readable?
@@ -270,17 +267,17 @@ loneEdgeAnt qs isCurr pos = do
                         let moveOutDir = side $ relation qs -- if this direction is chosen, special swap needed
                         let moveBackDir = oppDir (antDir a) -- if this direction is chosen change direction but don't move.
 
-                        let qs = moveIt side qs moveOutDir moveBackDir nd decisions --swapNode --addToNoProc
+                        let qs = loneMoveIt side qs moveOutDir moveBackDir nd decisions --swapNode --addToNoProc
 
                         procEdgeAntAtNode qs (pos+1)
 
 
-moveIt side qs mod mbd nd (dec:decs) = moveIt' side qs mod mbd nd (dec:decs)
-moveIt _ qs _ _ _ [] = qs
+loneMoveIt side qs mod mbd nd (dec:decs) = loneMoveIt' side qs mod mbd nd (dec:decs)
+loneMoveIt _ qs _ _ _ [] = qs
 
-moveIt' side qs mod mbd nd (dec:decs) | mod == fst dec = checkForAntOut
-                                      | mbd == fst dec = flipAntAtNode side qs mbd nd
-                                      | otherwise = checkForAntIn side qs mod mbd nd (dec:decs) 
+loneMoveIt' side qs mod mbd nd (dec:decs) | mod == fst dec = checkForAntOut side qs mod nd
+                                          | mbd == fst dec = flipAntAtNode side qs mbd nd
+                                          | otherwise = checkForAntIn side qs mod mbd nd (dec:decs) 
 
 flipAntAtNode side qs mbd nd = newQs qs
         where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
@@ -299,7 +296,7 @@ flipAntAtNode side qs mbd nd = newQs qs
 checkForAntIn side qs mod mbd nd (dec:decs) = do
                         let nxtNd = nextNode nd (fst dec) $ qSize qs
                         if isAntAtNode (fst$antGraphs qs) nxtNd
-                                then moveIt side qs mod mbd nd decs
+                                then loneMoveIt side qs mod mbd nd decs
                                 else swapIn qs side nd nxtNd
 
 swapIn qs side nd1 nd2 = newQs qs
@@ -317,17 +314,31 @@ swapIn qs side nd1 nd2 = newQs qs
                         --(((updateGraph nd1 nd2 (fst$antGraphs)),(snd$antGraphs qs)),
                         --                 ((fst$antGraphs qs),(updateGraph nd1 nd2 (fst$antGraphs))))
                        
-checkForAntOut = undefined
+checkForAntOut side qs mod nd (dec:decs) = do -- TODO YOU ARE HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                let nxtNd = nextNode nd (fst dec) $ qSize qs
+                if isAntAtNode (fst$antGraphs qs) nxtNd
+                        then loneMoveIt side qs mod mbd nd decs
+                        else swapIn qs side nd nxtNd
+
+
 
 -- Y U NO WORK FOR ME :( - found that work around tho :D
 otherSide side | side == fst = snd
                | side == snd = fst
 
+-- | Getting the node value of the node in a given direction on the same graph
 nextNode :: Int -> Direction -> Int -> Int
-nextNode nd dec siz | dec == North = nd - siz
-                    | dec == South = nd + siz
-                    | dec == East = nd + 1
-                    | dec == West = nd - 1 
+nextNode nd dir siz | dir == North = nd - siz
+                    | dir == South = nd + siz
+                    | dir == East = nd + 1
+                    | dir == West = nd - 1
+
+-- | Getting the node value of the node in a given direction
+outNode :: Int -> Direction -> Int -> Int
+outNode nd dir siz | dir == North = nd - siz
+                    | dir == South = nd + siz
+                    | dir == East = nd + 1
+                    | dir == West = nd - 1
 
 nodeFromEdgeIndex :: ((Direction, Direction) -> Direction) -> StitchableQuads -> Int -> Int
 nodeFromEdgeIndex side qs pos | (side $ relation qs) == North = (pos+1) -- edgepair index to node.
