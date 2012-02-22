@@ -312,7 +312,7 @@ swapIn qs side nd1 nd2 = newQs qs
                       pgs qs = (pherGraphs qs)
                       aep qs = (aEdgePair qs)
                       pep qs = (pEdgePair qs)
-                      npl qs = (noProcList qs)                   
+                      npl qs = (noProcList qs) --TODO                   
                         --updateGraph nd1 nd2 side$$antGraphs -> GraphATuple
                         --(((updateGraph nd1 nd2 (fst$antGraphs)),(snd$antGraphs qs)),
                         --                 ((fst$antGraphs qs),(updateGraph nd1 nd2 (fst$antGraphs))))
@@ -385,7 +385,7 @@ getPEdge graphPT getDir
 
 -- | TODO
 processPhers :: GraphPTuple -> GraphPTuple
-processPhers = undefined
+processPhers = undefined --TODO
 -- | TODO
 transPherToAnt :: GraphATuple -> GraphPTuple -> GraphATuple
 transPherToAnt graphAT graphPTuple = undefined --do

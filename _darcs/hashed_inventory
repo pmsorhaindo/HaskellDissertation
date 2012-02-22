@@ -1,4 +1,4 @@
-pristine:71476b45468c1886bd927904a7885b1525f2786c02b9016e7caa58a74da3fd24
+pristine:8d3bff0b7ef027ed6e6d837e77e43cd1e6a9a26bb66368f42c35ccffd12a8695
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -224,3 +224,8 @@ pmsorhaindo@gmail.com**20120217225525
  Ignore-this: c2e2a7e80cb4a095d0f682c1fe8c457c
 ] 
 hash: 0000004627-5d0f0f99c16b373cc48be0ddecf857d01eef4274e1332157bdaf4c0a7fc40d3a
+[last for days without net access, but introduced a stitchable quad structure and modularized further
+pmsorhaindo@gmail.com**20120221174958
+ Ignore-this: 2646b52973da0a7d1b8f08c70b685c99
+] 
+hash: 0000027956-69d74ea261cc4e528f13ba5b254dfa42f9f2bb61991850e608dd4e96ed4b54e6
