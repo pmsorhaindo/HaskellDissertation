@@ -275,9 +275,9 @@ loneEdgeAnt qs isCurr pos = do
 loneMoveIt side qs mod mbd nd (dec:decs) = loneMoveIt' side qs mod mbd nd (dec:decs)
 loneMoveIt _ qs _ _ _ [] = qs
 
-loneMoveIt' side qs mod mbd nd (dec:decs) | mod == fst dec = checkForAntOut side qs mod nd
+loneMoveIt' side qs mod mbd nd (dec:decs) | mod == fst dec = checkForAntOut side qs mod mbd nd (dec:decs)
                                           | mbd == fst dec = flipAntAtNode side qs mbd nd
-                                          | otherwise = checkForAntIn side qs mod mbd nd (dec:decs) 
+                                          | otherwise = checkForAntIn side qs mod mbd nd (dec:decs)
 
 flipAntAtNode side qs mbd nd = newQs qs
         where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
@@ -313,12 +313,26 @@ swapIn qs side nd1 nd2 = newQs qs
                         --updateGraph nd1 nd2 side$$antGraphs -> GraphATuple
                         --(((updateGraph nd1 nd2 (fst$antGraphs)),(snd$antGraphs qs)),
                         --                 ((fst$antGraphs qs),(updateGraph nd1 nd2 (fst$antGraphs))))
-                       
-checkForAntOut side qs mod nd (dec:decs) = do -- TODO YOU ARE HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                let nxtNd = nextNode nd (fst dec) $ qSize qs
-                if isAntAtNode (fst$antGraphs qs) nxtNd
+
+
+swapOut qs side currNd oppNd = newQs qs
+                where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
+                      quadSize qs = (qSize qs)
+                      rel qs = (relation qs)
+                      tempAnt = getAntAt -- needs an if to decide which graph to grab from and an extra variable.
+                      ags qs side = side (((updateGraph nd1 nd2 (fst$antGraphs qs)),(snd$antGraphs qs)),
+                                         ((fst$antGraphs qs),((updateGraph nd1 nd2 (snd$antGraphs qs)))))--depending on which side the Ant is in
+                                                                                                        -- a particular solution is chosen
+                      pgs qs = (pherGraphs qs)
+                      aep qs = (aEdgePair qs)
+                      pep qs = (pEdgePair qs)
+                      npl qs = (noProcList qs)
+
+checkForAntOut side qs mod mbd nd (dec:decs) = do 
+                let outNd = outNode nd (fst dec) $ qSize qs
+                if isAntAtNode (fst$antGraphs qs) outNd
                         then loneMoveIt side qs mod mbd nd decs
-                        else swapIn qs side nd nxtNd
+                        else swapIn qs side nd outNd
 
 
 
@@ -333,12 +347,12 @@ nextNode nd dir siz | dir == North = nd - siz
                     | dir == East = nd + 1
                     | dir == West = nd - 1
 
--- | Getting the node value of the node in a given direction
+-- | Getting the node value of the node in a given direction on another graph given an edge Node.
 outNode :: Int -> Direction -> Int -> Int
-outNode nd dir siz | dir == North = nd - siz
-                    | dir == South = nd + siz
-                    | dir == East = nd + 1
-                    | dir == West = nd - 1
+outNode nd dir siz | dir == North = nd + (siz^2 - siz)
+                   | dir == South = nd - (siz^2 - siz)
+                   | dir == East = nd - (siz-1)
+                   | dir == West = nd + (siz-1)
 
 nodeFromEdgeIndex :: ((Direction, Direction) -> Direction) -> StitchableQuads -> Int -> Int
 nodeFromEdgeIndex side qs pos | (side $ relation qs) == North = (pos+1) -- edgepair index to node.
