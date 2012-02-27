@@ -135,7 +135,7 @@ addAnt graphT pos = graphFromEdges $ zip3 (preList ++ [Just(Ant 1 East 1)] ++ su
               sufList = drop pos (listOfNodes $ brokenUpGraph graphT)
 --Allows a prexisting Ant to be placed in a graph.
 
---addExistingAnt :: GraphATuple -> Int -> t -> GraphATuple
+addExistingAnt :: GraphATuple -> Int -> Maybe Ant -> GraphATuple
 addExistingAnt graphT pos passedAnt = graphFromEdges $ zip3 (preList ++ [passedAnt] ++ sufList) ([1..]) (adjVertsFromCombo graphT)
         where preList | pos < 1 = []
                       | otherwise = take (pos-1) (listOfNodes $ brokenUpGraph graphT)
@@ -319,9 +319,10 @@ swapOut qs side currNd oppNd = newQs qs
                 where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
                       quadSize qs = (qSize qs)
                       rel qs = (relation qs)
-                      tempAnt = Just (getAntFromNode (side (antGraphs qs)) currNd) --actually doesn't because its only one Ant
-                      ags qs side = side (((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)),
-                                         (((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))--depending on which side the Ant is in
+                      tempAnt = undefined--(fstTrip (getAntFromNode (side (antGraphs qs)) currNd)) --actually doesn't because its only one Ant
+                      ags qs side = side(((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)),(((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))
+
+--ags qs side = side (((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistiqs)ngAnt (snd$antGraphs qs) oppNd tempAnt)), (((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))--depending on which side the Ant is in
                                                                                                         -- a particular solution is chosen
                       pgs qs = (pherGraphs qs)
                       aep qs = (aEdgePair qs)
@@ -363,7 +364,7 @@ nodeFromEdgeIndex side qs pos | (side $ relation qs) == North = (pos+1) -- edgep
 -- | Double Edge Ant
 doubleEdgeAnt :: StitchableQuads -> Int -> StitchableQuads
 doubleEdgeAnt qs pos = do
-                --STUFF
+                --TODO STUFF
                 --Move Ant
                 procEdgeAntAtNode qs (pos+1)
 
