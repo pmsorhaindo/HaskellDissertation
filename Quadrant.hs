@@ -298,7 +298,8 @@ checkForAntIn side qs mod mbd nd (dec:decs) = do
                         if isAntAtNode (fst$antGraphs qs) nxtNd
                                 then loneMoveIt side qs mod mbd nd decs
                                 else swapIn qs side nd nxtNd
-
+swapIn :: StitchableQuads -> (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> Int -> Int 
+                -> StitchableQuads
 swapIn qs side nd1 nd2 = newQs qs
                 where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
                       quadSize qs = (qSize qs)
@@ -319,10 +320,10 @@ swapOut qs side currNd oppNd = newQs qs
                 where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
                       quadSize qs = (qSize qs)
                       rel qs = (relation qs)
-                      tempAnt = undefined--(fstTrip (getAntFromNode (side (antGraphs qs)) currNd)) --actually doesn't because its only one Ant
+                      tempAnt = Just (fstTrip (getAntFromNode (fst (antGraphs qs)) currNd)) --actually doesn't because its only one Ant
                       ags qs side = side(((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)),(((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))
 
---ags qs side = side (((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistiqs)ngAnt (snd$antGraphs qs) oppNd tempAnt)), (((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))--depending on which side the Ant is in
+--ags qs side = side (((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)), (((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))--depending on which side the Ant is in
                                                                                                         -- a particular solution is chosen
                       pgs qs = (pherGraphs qs)
                       aep qs = (aEdgePair qs)
