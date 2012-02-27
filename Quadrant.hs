@@ -319,9 +319,9 @@ swapOut qs side currNd oppNd = newQs qs
                 where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
                       quadSize qs = (qSize qs)
                       rel qs = (relation qs)
-                      tempAnt = getAntAt -- needs an if to decide which graph to grab from and an extra variable.
-                      ags qs side = side (((updateGraph nd1 nd2 (fst$antGraphs qs)),(snd$antGraphs qs)),
-                                         ((fst$antGraphs qs),((updateGraph nd1 nd2 (snd$antGraphs qs)))))--depending on which side the Ant is in
+                      tempAnt = Just (getAntFromNode (side (antGraphs qs)) currNd) --actually doesn't because its only one Ant
+                      ags qs side = side (((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)),
+                                         (((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))--depending on which side the Ant is in
                                                                                                         -- a particular solution is chosen
                       pgs qs = (pherGraphs qs)
                       aep qs = (aEdgePair qs)

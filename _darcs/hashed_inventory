@@ -1,4 +1,4 @@
-pristine:d93e5ca73173ada96c3fb6319e8305fb5288729687bda4e4b607c26b78319cc9
+pristine:e522f4de2481249742cf904143fc18f58090216e897a29e5508446ae173ea557
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -234,3 +234,8 @@ pmsorhaindo@gmail.com**20120222175753
  Ignore-this: 82830661a30de69c8aed747bc8a3a56c
 ] 
 hash: 0000002838-75e6cc9d56053092f1c894a902ff4d316ba5fe01165bcfb6af32fdfd3ef2d672
+[Further work on moving out
+pmsorhaindo@gmail.com**20120226121042
+ Ignore-this: b0780161e9c8d87f200d3b6b06b1a39a
+] 
+hash: 0000002700-5f5eec3a830226710b16d4c6d0afd2ad4c9fa29aae4a42c7889da74044c54c0a
