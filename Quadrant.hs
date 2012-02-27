@@ -271,7 +271,7 @@ loneEdgeAnt qs isCurr pos = do
 
                         procEdgeAntAtNode qs (pos+1)
 
-
+loneMoveIt  :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> StitchableQuads
 loneMoveIt side qs mod mbd nd (dec:decs) = loneMoveIt' side qs mod mbd nd (dec:decs)
 loneMoveIt _ qs _ _ _ [] = qs
 
@@ -298,8 +298,9 @@ checkForAntIn side qs mod mbd nd (dec:decs) = do
                         if isAntAtNode (fst$antGraphs qs) nxtNd
                                 then loneMoveIt side qs mod mbd nd decs
                                 else swapIn qs side nd nxtNd
+
 swapIn :: StitchableQuads -> (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> Int -> Int 
-                -> StitchableQuads
+     -> StitchableQuads
 swapIn qs side nd1 nd2 = newQs qs
                 where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
                       quadSize qs = (qSize qs)
@@ -315,12 +316,13 @@ swapIn qs side nd1 nd2 = newQs qs
                         --(((updateGraph nd1 nd2 (fst$antGraphs)),(snd$antGraphs qs)),
                         --                 ((fst$antGraphs qs),(updateGraph nd1 nd2 (fst$antGraphs))))
 
-
-swapOut qs side currNd oppNd = newQs qs
+--swapOut :: StitchableQuads -> (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> Int -> Int
+--        -> StitchableQuads
+swapOut qs side side' currNd oppNd = newQs qs
                 where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
                       quadSize qs = (qSize qs)
                       rel qs = (relation qs)
-                      tempAnt = Just (fstTrip (getAntFromNode (fst (antGraphs qs)) currNd)) --actually doesn't because its only one Ant
+                      tempAnt = Just (fstTrip (getAntFromNode (side' (antGraphs qs)) currNd)) --actually doesn't because its only one Ant
                       ags qs side = side(((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)),(((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))
 
 --ags qs side = side (((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)), (((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))--depending on which side the Ant is in
@@ -332,9 +334,10 @@ swapOut qs side currNd oppNd = newQs qs
 
 checkForAntOut side qs mod mbd nd (dec:decs) = do 
                 let outNd = outNode nd (fst dec) $ qSize qs
+                let side' = fst -- TODO hacked ;/
                 if isAntAtNode (fst$antGraphs qs) outNd
                         then loneMoveIt side qs mod mbd nd decs
-                        else swapIn qs side nd outNd
+                        else swapOut qs side side' nd outNd -- side' to selct the section of the antGraph returned from antGraphs I want.
 
 
 

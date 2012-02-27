@@ -20,7 +20,7 @@ import Control.DeepSeq
 
 deep a = deepseq a a
 
-runSim = forM_ (iterate (`processAQuadrant` b_) a_) (print . brokenUpGraph)
+runSim pherG antG = forM_ (iterate (`processAQuadrant` pherG) antG) (print . brokenUpGraph)
 aQuads  = listOfNodes $ brokenUpGraph antWorld
 pQuads  = listOfNodes $ brokenUpGraph pherWorld
 
