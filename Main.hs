@@ -26,13 +26,14 @@ runSimSingle pherG antG = forM_ (iterate (`processAQuadrant` pherG) antG) (prett
 runSimParallel_fail aQuads pQuads = (pQuads `using` parList rpar)
 runSimParallel_ aQuads pQuads = (map processAQuadrant aQuads) `using` rpar 
 
-runSimParallel aQuads pQuads = parMap rpar --(map processAQuadrant aQuads)
+runSimParallel zippedQuads = parMap rpar (processAQuadrant_) zippedQuads --(map processAQuadrant aQuads)
 
 --(pQuads `using` parMap rpar processAQuadrant aQuads) 
 
 
-aQuads  = listOfNodes $ brokenUpGraph antWorld
-pQuads  = listOfNodes $ brokenUpGraph pherWorld
+aQuads  = (listOfNodes $ brokenUpGraph antWorld) :: [GraphATuple]
+pQuads  = listOfNodes $ brokenUpGraph pherWorld :: [GraphPTuple]
+zippedQuads = zip aQuads pQuads
 
 z = processAQuadrant (head aQuads) emptyPherQuadrant 
 

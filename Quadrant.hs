@@ -273,17 +273,17 @@ loneEdgeAnt qs isCurr pos = do
                         let moveOutDir = side $ relation qs -- if this direction is chosen, special swap needed
                         let moveBackDir = oppDir (antDir a) -- if this direction is chosen change direction but don't move.
 
-                        let qs = loneMoveIt side qs moveOutDir moveBackDir nd decisions --swapNode --addToNoProc
+                        let qs = loneMoveIt side qs moveOutDir moveBackDir nd decisions isCurr --swapNode --addToNoProc
 
                         procEdgeAntAtNode qs (pos+1)
 
-loneMoveIt  :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> StitchableQuads
-loneMoveIt side qs mod mbd nd (dec:decs) = loneMoveIt' side qs mod mbd nd (dec:decs)
-loneMoveIt _ qs _ _ _ [] = qs
+loneMoveIt  :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> Bool -> StitchableQuads
+loneMoveIt side qs mod mbd nd (dec:decs) isCurr = loneMoveIt' side qs mod mbd nd (dec:decs) isCurr
+loneMoveIt _ qs _ _ _ [] _ = qs
 
-loneMoveIt' side qs mod mbd nd (dec:decs) | mod == fst dec = checkForAntOut side qs mod mbd nd (dec:decs)
-                                          | mbd == fst dec = flipAntAtNode side qs mbd nd
-                                          | otherwise = checkForAntIn side qs mod mbd nd (dec:decs)
+loneMoveIt' side qs mod mbd nd (dec:decs) isCurr | mod == fst dec = checkForAntOut side qs mod mbd nd (dec:decs) isCurr
+                                                 | mbd == fst dec = flipAntAtNode side qs mbd nd
+                                                 | otherwise = checkForAntIn side qs mod mbd nd (dec:decs) isCurr
 
 flipAntAtNode side qs mbd nd = newQs qs
         where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
@@ -299,10 +299,10 @@ flipAntAtNode side qs mbd nd = newQs qs
 -- (((setDir (fst$antGraphs qs) nd mbd),(snd$antGraphs qs)),(fst$antGraphs qs),((setDir (snd$antGraphs qs) nd mbd)))
 -- (((GraphATuple, GraphATuple),GraphATuple,GraphATuple) -> t0) -> t0
 
-checkForAntIn side qs mod mbd nd (dec:decs) = do
+checkForAntIn side qs mod mbd nd (dec:decs) isCurr = do
                         let nxtNd = nextNode nd (fst dec) $ qSize qs
                         if isAntAtNode (fst$antGraphs qs) nxtNd
-                                then loneMoveIt side qs mod mbd nd decs
+                                then loneMoveIt side qs mod mbd nd decs isCurr
                                 else swapIn qs side nd nxtNd
 
 --swapIn :: StitchableQuads -> (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> Int -> Int -> StitchableQuads
@@ -337,11 +337,11 @@ swapOut qs side side' currNd oppNd = newQs qs
                       pep qs = (pEdgePair qs)
                       npl qs = (noProcList qs)
 
-checkForAntOut side qs mod mbd nd (dec:decs) = do 
+checkForAntOut side qs mod mbd nd (dec:decs) isCurr = do 
                 let outNd = outNode nd (fst dec) $ qSize qs
-                let side' = fst -- TODO hacked ;/
+                let side' = getSide isCurr Side
                 if isAntAtNode (fst$antGraphs qs) outNd
-                        then loneMoveIt side qs mod mbd nd decs
+                        then loneMoveIt side qs mod mbd nd decs isCurr
                         else swapOut qs side side' nd outNd -- side' to selct the section of the antGraph returned from antGraphs I want.
 
 
@@ -398,6 +398,14 @@ processAQuadrant graphAT graphPT = do
                                    let nodesToProcess = listOfNodesWithAntsIn graphAT
                                    let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess
                                    graphAT'
+
+processAQuadrant_ :: (GraphATuple, GraphPTuple) -> GraphATuple 
+processAQuadrant_ graphs = do    
+                           let graphAT = fst graphs
+                           let graphPT = snd graphs
+                           let nodesToProcess = listOfNodesWithAntsIn graphAT
+                           let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess
+                           graphAT'
 
 -- | Export graph Edge for stitching
 --getEdge :: GraphATuple -> Direction -> Size -> [a] --TODO package the dir up with it.. ([a],Direction)
