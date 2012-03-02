@@ -14,13 +14,23 @@ import Data.Foldable (forM_)
 import Control.Parallel.Strategies
 import Control.Exception
 import Control.DeepSeq 
+import Control.Applicative
 
 
 --type check
 
 deep a = deepseq a a
 
-runSim pherG antG = forM_ (iterate (`processAQuadrant` pherG) antG) (print . brokenUpGraph)
+runSimSingle pherG antG = forM_ (iterate (`processAQuadrant` pherG) antG) (prettyAnt)
+
+runSimParallel_fail aQuads pQuads = (pQuads `using` parList rpar)
+runSimParallel_ aQuads pQuads = (map processAQuadrant aQuads) `using` rpar 
+
+runSimParallel aQuads pQuads = parMap rpar --(map processAQuadrant aQuads)
+
+--(pQuads `using` parMap rpar processAQuadrant aQuads) 
+
+
 aQuads  = listOfNodes $ brokenUpGraph antWorld
 pQuads  = listOfNodes $ brokenUpGraph pherWorld
 

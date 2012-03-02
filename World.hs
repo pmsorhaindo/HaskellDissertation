@@ -118,7 +118,7 @@ edgePointsWithAntsIn ((ant,nd):xs)
 
 
 processQuadrants :: GraphAWTuple -> GraphPWTuple -> GraphAWTuple
-processQuadrants = undefined -- TODO parallel stuffs
+processQuadrants = undefined -- TODO parallel stuff
 
 
 processWorld :: GraphAWTuple -> GraphAWTuple

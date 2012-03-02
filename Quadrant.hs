@@ -244,16 +244,22 @@ procEdgeAntAtNode qs pos  = do -- rename fst and snd to adj and curr to make mor
         if pos<10
                 then x
                 else qs
+
+data WhichSide = Side | OtherSide
+
+getSide :: Bool -> WhichSide -> (a,a) -> a
+getSide True Side = fst
+getSide False Side = snd
+getSide True OtherSide = snd
+getSide False OtherSide = fst
         
 
 -- | Lone Edge Ant
 loneEdgeAnt :: StitchableQuads -> Bool -> Int -> StitchableQuads
 loneEdgeAnt qs isCurr pos = do
-                        let side | isCurr == True = fst
-                                 | otherwise = snd
-                        let oSide| isCurr == True = snd
-                                 | otherwise = fst
-
+                        let side = getSide isCurr Side
+                        let oSide = getSide isCurr OtherSide
+                        
                         --Move Ant -- tested with hand calculations
                         let a = fromJust $ fst((side $ aEdgePair $ qs)!!pos) -- gets me my Ant
                         let nd = nodeFromEdgeIndex side qs pos
@@ -299,8 +305,7 @@ checkForAntIn side qs mod mbd nd (dec:decs) = do
                                 then loneMoveIt side qs mod mbd nd decs
                                 else swapIn qs side nd nxtNd
 
-swapIn :: StitchableQuads -> (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> Int -> Int 
-     -> StitchableQuads
+--swapIn :: StitchableQuads -> (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> Int -> Int -> StitchableQuads
 swapIn qs side nd1 nd2 = newQs qs
                 where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
                       quadSize qs = (qSize qs)
