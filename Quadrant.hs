@@ -373,9 +373,43 @@ nodeFromEdgeIndex side qs pos | (side $ relation qs) == North = (pos+1) -- edgep
 -- | Double Edge Ant
 doubleEdgeAnt :: StitchableQuads -> Int -> StitchableQuads
 doubleEdgeAnt qs pos = do
-                --TODO STUFF
-                --Move Ant
-                procEdgeAntAtNode qs (pos+1)
+                let a1 = fromJust $ fst((fst $ aEdgePair $ qs)!!pos)
+                let a2 = fromJust $ fst((snd $ aEdgePair $ qs)!!pos)
+                let nd1 = nodeFromEdgeIndex fst qs pos
+                let nd2 = nodeFromEdgeIndex snd qs pos
+
+                let snse1 = senseSur (fst $ pherGraphs qs) nd1
+                let snse2 =  senseSur (snd $ pherGraphs qs) nd2
+                let isnse1 = ((fst$relation qs), (fst(snd (pEdgePair qs)!!pos))) :snse1
+                let isnse2 = ((snd$relation qs), (fst(fst (pEdgePair qs)!!pos))) :snse2
+
+                let decisions1 = makeDecisions isnse1
+                let decisions2 = makeDecisions isnse2
+
+                let moveOutDir1 = side $ relation qs
+                let moveOutDir2 = side $ relation qs -- TODO you are here!!!!!!!!!!!!!!!!!!!!!!!
+
+                --if one Edge ant successfully moves in a non out direction
+                procEdgeAntAtNode qs (pos)
+
+{-oneEdgeAnt qs isCurr pos = do
+                        
+                        --Move Ant -- tested with hand calculations
+                        let a = fromJust $ fst((side $ aEdgePair $ qs)!!pos) -- gets me my Ant
+                        let nd = nodeFromEdgeIndex side qs pos
+                        -- fetch sense from the graph the ant is in.
+                        let snse = senseSur (side $ pherGraphs qs) nd
+                        --increases sense to make use of the other graph.
+                        let isnse = ((side$relation qs), (fst(oSide (pEdgePair qs)!!pos))) :snse
+                        -- makes decision by prioritizing the phermone list
+                        let decisions = makeDecisions isnse
+
+                        let moveOutDir = side $ relation qs -- if this direction is chosen, special swap needed
+                        let moveBackDir = oppDir (antDir a) -- if this direction is chosen change direction but don't move.
+
+                        let qs = loneMoveIt side qs moveOutDir moveBackDir nd decisions isCurr --swapNode --addToNoProc
+
+                        procEdgeAntAtNode qs (pos+1)-}
 
 
 -- | Arranges the Pheremone list to hold

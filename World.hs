@@ -27,6 +27,8 @@ worldWidth = 3 -- this calls for the generation of 9 Ant Worlds and Pheremone Ma
 antWorld = graphFromEdges $ zip3 (listOfAntQuadrants) (keyList worldWidth) (adjListForNewGraph worldWidth)
 pherWorld = graphFromEdges $ zip3 (listOfPherQuadrants) (keyList worldWidth) (adjListForNewGraph worldWidth)
 
+updatedAWorld newAQuads = graphFromEdges $ zip3 (newAQuads) (keyList worldWidth) (adjListForNewGraph worldWidth)
+
 --listOfAntQuadrants = replicate (worldWidth^2) emptyAntQuadrant
 listOfAntQuadrants = replicate (worldWidth^2) a''
 
