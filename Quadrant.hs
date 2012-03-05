@@ -277,14 +277,16 @@ loneEdgeAnt qs isCurr pos = do
 
                         procEdgeAntAtNode qs (pos+1)
 
+-- | 
 loneMoveIt  :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> Bool -> StitchableQuads
 loneMoveIt side qs mod mbd nd (dec:decs) isCurr = loneMoveIt' side qs mod mbd nd (dec:decs) isCurr
-loneMoveIt _ qs _ _ _ [] _ = qs
+loneMoveIt _ qs _ _ _ [] _ = qs -- No possible moves.
 
 loneMoveIt' side qs mod mbd nd (dec:decs) isCurr | mod == fst dec = checkForAntOut side qs mod mbd nd (dec:decs) isCurr
                                                  | mbd == fst dec = flipAntAtNode side qs mbd nd
                                                  | otherwise = checkForAntIn side qs mod mbd nd (dec:decs) isCurr
 
+-- | Changes the direction an ant so they are facing in the opposite direction.
 flipAntAtNode side qs mbd nd = newQs qs
         where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
               quadSize qs = (qSize qs)
@@ -296,15 +298,15 @@ flipAntAtNode side qs mbd nd = newQs qs
               aep qs = (aEdgePair qs)
               pep qs = (pEdgePair qs)
               npl qs = (noProcList qs) -- NEEDS CHANGING
--- (((setDir (fst$antGraphs qs) nd mbd),(snd$antGraphs qs)),(fst$antGraphs qs),((setDir (snd$antGraphs qs) nd mbd)))
--- (((GraphATuple, GraphATuple),GraphATuple,GraphATuple) -> t0) -> t0
 
+-- |
 checkForAntIn side qs mod mbd nd (dec:decs) isCurr = do
                         let nxtNd = nextNode nd (fst dec) $ qSize qs
                         if isAntAtNode (fst$antGraphs qs) nxtNd
                                 then loneMoveIt side qs mod mbd nd decs isCurr
                                 else swapIn qs side nd nxtNd
 
+-- |
 --swapIn :: StitchableQuads -> (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> Int -> Int -> StitchableQuads
 swapIn qs side nd1 nd2 = newQs qs
                 where newQs qs = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
@@ -316,11 +318,9 @@ swapIn qs side nd1 nd2 = newQs qs
                       pgs qs = (pherGraphs qs)
                       aep qs = (aEdgePair qs)
                       pep qs = (pEdgePair qs)
-                      npl qs = (noProcList qs) --TODO                   
-                        --updateGraph nd1 nd2 side$$antGraphs -> GraphATuple
-                        --(((updateGraph nd1 nd2 (fst$antGraphs)),(snd$antGraphs qs)),
-                        --                 ((fst$antGraphs qs),(updateGraph nd1 nd2 (fst$antGraphs))))
+                      npl qs = (noProcList qs) --TODO Update no proc List      
 
+-- | 
 --swapOut :: StitchableQuads -> (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> Int -> Int
 --        -> StitchableQuads
 swapOut qs side side' currNd oppNd = newQs qs
@@ -328,15 +328,14 @@ swapOut qs side side' currNd oppNd = newQs qs
                       quadSize qs = (qSize qs)
                       rel qs = (relation qs)
                       tempAnt = Just (fstTrip (getAntFromNode (side' (antGraphs qs)) currNd)) --actually doesn't because its only one Ant
-                      ags qs side = side(((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)),(((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))
-
---ags qs side = side (((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)), (((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))--depending on which side the Ant is in
-                                                                                                        -- a particular solution is chosen
+                      ags qs side = side(((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)),(((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing)))) --depending on which side the Ant is in
+                                                                                                             -- a particular solution is chosen from the tuple.                                                                                                     
                       pgs qs = (pherGraphs qs)
                       aep qs = (aEdgePair qs)
                       pep qs = (pEdgePair qs)
                       npl qs = (noProcList qs)
 
+-- | 
 checkForAntOut side qs mod mbd nd (dec:decs) isCurr = do 
                 let outNd = outNode nd (fst dec) $ qSize qs
                 let side' = getSide isCurr Side
@@ -386,23 +385,32 @@ doubleEdgeAnt qs pos = do
                 let decisions1 = makeDecisions isnse1
                 let decisions2 = makeDecisions isnse2
 
-                let moveOutDir1 = side $ relation qs
-                let moveOutDir2 = side $ relation qs -- TODO you are here!!!!!!!!!!!!!!!!!!!!!!!
-
-                --if one Edge ant successfully moves in a non out direction
+                let moveOutDir1 = fst $ relation qs
+                let moveInDir1 = oppDir (antDir a1)
+                let moveOutDir2 = snd $ relation qs
+                let moveInDir2 = oppDir (antDir a2) 
+                
+                -- doubleMoveIt TODO you are here!!!!!!!!!!!!!!!!!!!!!!!
                 procEdgeAntAtNode qs (pos)
 
+-- TODO
+doubleMoveIt :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> (Bool,Bool) -> Bool -> StitchableQuads
+doubleMoveIt side qs mod mbd nd (dec:decs) (False,False) isCurr = doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) isCurr
+doubleMoveIt side qs mod mbd nd (dec:decs) (out1,out2) isCurr = undefined
+
+doubleMoveIt' side qs mod mbd nd (dec:decs) (out1,out2) isCurr = undefined
+
+{-
+loneMoveIt  :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> Bool -> StitchableQuads
+loneMoveIt side qs mod mbd nd (dec:decs) isCurr = loneMoveIt' side qs mod mbd nd (dec:decs) isCurr
+loneMoveIt _ qs _ _ _ [] _ = qs
+
+loneMoveIt' side qs mod mbd nd (dec:decs) isCurr | mod == fst dec = checkForAntOut side qs mod mbd nd (dec:decs) isCurr
+                                                 | mbd == fst dec = flipAntAtNode side qs mbd nd
+                                                 | otherwise = checkForAntIn side qs mod mbd nd (dec:decs) isCurr
+-}
 {-oneEdgeAnt qs isCurr pos = do
-                        
-                        --Move Ant -- tested with hand calculations
-                        let a = fromJust $ fst((side $ aEdgePair $ qs)!!pos) -- gets me my Ant
-                        let nd = nodeFromEdgeIndex side qs pos
-                        -- fetch sense from the graph the ant is in.
-                        let snse = senseSur (side $ pherGraphs qs) nd
-                        --increases sense to make use of the other graph.
-                        let isnse = ((side$relation qs), (fst(oSide (pEdgePair qs)!!pos))) :snse
-                        -- makes decision by prioritizing the phermone list
-                        let decisions = makeDecisions isnse
+                        ...
 
                         let moveOutDir = side $ relation qs -- if this direction is chosen, special swap needed
                         let moveBackDir = oppDir (antDir a) -- if this direction is chosen change direction but don't move.
@@ -417,6 +425,7 @@ makeDecision :: [(Direction,Double)] -> Direction
 makeDecision pLevels = fst (maximumBy highestPher pLevels)
                 where highestPher x y = (snd x) `compare` (snd y) 
 
+-- |
 makeDecisions :: [(Direction,Double)] -> [(Direction,Double)]
 makeDecisions pLevels = sortBy highestPher pLevels
                 where highestPher x y = (snd x) `compare` (snd y) 
@@ -433,6 +442,7 @@ processAQuadrant graphAT graphPT = do
                                    let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess
                                    graphAT'
 
+-- |
 processAQuadrant_ :: (GraphATuple, GraphPTuple) -> GraphATuple 
 processAQuadrant_ graphs = do    
                            let graphAT = fst graphs
@@ -451,6 +461,7 @@ getAEdge graphAT getDir
                where size = truncate (sqrt(fromIntegral ((snd $ bounds $ fstTrip graphAT) + 1))) :: Int
                      f    = getWhatIsAtNode graphAT
 
+-- |
 --getPEdge :: GraphPTuple -> Direction -> Size -> [a] --TODO package the dir up with it.. ([a],Direction)
 getPEdge graphPT getDir
         | getDir == North = zip (map f [1 .. size]) [1..size]
@@ -463,6 +474,12 @@ getPEdge graphPT getDir
 -- | TODO
 processPhers :: GraphPTuple -> GraphPTuple
 processPhers = undefined --TODO
+
+-- | TODO
+evaporatePhers :: GraphPTuple -> GraphPTuple
+evaporatePhers pherTuple = undefined--graphFromEdges $ zip3 newNodes [1..] (adjVertsFromCombo pherTuple)
+                --where newNodes = map (-0.2) (listOfNodes $ brokenUpGraph pherTuple)
+
 -- | TODO
 transPherToAnt :: GraphATuple -> GraphPTuple -> GraphATuple
 transPherToAnt graphAT graphPTuple = undefined --do
