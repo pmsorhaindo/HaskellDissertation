@@ -475,10 +475,10 @@ getPEdge graphPT getDir
 processPhers :: GraphPTuple -> GraphPTuple
 processPhers = undefined --TODO
 
--- | TODO
+-- | Removes some of the pheremone from the world. (The same amount of Pheremone is removed from everywhere) 
 evaporatePhers :: GraphPTuple -> GraphPTuple
-evaporatePhers pherTuple = undefined--graphFromEdges $ zip3 newNodes [1..] (adjVertsFromCombo pherTuple)
-                --where newNodes = map (-0.2) (listOfNodes $ brokenUpGraph pherTuple)
+evaporatePhers pherTuple = graphFromEdges $ zip3 newNodes [1..] (adjVertsFromCombo pherTuple)
+                where newNodes =  map ((-)1.0) (listOfNodes $ brokenUpGraph pherTuple)
 
 -- | TODO
 transPherToAnt :: GraphATuple -> GraphPTuple -> GraphATuple
