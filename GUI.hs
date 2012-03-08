@@ -1,19 +1,5 @@
 --GUI
 
-{-module Main where
-import Graphics.UI.WX
-
-main :: IO ()
-main
-  = start hello
-
-hello :: IO ()
-hello
-  = do f    <- frame    [text := "Hello!"]
-       quit <- button f [text := "Quit", on command := close f]
-       set f [layout := widget quit] -}
-
-
 module Main where
 
 import Graphics.UI.WX
@@ -25,75 +11,54 @@ main
 
 gui :: IO ()
 gui
-  = do -- main gui elements: frame, panel, text control, and the notebook
-       f       <- frame [text := "Controls"]
+  = do -- Main GUI Elements: Frame, Panel, Text control, and the Notebook
+       f       <- frame [text := "Ant Simulation Parameters"]
        p       <- panel f []
        nb      <- notebook p [] 
        textlog <- textCtrl p [enabled := False, wrap := WrapNone] 
 
        -- use text control as logger
        textCtrlMakeLogActiveTarget textlog
-       logMessage "logging enabled"              
+       logMessage "Logging enabled"              
        -- set f [on closing :~ \prev -> do logSetActiveTarget oldlog; logDelete log; prev]
-
-       -- button page
-       p1   <- panel  nb []
-       ok   <- button p1 [text := "Ok", on command := logMessage "ok button pressed"]
-       quit <- button p1 [text := "Quit", on command := close f]
 
        -- radio box page
        p2   <- panel  nb []
-       let rlabels = ["first", "second", "third"]
-       r1   <- radioBox p2 Vertical rlabels   [text := "radio box", on select ::= logSelect]
-       r2   <- radioBox p2 Horizontal rlabels [tooltip := "radio group two", on select ::= logSelect]
-       rb1  <- button   p2 [text := "disable", on command ::= onEnable r1]
-
-       -- choice
-       p3   <- panel nb []
-       let clabels = ["mies","noot","aap"]
-       c1   <- choice p3 [tooltip := "unsorted choices", on select ::= logSelect, sorted  := False, items := clabels]
-       c2   <- choice p3 [tooltip := "sorted choices", on select ::= logSelect, sorted  := True, items := clabels] 
-       cb1  <- button p3 [text := "disable", on command ::= onEnable c1]
-
-       -- list box page
-       p4   <- panel nb []
-       sl1  <- singleListBox p4 
-                  [items      := clabels
-                  ,tooltip    := "unsorted single-selection listbox"
-                  ,on select ::= logSelect]
-       sl2  <- singleListBox p4 
-                  [items      := clabels
-                  ,tooltip    := "sorted listbox"
-                  ,on select ::= logSelect, sorted     := True]
-       sc1  <- checkBox p4 [text := "enable the listbox", checked := True, on command := set sl1 [enabled :~ not]]
+       let fstLabels = ["Search", "Colonate", "Random"]
+       let sndLabels = ["Parallel", "Concurrent", "Not Concurrent"]
+       r1   <- radioBox p2 Vertical fstLabels   [text := "Ant Behaviours", on select ::= logSelect]
+       r2   <- radioBox p2 Vertical sndLabels   [text := "Backend Behaviours", on select ::= logSelect] --tooltip String property
+       rb1  <- button   p2 [text := "Disable", on command ::= onEnable r1]
 
        -- slider/gauge page
-       p5   <- panel nb []
-       s    <- hslider p5 True {- show labels -} 1 100 [selection := 50]
-       g    <- hgauge  p5 100 [selection := 50]
-       set s [on command := do{ i <- get s selection; set g [selection := i]} ]
+       p3   <- panel nb []
+       s    <- hslider p3 True {- show labels -} 1 100 [selection := 50]
+       g    <- hgauge  p3 100 [selection := 50]
+       set s [on command := do{ i <- get s selection; logMessage("Ants starting " ++ (show i)); set g [selection := i] } ]
+
+
+       -- button page
+       p1   <- panel  nb []
+       ok   <- button p1 [text := "Run Simulation", on command := do{logMessage "Start Simulation"; getAllValues s r1 r2 rb1}]
+       quit <- button p1 [text := "Quit", on command := close f]
+
 
        -- specify layout
        set f [layout :=
                 container p $
                 column 0
                  [ tabs nb
-                    [tab "buttons" $ 
-                     container p1 $ margin 10 $ floatCentre $ row 5 [widget ok, widget quit]
-                    ,tab "radio box" $ 
-                     container p2 $ margin 10 $ column 5 [ hstretch $ widget rb1
+                    [tab "Main" $ 
+                     container p1 $ margin 15 $ floatCentre $ row 5 [widget ok, widget quit]
+
+                    ,tab "Selections" $ 
+                     container p2 $ margin 15 $ column 5 [ hstretch $ widget rb1
                                                          , row 0 [floatLeft $ widget r1
-                                                                 ,floatRight $ widget r2]]
-                    ,tab "choice" $ 
-                     container p3 $ margin 10 $ column 5 [ hstretch $ widget cb1
-                                                         , row 0 [floatLeft $ widget c1
-                                                                 ,floatRight $ row 5 [label "sorted: ", widget c2]]]
-                    ,tab "listbox" $ 
-                     container p4 $ margin 10 $ column 5 [ hstretch  $ dynamic $ widget sc1
-                                                         , floatLeft $
-                                                           row 0 [widget sl1, widget sl2]]
-                    ,tab "slider" $ 
-                     container p5 $ margin 10 $ column 5 [ hfill $ widget s
+                                                         ,floatRight $ widget r2]
+                                                         ]
+
+                    ,tab "Ants" $ 
+                     container p3 $ margin 15 $ column 5 [ hfill $ widget s
                                                          , hfill $ widget g
                                                          , glue
                                                          ]
@@ -110,18 +75,12 @@ gui
            s <- get w (item i)
            logMessage ("selected index: " ++ show i ++ ": " ++ s)
            
-
     onEnable w b
       = do set w [enabled :~ not]
            enable <- get w enabled
-           set b [text := (if enable then "disable" else "enable")]
+           set b [text := (if enable then "Disable" else "Enable")]
 
--- kindof :: Object a -> String -> IO ()
-kindof obj className
-  = do classInfo <- classInfoFindClass className
-       if (objectIsNull classInfo)
-        then logMessage ("kindof " ++ className ++ ": no such class")
-        else if (objectIsNull obj)
-              then logMessage ("kindof " ++ className ++ ": null object")
-              else do haskind <- objectIsKindOf obj classInfo
-                      logMessage ("kindof " ++ className ++ ": " ++ show haskind)
+getAllValues s r1 r2 rb1 = do
+                                i<-get s selection
+                                putStrLn("woot " ++ show i)
+                                -- pass To Simulation
