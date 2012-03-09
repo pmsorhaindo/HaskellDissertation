@@ -19,7 +19,7 @@ data Ant = Ant {
         deriving(Eq)
 
 instance Show Ant where
-         show (Ant {antId = i} ) = "Ant: " ++ show i
+         show (Ant {pherLevel = i} ) = "Ant: " ++ show i
 
 
 
