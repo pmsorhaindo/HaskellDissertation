@@ -26,10 +26,30 @@ twoBadRandoms gen = (fst $ random gen, fst $ random gen)
 
 refreshRandoms = newStdGen
 
-twoGoodRandoms :: RandomGen g => g -> ((Float), g)
-twoGoodRandoms gen = let (a,gen') = random gen
+randomFloat :: RandomGen g => g -> ((Float), g)
+randomFloat gen = let (a,gen') = random gen
                      in (a,gen')
 
+randomFloats gen x [] =  do
+                        let (a,gen1) = randomFloat gen
+                        randomFloats gen1 (x-1) [a]
+
+randomFloats gen 0 list = list
+
+randomFloats gen x list = do
+                        let a = randomFloat gen
+                        randomFloats (snd a) (x-1) ((fst a):list)
+
+randomFloats' n g = take n (randoms g)
+
+-- | An infinite list of random numbers.
+genRandoms :: IO [Int]
+genRandoms = do { g <- getStdGen; return $ randomRs (1,4) g}
+
+
+
+--randomlist :: Int -> StdGen -> [Int]
+--randomlist n = take n . unfoldr (Just . random)
 
 {-
 -- modified random number game with flexible range

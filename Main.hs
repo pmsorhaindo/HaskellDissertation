@@ -45,6 +45,7 @@ z = processAQuadrant (head aQuads) emptyPherQuadrant
 main :: IO ()
 main = do
         -- Launch GUI.
+        rnumbers <- genRandoms
         a <- getLine
         putStrLn ("Hey " ++ a)
         putStrLn ("test")
