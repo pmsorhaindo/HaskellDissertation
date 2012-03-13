@@ -4,6 +4,8 @@ module AntRepresent where
 data Direction = North | South | East | West
         deriving(Eq)
 
+data Mode = Explore | Return -- possibly add more behaviour types here
+        deriving (Eq)
 
 instance Show Direction where 
         show North = "North"
@@ -15,6 +17,8 @@ data Ant = Ant {
          antId        :: Int
         ,antDir       :: Direction
         ,pherLevel :: Double
+        ,age :: Int
+        ,aim :: Mode
         }
         deriving(Eq)
 

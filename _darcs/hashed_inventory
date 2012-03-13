@@ -1,4 +1,4 @@
-pristine:e522f4de2481249742cf904143fc18f58090216e897a29e5508446ae173ea557
+pristine:54f67a9c49bc2420cdcc07f2a25940727e5974bc916eea597c620d9ab208ac4c
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -239,3 +239,8 @@ pmsorhaindo@gmail.com**20120226121042
  Ignore-this: b0780161e9c8d87f200d3b6b06b1a39a
 ] 
 hash: 0000002700-5f5eec3a830226710b16d4c6d0afd2ad4c9fa29aae4a42c7889da74044c54c0a
+[Been gitting too long, Project update with Stitchable quads being used and random numbers being piped into Main
+pmsorhaindo@gmail.com**20120312221508
+ Ignore-this: 422526e1ca6edcbf1217628e88411e08
+] 
+hash: 0000313568-5fa2a94f10c67b3b01a291ea95505d8227a0764032bc9942cd329d64caa00028

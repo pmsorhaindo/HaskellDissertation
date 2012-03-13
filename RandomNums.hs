@@ -1,7 +1,6 @@
 --Random Nums
 module RandomNums where
 import System.Random
-import System.Random  
 import Control.Monad(when)
 import Control.Monad.State 
 
@@ -43,8 +42,8 @@ randomFloats gen x list = do
 randomFloats' n g = take n (randoms g)
 
 -- | An infinite list of random numbers.
-genRandoms :: IO [Int]
-genRandoms = do { g <- getStdGen; return $ randomRs (1,4) g}
+genRandoms :: Int -> Int -> IO [Int]
+genRandoms lo hi = do { g <- getStdGen; return $ randomRs (lo,hi) g}
 
 
 

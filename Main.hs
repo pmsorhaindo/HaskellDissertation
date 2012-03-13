@@ -45,10 +45,15 @@ z = processAQuadrant (head aQuads) emptyPherQuadrant
 main :: IO ()
 main = do
         -- Launch GUI.
-        rnumbers <- genRandoms
+        rnumbers <- genRandoms 1 4
         a <- getLine
         putStrLn ("Hey " ++ a)
         putStrLn ("test")
+        putStrLn (show $ fst $ splitAt 3 rnumbers)
+
+
+--setUpWorld = 
+
 
         
 

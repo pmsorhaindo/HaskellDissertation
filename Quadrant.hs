@@ -53,7 +53,7 @@ edgesForTestGraph :: [([Char], Int, [Int])]
 edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
 
 edgesForTestAGraph :: [(Maybe Ant, Int, [Int])]
-edgesForTestAGraph = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Just(Ant 1 West 2.1),4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 1.0),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Just(Ant 1 West 0.2),9,[8,6])]
+edgesForTestAGraph = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Just(Ant 1 West 2.1  0 Return),4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 1.0 0 Return),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Just(Ant 1 West 0.2 0 Return),9,[8,6])]
 
 edgesForTestPGraph :: [(Double, Int, [Int])]
 edgesForTestPGraph = [(0,1,[2,4]),(0,2,[1,5,3]),(0,3,[2,6]),(0,4,[1,7,15]),(0,5,[2,4,8,6]),(0,6,[3,5,9]),(0,7,[4,8]),(0,8,[7,5,9]),(0,9,[8,6])]
@@ -129,7 +129,7 @@ eachSuccNode graphT iterator = do
 
 -- Adds an Ant to a node (pos) of a given graph (graphT)
 addAnt :: GraphATuple -> Int -> GraphATuple
-addAnt graphT pos = graphFromEdges $ zip3 (preList ++ [Just(Ant 1 East 1)] ++ sufList) ([1..]) (adjVertsFromCombo graphT)
+addAnt graphT pos = graphFromEdges $ zip3 (preList ++ [Just(Ant 1 East 1 0 Return)] ++ sufList) ([1..]) (adjVertsFromCombo graphT)
         where preList | pos < 1 = []
                       | otherwise = take (pos-1) (listOfNodes $ brokenUpGraph graphT)
               sufList = drop pos (listOfNodes $ brokenUpGraph graphT)
@@ -433,7 +433,7 @@ makeDecisions pLevels = sortBy highestPher pLevels
 -- | Change an Ants current direction at a given node to a given direction.
 setDir :: GraphATuple -> Point -> Direction -> GraphATuple
 setDir graphT nd newDir = addExistingAnt graphT nd (modif $ fstTrip $ getAntFromNode graphT nd) -- Not to be called it there isn't an ant at the node getAntFromNode will have a fit.
-                where modif x = Just (Ant (antId x) newDir (pherLevel x)) 
+                where modif x = Just (Ant (antId x) newDir (pherLevel x) (age x) (aim x)) 
 
 -- | Function to process the whole Quadrant.
 processAQuadrant :: GraphATuple -> GraphPTuple -> GraphATuple 
@@ -500,7 +500,7 @@ pherToAnt ant pher = do
 pherToAnt' ant pher = do        
         let currLevel = pherLevel ant
         let additPher = pher*0.25 -- additional pheremone to add (1/4 of the pher at location)
-        let newAnt = Just(Ant (antId ant) (antDir ant) ((pherLevel ant) + additPher))
+        let newAnt = Just(Ant (antId ant) (antDir ant) ((pherLevel ant) + additPher)  (age ant) (aim ant))
         newAnt
         
 
@@ -517,8 +517,12 @@ transAntToPher graphPT graphAT = do
 a'' = graphTuple edgesForTestAGraph
 b'' = graphTuple edgesForTestPGraph
 
+
 width = 3
-a = graphFromEdges $ zip3 (replicate (width^2) Nothing) (keyList width) (adjListForNewGraph width) :: GraphATuple
-b = graphFromEdges $ zip3 (replicate (width^2) 1.0) (keyList width) (adjListForNewGraph width) :: GraphPTuple
+-- | Generating empty ant Graph of size width
+newAQuad width = graphFromEdges $ zip3 (replicate (width^2) Nothing) (keyList width) (adjListForNewGraph width) :: GraphATuple
+
+-- | Gennerating empty pheremone Graph of size width
+newPQuad width = graphFromEdges $ zip3 (replicate (width^2) 0.0) (keyList width) (adjListForNewGraph width) :: GraphPTuple
 
 

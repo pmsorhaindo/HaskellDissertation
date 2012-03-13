@@ -17,7 +17,9 @@ type GraphPWTuple = (Graph, Vertex -> (GraphPTuple, Int, [Int]), Int -> Maybe Ve
 
 --Build a new Graph 6 and 36 need replacing with a variable graph size and graph size^2
 -- let a = graphFromEdges $ zip3 [1..36] (keyList 6) (adjListForNewGraph 6)
-buildEmptyWorld size = graphFromEdges $ zip3 (replicate (size^2) 0) (keyList size) (adjListForNewGraph size)
+
+-- | Just 0's in a graph of size supplied
+testBuildEmptyWorld size = graphFromEdges $ zip3 (replicate (size^2) 0) (keyList size) (adjListForNewGraph size)
 
 -- | Globals\
 a_ = graphTuple edgesForTestAGraph
@@ -26,6 +28,13 @@ b_ = graphTuple edgesForTestPGraph
 worldWidth = 3 -- this calls for the generation of 9 Ant Worlds and Pheremone Maps
 antWorld = graphFromEdges $ zip3 (listOfAntQuadrants) (keyList worldWidth) (adjListForNewGraph worldWidth)
 pherWorld = graphFromEdges $ zip3 (listOfPherQuadrants) (keyList worldWidth) (adjListForNewGraph worldWidth)
+
+-- | Generate empty ant world based on the size (worldWidth) provided as a prameter
+newAWorld worldWidth quadWidth = graphFromEdges $ zip3 (replicate (worldWidth^2) (newAQuad quadWidth)) (keyList worldWidth) (adjListForNewGraph worldWidth)
+
+-- | Generate empty pheremone world based on the size (worldWidth) provided as a prameter
+newPWorld worldWidth quadWidth = graphFromEdges $ zip3 (replicate (worldWidth^2) (newPQuad quadWidth)) (keyList worldWidth) (adjListForNewGraph worldWidth)
+
 
 updatedAWorld newAQuads = graphFromEdges $ zip3 (newAQuads) (keyList worldWidth) (adjListForNewGraph worldWidth)
 
@@ -125,6 +134,7 @@ processQuadrants = undefined -- TODO parallel stuff
 
 processWorld :: GraphAWTuple -> GraphAWTuple
 processWorld = undefined -- TODO the big loop
+
 
 
 
