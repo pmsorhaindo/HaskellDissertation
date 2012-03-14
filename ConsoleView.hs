@@ -2,6 +2,7 @@
 module ConsoleView where
 import AntRepresent
 import Quadrant
+import World
 import GraphOps
 import Data.Maybe (isNothing, isJust)
 
@@ -29,15 +30,23 @@ prizzle count siz [] = putStrLn(".")
 
 prettyAntWorld aWorld  = do
         let theData = brokenUpGraph aWorld   
-        let siz = 3      
+        let siz = truncate $ sqrt $fromIntegral $length $theData
         printWorldLine 1 1 siz aWorld
 
-printWorldLine row worldCol siz aWorld = do
-        let preData = brokenUpGraph $ fstTrip ((sndTrip aWorld) worldCol)
-        let theData = fst $ splitAt siz $snd (splitAt (siz*row-1) preData)
-        prizzleLn theData
+printWorldLine :: Int -> Int-> Int -> GraphAWTuple -> IO()
+
+printWorldLine 0 worldCol siz aWorld = putStr("")
+
+printWorldLine row worldCol siz aWorld | not((siz - worldCol+1) == 0) = do
+        let preData = brokenUpGraph $ fstTrip ((sndTrip aWorld) (row-1))
+        let theData = fst $ splitAt siz $snd (splitAt (siz*(row-1)) preData) -- TODO something wrong here with picking up ros
+        prizzleLn worldCol siz theData
         printWorldLine row (worldCol+1) siz aWorld
-         
+
+                                       | otherwise = printWorldLine (row+1) 1 siz aWorld
+
+
+prizzleLn :: Int -> Int -> [(Maybe Ant, Int, [Int])] -> IO ()
 prizzleLn worldCol siz (someData:theData) | isJust (fstTrip someData) = do putStr("|O|")
                                                                            prizzleLn worldCol siz theData
 
