@@ -27,6 +27,10 @@ b_ = graphTuple edgesForTestPGraph
 
 worldWidth = 3 -- this calls for the generation of 9 Ant Worlds and Pheremone Maps
 antWorld = graphFromEdges $ zip3 (listOfAntQuadrants) (keyList worldWidth) (adjListForNewGraph worldWidth)
+
+antWorld' = graphFromEdges $ zip3 (listOfAntQuadrants') (keyList worldWidth) (adjListForNewGraph worldWidth)
+        where listOfAntQuadrants' = [newAQuad',newAQuad 3,newAQuad 3,newAQuad 3,newAQuad',newAQuad 3,newAQuad 3,newAQuad 3,newAQuad']
+
 pherWorld = graphFromEdges $ zip3 (listOfPherQuadrants) (keyList worldWidth) (adjListForNewGraph worldWidth)
 
 -- | Generate empty ant world based on the size (worldWidth) provided as a prameter

@@ -55,6 +55,9 @@ edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),(
 edgesForTestAGraph :: [(Maybe Ant, Int, [Int])]
 edgesForTestAGraph = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Just(Ant 1 West 2.1  0 Return),4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 1.0 0 Return),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Just(Ant 1 West 0.2 0 Return),9,[8,6])]
 
+edgesForTestAGraph' :: [(Maybe Ant, Int, [Int])]
+edgesForTestAGraph' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Just(Ant 1 West 2.1  0 Return),5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+
 edgesForTestPGraph :: [(Double, Int, [Int])]
 edgesForTestPGraph = [(0,1,[2,4]),(0,2,[1,5,3]),(0,3,[2,6]),(0,4,[1,7,15]),(0,5,[2,4,8,6]),(0,6,[3,5,9]),(0,7,[4,8]),(0,8,[7,5,9]),(0,9,[8,6])]
 
@@ -522,6 +525,7 @@ width = 3
 -- | Generating empty ant Graph of size width
 newAQuad width = graphFromEdges $ zip3 (replicate (width^2) Nothing) (keyList width) (adjListForNewGraph width) :: GraphATuple
 
+newAQuad' = graphFromEdges $ edgesForTestAGraph' :: GraphATuple
 -- | Gennerating empty pheremone Graph of size width
 newPQuad width = graphFromEdges $ zip3 (replicate (width^2) 0.0) (keyList width) (adjListForNewGraph width) :: GraphPTuple
 
