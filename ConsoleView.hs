@@ -47,8 +47,8 @@ specificLinePrint aWorld row wsiz worldCol = do
         --a <- getLine
         let preData = brokenUpGraph $ fstTrip ((sndTrip aWorld) ((nlf row wsiz)+(worldCol-1))) -- pulls out the specific Graph! so only siz^2 elements in pre Data!
         let theData = fst $ splitAt wsiz $snd (splitAt ((row`mod`wsiz)*wsiz) preData) -- TODO wsiz chang to local size
-        putStr("World Col = "++ (show worldCol) ++ " ")
-        putStr("World Row = " ++ (show row) ++ " ")
+        --putStr("World Col = "++ (show worldCol) ++ " ")
+        --putStr("World Row = " ++ (show row) ++ " ")
         --putStr("World Siz = " ++ (show wsiz) ++ " ")
         --putStrLn("Test ")
         --prizzleLn worldCol wsiz preData

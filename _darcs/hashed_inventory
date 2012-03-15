@@ -1,4 +1,4 @@
-pristine:2df273b0d873a5125e8c1d3212c9ef34d061663a42c114ef32f58432bfb1b02f
+pristine:0bfd54070e3e25e6e2e64cc95666e936e26a60ecbebc39d0430f44902a994aef
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -249,3 +249,8 @@ pmsorhaindo@gmail.com**20120313011049
  Ignore-this: 15a9075ea490dfbb58fc767a3be0f57b
 ] 
 hash: 0000004183-fb0cfa3321218ee9793c61932f0a0d9f58d2104f931ccf67f11d27e78b3ef064
+[printing of worlds sorted out. Incomplete idea for stitching up double cases in Stitchablequads.
+pmsorhaindo@gmail.com**20120315023211
+ Ignore-this: 770c871f6a3ba23119ff3b643d1ac7d0
+] 
+hash: 0000600838-f82a85ad42e5ddc767f8ac93840839e2ca0d426cde846574cba549958b0d94d5

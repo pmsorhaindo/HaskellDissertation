@@ -399,18 +399,19 @@ doubleEdgeAnt qs pos = do
 
         procEdgeAntAtNode qs (pos)
 
--- TODO
 --doubleMoveIt :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> (Bool,Bool) -> StitchableQuads
 doubleMoveIt side qs mod mbd nd (dec1:decs1,dec2:decs2) (False,False) = do
-        select
-        (dec1 == oppDir(fst mod)  , do stuff ):
-        (dec2 == oppDir(snd mod)  , do stuff ):
-        (not (dec1 ==  (fst mod))), do stuff ):
+       select  "attempt to Move Ant1 back in"  $
+        (dec1 == oppDir(fst mod)  , "attempt to Move Ant1 back in"   ):
+        (dec2 == oppDir(snd mod)  , "attempt to Move Ant2 back in"   ):
+        (not (dec1 ==  (fst mod)) , "attempt to Move Ant1 along Edge"):
+        (not (dec2 ==  (snd mod)) , "attempt to Move Ant2 along Edge"):
+        (True                     , "removing a decision the decsion " ++  show dec2 ++ "from Ant 2 : its Move Out Direction was " ++ show mod ):
         []  -- TODO not what I want to do doesn't cycle through the choices for each Ant
-        doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) isCurr
-doubleMoveIt side qs mod mbd nd (dec:decs) (True,False) = doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) False
-doubleMoveIt side qs mod mbd nd (dec:decs) (False,True) = doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) True
-doubleMoveIt side qs mod mbd nd (dec:decs) (True,True) isCurr = qs
+doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) = undefined
+doubleMoveIt' side qs mod mbd nd (dec:decs) (True,False) = undefined --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) False
+doubleMoveIt' side qs mod mbd nd (dec:decs) (False,True) = undefined --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) True
+doubleMoveIt' side qs mod mbd nd (dec:decs) (True,True) = undefined --qs
 {-
 loneMoveIt  :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> Bool -> StitchableQuads
 loneMoveIt side qs mod mbd nd (dec:decs) isCurr = loneMoveIt' side qs mod mbd nd (dec:decs) isCurr
