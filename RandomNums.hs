@@ -20,8 +20,8 @@ printxRandoms x = do
         let ns = randoms gen :: [Float]
         print $ take x ns
 
-twoBadRandoms :: RandomGen g => g -> (Int,Int)
-twoBadRandoms gen = (fst $ random gen, fst $ random gen)
+twoRandoms_ :: RandomGen g => g -> (Int,Int)
+twoRandoms_ gen = (fst $ random gen, fst $ random gen)
 
 refreshRandoms = newStdGen
 
@@ -50,7 +50,7 @@ genRandoms lo hi = do { g <- getStdGen; return $ randomRs (lo,hi) g}
 --randomlist :: Int -> StdGen -> [Int]
 --randomlist n = take n . unfoldr (Just . random)
 
-{-
+
 -- modified random number game with flexible range
 askForNumber :: StdGen -> IO ()  
 askForNumber gen = do 
@@ -66,4 +66,4 @@ askForNumber gen = do
             then putStrLn "You are correct!"  
             else putStrLn $ "Sorry, it was " ++ show randNumber  
         askForNumber newGen
--}
+
