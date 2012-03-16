@@ -243,9 +243,9 @@ procEdgeAntAtNode qs pos  = do -- rename fst and snd to adj and curr to make mor
         let x | (isNothing currAnt) && (isNothing adjAnt) = procEdgeAntAtNode qs (pos+1)
               | (isJust currAnt) && (isNothing adjAnt)    = loneEdgeAnt qs True pos
               | (isNothing currAnt) && (isJust adjAnt)    = loneEdgeAnt qs False pos
-              | (isJust currAnt) && (isJust adjAnt)       = qs --doubleEdgeAnt qs (pos+1) PROBLEM WITH DOUBLEEDGE
+              | (isJust currAnt) && (isJust adjAnt)       = doubleEdgeAnt qs pos -- PROBLEM WITH DOUBLEEDGE
 
-        if pos<3
+        if pos>3
                 then x
                 else qs
 
@@ -386,53 +386,40 @@ doubleEdgeAnt qs pos = do
         let isnse1      = ((fst$relation qs), (fst(snd (pEdgePair qs)!!pos))) :snse1
         let isnse2      = ((snd$relation qs), (fst(fst (pEdgePair qs)!!pos))) :snse2
 
-        let decisions1  = makeDecisions isnse1
-        let decisions2  = makeDecisions isnse2
+        let decs1  = makeDecisions isnse1
+        let decs2  = makeDecisions isnse2
 
         let moveOutDir1 = fst $ relation qs
         let moveInDir1  = oppDir (antDir a1)
         let moveOutDir2 = snd $ relation qs
-        let moveInDir2  = oppDir (antDir a2) 
+        let moveInDir2  = oppDir (antDir a2)    
 
-        --let qs = doubleMoveIt side qs (moveOutDir1,moveOutDir2) (moveBackDir1,moveBackDir2)
-        --                      nd (decisions1,decisions2)-- more stuff needed?
+        let qs =  doubleMoveIt qs (moveOutDir1,moveOutDir2) (moveInDir1,moveInDir2) (nd1,nd2) (decs1,decs2) (False,False) :: StitchableQuads
 
-        procEdgeAntAtNode qs (pos)
+        procEdgeAntAtNode qs (pos+1)
 
+doubleMoveIt   :: StitchableQuads -> (Direction, Direction) -> (Direction, Direction) -> (Int,Int) -> ([(Direction, b)], [(Direction, b1)])-> (Bool, Bool)-> StitchableQuads
 --doubleMoveIt :: StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> (Bool,Bool) -> StitchableQuads
 doubleMoveIt qs mod mbd nd (dec1:decs1,dec2:decs2) (False,False) = do
-        let a = select  "attempt to Move Ant1 back in"  $
-                (dec1 == oppDir(fst mod)  , "attempt to Move Ant1 back in"   ):
-                (dec2 == oppDir(snd mod)  , "attempt to Move Ant2 back in"   ):
-                (not (dec1 ==  (fst mod)) , "attempt to Move Ant1 along Edge"):
-                (not (dec2 ==  (snd mod)) , "attempt to Move Ant2 along Edge"):
-                (True                     , "removing a decision the decsion " ++  show dec2 ++ "from Ant 2 : its Move Out Direction was " ++ show mod ):
+        let attemptMove = select  qs  $
+                --"attempt to Move Ant1 back in"
+                (fst dec1 == oppDir(fst mod) ,loneMoveIt (getSide True Side) qs (fst mod) (fst mbd) (fst nd) (dec1:decs1) True  ): 
+                --"attempt to Move Ant2 back in"
+                (fst dec2 == oppDir(snd mod) ,loneMoveIt (getSide False Side) qs (snd mod) (snd mbd) (snd nd) (dec2:decs2) False):
+                --"attempt to Move Ant1 along Edge"
+                (not (fst dec1 ==  (fst mod)),loneMoveIt (getSide True Side) qs (fst mod) (snd mbd) (fst nd) (dec1:decs1) True  ):
+                --"attempt to Move Ant2 along Edge"
+                (not (fst dec2 ==  (snd mod)),loneMoveIt (getSide False Side) qs (fst mod) (snd mbd) (snd nd) (dec2:decs2) False): 
+                -- needs to be random which one to remove
+                (True                        ,doubleMoveIt qs mod mbd nd (dec1:decs1,decs2) (False,False)): 
                 []
-        putStrLn(a)  -- TODO not what I want to do doesn't cycle through the choices for each Ant
+        attemptMove
+        --putStrLn(a)  -- TODO not what I want to do doesn't cycle through the choices for each Ant
 
-doubleMoveIt' qs mod mbd nd (dec:decs) (False,False) = undefined
-doubleMoveIt' qs mod mbd nd (dec:decs) (True,False) = undefined --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) False
-doubleMoveIt' qs mod mbd nd (dec:decs) (False,True) = undefined --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) True
-doubleMoveIt' qs mod mbd nd (dec:decs) (True,True) = undefined --qs
-{-
-loneMoveIt  :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> Bool -> StitchableQuads
-loneMoveIt side qs mod mbd nd (dec:decs) isCurr = loneMoveIt' side qs mod mbd nd (dec:decs) isCurr
-loneMoveIt _ qs _ _ _ [] _ = qs
-
-loneMoveIt' side qs mod mbd nd (dec:decs) isCurr | mod == fst dec = checkForAntOut side qs mod mbd nd (dec:decs) isCurr
-                                                 | mbd == fst dec = flipAntAtNode side qs mbd nd
-                                                 | otherwise = checkForAntIn side qs mod mbd nd (dec:decs) isCurr
--}
-{-oneEdgeAnt qs isCurr pos = do
-                        ...
-
-                        let moveOutDir = side $ relation qs -- if this direction is chosen, special swap needed
-                        let moveBackDir = oppDir (antDir a) -- if this direction is chosen change direction but don't move.
-
-                        let qs = loneMoveIt side qs moveOutDir moveBackDir nd decisions isCurr --swapNode --addToNoProc
-
-                        procEdgeAntAtNode qs (pos+1)-}
-
+doubleMoveIt' qs mod mbd nd (dec:decs) (False,False) = qs
+doubleMoveIt' qs mod mbd nd (dec:decs) (True,False) = qs --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) False
+doubleMoveIt' qs mod mbd nd (dec:decs) (False,True) = qs --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) True
+doubleMoveIt' qs mod mbd nd (dec:decs) (True,True) = qs --qs
 
 -- | Arranges the Pheremone list to hold
 makeDecision :: [(Direction,Double)] -> Direction

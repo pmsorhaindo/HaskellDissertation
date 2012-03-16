@@ -1,4 +1,4 @@
-pristine:5467c196a4df773d4ab0c8f06f3d202bf97b70cbf7427664d03338f24b49f0ac
+pristine:0e17a8d4609bae3462c33a0abe1eab5951fffeb9999b7783f326b83c9bb491e6
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -259,3 +259,8 @@ pmsorhaindo@gmail.com**20120315204119
  Ignore-this: 29bde24276e51ca7ef98d5c14a6756ed
 ] 
 hash: 0000001891-9047d4ad0cb25cfe89a9af535f342659a8b39e3de644421816549e832c444dc9
+[Problem with Double Ant Edge ... Just hangs :( But I've got gtk working eyy!
+pmsorhaindo@gmail.com**20120316161258
+ Ignore-this: 84760815f39525659c57b21a8643c389
+] 
+hash: 0000004739-d969413d4f375f77542c2a8120edef0dc7f2f031aaf1788b27de2b19494b68e2
