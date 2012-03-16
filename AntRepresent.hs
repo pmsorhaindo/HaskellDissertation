@@ -10,15 +10,15 @@ data Mode = Explore | Return -- possibly add more behaviour types here
 instance Show Direction where 
         show North = "North"
         show South = "South"
-        show East = "East"
-        show West = "West"
+        show East  = "East"
+        show West  = "West"
 
 data Ant = Ant {
-         antId        :: Int
-        ,antDir       :: Direction
+         antId     :: Int
+        ,antDir    :: Direction
         ,pherLevel :: Double
-        ,age :: Int
-        ,aim :: Mode
+        ,age       :: Int
+        ,aim       :: Mode
         }
         deriving(Eq)
 
@@ -29,8 +29,8 @@ instance Show Ant where
 
 oppDir x | x == North = South
          | x == South = North
-         | x == East = West
-         | x == West = East
+         | x == East  = West
+         | x == West  = East
 
 
 --changeDir :: Vector -> Vector

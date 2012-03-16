@@ -6,6 +6,7 @@ import Data.Graph
 import Data.Maybe (fromJust, isNothing, isJust)
 import Data.List (maximumBy, sortBy)
 import Data.Bool.HT
+import Debug.Trace
 import Test.QuickCheck
 import Test.HUnit
 --Test-Framework .... to automate the testing -- TODO
@@ -57,7 +58,7 @@ edgesForTestAGraph :: [(Maybe Ant, Int, [Int])]
 edgesForTestAGraph = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Just(Ant 1 West 2.1  0 Return),4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 1.0 0 Return),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Just(Ant 1 West 0.2 0 Return),9,[8,6])]
 
 edgesForTestAGraph' :: [(Maybe Ant, Int, [Int])]
-edgesForTestAGraph' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Just(Ant 1 West 2.1  0 Return),5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+edgesForTestAGraph' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Just(Ant 1 West 2.1  0 Return),5,[2,4,8,6]),(Just(Ant 1 West 2.1  0 Return),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
 
 edgesForTestPGraph :: [(Double, Int, [Int])]
 edgesForTestPGraph = [(0,1,[2,4]),(0,2,[1,5,3]),(0,3,[2,6]),(0,4,[1,7,15]),(0,5,[2,4,8,6]),(0,6,[3,5,9]),(0,7,[4,8]),(0,8,[7,5,9]),(0,9,[8,6])]
@@ -226,7 +227,7 @@ increaseSense = undefined
         
 --procEdgeAntAtNode :: StitchableQuads -> Int -> StitchableQuads 
 procEdgeAntAtNode qs pos  = do -- rename fst and snd to adj and curr to make more readable?
-
+        
         let rel = relation qs 
         let currAntGraph = fst $ antGraphs qs
         let currPherGraph = fst $ pherGraphs qs
@@ -235,7 +236,6 @@ procEdgeAntAtNode qs pos  = do -- rename fst and snd to adj and curr to make mor
         let aEdge = aEdgePair qs
         let pEdge = pEdgePair qs
         let npList = noProcList qs
-        let resultingTuples = undefined
 
         let currAnt = (fst $ (fst $ aEdge) !! pos)
         let adjAnt = (fst $ (snd $ aEdge) !! pos)
@@ -243,9 +243,9 @@ procEdgeAntAtNode qs pos  = do -- rename fst and snd to adj and curr to make mor
         let x | (isNothing currAnt) && (isNothing adjAnt) = procEdgeAntAtNode qs (pos+1)
               | (isJust currAnt) && (isNothing adjAnt)    = loneEdgeAnt qs True pos
               | (isNothing currAnt) && (isJust adjAnt)    = loneEdgeAnt qs False pos
-              | (isJust currAnt) && (isJust adjAnt)       = doubleEdgeAnt qs (pos+1)
+              | (isJust currAnt) && (isJust adjAnt)       = qs --doubleEdgeAnt qs (pos+1) PROBLEM WITH DOUBLEEDGE
 
-        if pos<10
+        if pos<3
                 then x
                 else qs
 
@@ -399,19 +399,21 @@ doubleEdgeAnt qs pos = do
 
         procEdgeAntAtNode qs (pos)
 
---doubleMoveIt :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> (Bool,Bool) -> StitchableQuads
-doubleMoveIt side qs mod mbd nd (dec1:decs1,dec2:decs2) (False,False) = do
-       select  "attempt to Move Ant1 back in"  $
-        (dec1 == oppDir(fst mod)  , "attempt to Move Ant1 back in"   ):
-        (dec2 == oppDir(snd mod)  , "attempt to Move Ant2 back in"   ):
-        (not (dec1 ==  (fst mod)) , "attempt to Move Ant1 along Edge"):
-        (not (dec2 ==  (snd mod)) , "attempt to Move Ant2 along Edge"):
-        (True                     , "removing a decision the decsion " ++  show dec2 ++ "from Ant 2 : its Move Out Direction was " ++ show mod ):
-        []  -- TODO not what I want to do doesn't cycle through the choices for each Ant
-doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) = undefined
-doubleMoveIt' side qs mod mbd nd (dec:decs) (True,False) = undefined --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) False
-doubleMoveIt' side qs mod mbd nd (dec:decs) (False,True) = undefined --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) True
-doubleMoveIt' side qs mod mbd nd (dec:decs) (True,True) = undefined --qs
+--doubleMoveIt :: StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> (Bool,Bool) -> StitchableQuads
+doubleMoveIt qs mod mbd nd (dec1:decs1,dec2:decs2) (False,False) = do
+        let a = select  "attempt to Move Ant1 back in"  $
+                (dec1 == oppDir(fst mod)  , "attempt to Move Ant1 back in"   ):
+                (dec2 == oppDir(snd mod)  , "attempt to Move Ant2 back in"   ):
+                (not (dec1 ==  (fst mod)) , "attempt to Move Ant1 along Edge"):
+                (not (dec2 ==  (snd mod)) , "attempt to Move Ant2 along Edge"):
+                (True                     , "removing a decision the decsion " ++  show dec2 ++ "from Ant 2 : its Move Out Direction was " ++ show mod ):
+                []
+        putStrLn(a)  -- TODO not what I want to do doesn't cycle through the choices for each Ant
+
+doubleMoveIt' qs mod mbd nd (dec:decs) (False,False) = undefined
+doubleMoveIt' qs mod mbd nd (dec:decs) (True,False) = undefined --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) False
+doubleMoveIt' qs mod mbd nd (dec:decs) (False,True) = undefined --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) True
+doubleMoveIt' qs mod mbd nd (dec:decs) (True,True) = undefined --qs
 {-
 loneMoveIt  :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> Bool -> StitchableQuads
 loneMoveIt side qs mod mbd nd (dec:decs) isCurr = loneMoveIt' side qs mod mbd nd (dec:decs) isCurr

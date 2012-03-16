@@ -5,6 +5,7 @@ data Direction = North | South | East | West
         deriving(Eq)
 
 data Mode = Explore | Return -- possibly add more behaviour types here
+        deriving (Eq)
 
 instance Show Direction where 
         show North = "North"

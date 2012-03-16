@@ -1,4 +1,4 @@
-pristine:0bfd54070e3e25e6e2e64cc95666e936e26a60ecbebc39d0430f44902a994aef
+pristine:5467c196a4df773d4ab0c8f06f3d202bf97b70cbf7427664d03338f24b49f0ac
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -254,3 +254,8 @@ pmsorhaindo@gmail.com**20120315023211
  Ignore-this: 770c871f6a3ba23119ff3b643d1ac7d0
 ] 
 hash: 0000600838-f82a85ad42e5ddc767f8ac93840839e2ca0d426cde846574cba549958b0d94d5
+[save select statement
+pmsorhaindo@gmail.com**20120315204119
+ Ignore-this: 29bde24276e51ca7ef98d5c14a6756ed
+] 
+hash: 0000001891-9047d4ad0cb25cfe89a9af535f342659a8b39e3de644421816549e832c444dc9

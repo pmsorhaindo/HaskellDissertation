@@ -1,86 +1,31 @@
---GUI
-
-module Main where
-
-import Graphics.UI.WX
-import Graphics.UI.WXCore 
+import Graphics.UI.Gtk
 
 main :: IO ()
-main
-  = start gui
+main = do
+     initGUI
+     window <- windowNew
+     set window [windowTitle := "Paned Window", containerBorderWidth := 10,
+                 windowDefaultWidth := 400, windowDefaultHeight := 400 ]
 
-gui :: IO ()
-gui
-  = do -- Main GUI Elements: Frame, Panel, Text control, and the Notebook
-       f       <- frame [text := "Ant Simulation Parameters"]
-       p       <- panel f []
-       nb      <- notebook p [] 
-       textlog <- textCtrl p [enabled := False, wrap := WrapNone] 
+     pw <- vPanedNew
+     panedSetPosition pw 250
+     containerAdd window pw
+     af <- aspectFrameNew 0.5 0.5 (Just 3.0)
+     frameSetLabel af "Aspect Ratio: 3.0"
+     frameSetLabelAlign af 1.0 0.0
+     panedAdd1 pw af
 
-       -- use text control as logger
-       textCtrlMakeLogActiveTarget textlog
-       logMessage "Logging enabled"              
-       -- set f [on closing :~ \prev -> do logSetActiveTarget oldlog; logDelete log; prev]
+     da <- drawingAreaNew
+     containerAdd af da
+     widgetModifyBg da StateNormal (Color 65535 0 0)
+   
+     tv <- textViewNew
+     panedAdd2 pw tv
+     buf <- textViewGetBuffer tv
 
-       -- radio box page
-       p2   <- panel  nb []
-       let fstLabels = ["Search", "Colonate", "Random"]
-       let sndLabels = ["Parallel", "Concurrent", "Not Concurrent"]
-       r1   <- radioBox p2 Vertical fstLabels   [text := "Ant Behaviours", on select ::= logSelect]
-       r2   <- radioBox p2 Vertical sndLabels   [text := "Backend Behaviours", on select ::= logSelect] --tooltip String property
-       rb1  <- button   p2 [text := "Disable", on command ::= onEnable r1]
+     onBufferChanged buf $ do cn <- textBufferGetCharCount buf
+                              putStrLn (show cn)   
 
-       -- slider/gauge page
-       p3   <- panel nb []
-       s    <- hslider p3 True {- show labels -} 1 100 [selection := 50]
-       g    <- hgauge  p3 100 [selection := 50]
-       set s [on command := do{ i <- get s selection; logMessage("Ants starting " ++ (show i)); set g [selection := i] } ]
-
-
-       -- button page
-       p1   <- panel  nb []
-       ok   <- button p1 [text := "Run Simulation", on command := do{logMessage "Start Simulation"; getAllValues s r1 r2 rb1}]
-       quit <- button p1 [text := "Quit", on command := close f]
-
-
-       -- specify layout
-       set f [layout :=
-                container p $
-                column 0
-                 [ tabs nb
-                    [tab "Main" $ 
-                     container p1 $ margin 15 $ floatCentre $ row 5 [widget ok, widget quit]
-
-                    ,tab "Selections" $ 
-                     container p2 $ margin 15 $ column 5 [ hstretch $ widget rb1
-                                                         , row 0 [floatLeft $ widget r1
-                                                         ,floatRight $ widget r2]
-                                                         ]
-
-                    ,tab "Ants" $ 
-                     container p3 $ margin 15 $ column 5 [ hfill $ widget s
-                                                         , hfill $ widget g
-                                                         , glue
-                                                         ]
-                    ]
-                 , hfill $ minsize (sz 20 80) $ widget textlog
-                 ]
-             , clientSize := sz 400 300 ]
-       return ()
-
-  where
-    -- logSelect :: (Selection w, Items w String) => w -> IO ()
-    logSelect w
-      = do i <- get w selection
-           s <- get w (item i)
-           logMessage ("selected index: " ++ show i ++ ": " ++ s)
-           
-    onEnable w b
-      = do set w [enabled :~ not]
-           enable <- get w enabled
-           set b [text := (if enable then "Disable" else "Enable")]
-
-getAllValues s r1 r2 rb1 = do
-                                i<-get s selection
-                                putStrLn("woot " ++ show i)
-                                -- pass To Simulation
+     widgetShowAll window 
+     onDestroy window mainQuit
+     mainGUI

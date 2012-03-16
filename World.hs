@@ -82,10 +82,10 @@ dirsNeeded quadTuple
 genQuadPairs :: [(Int, Int)] -> [((Int, Direction), (Int, Direction))]
 genQuadPairs pairs = map dirsNeeded pairs
 
-stitchUpEdges :: GraphAWTuple -> GraphAWTuple
-stitchUpEdges world = undefined --stitchEdges edges $ fstTrip world -- more serially stuffs
+--stitchUpEdges :: GraphAWTuple -> GraphAWTuple NOT NEEDED?!
+--stitchUpEdges world = undefined --stitchEdges edges $ fstTrip world -- more serially stuffs
 
---stitchUpEdge :: GraphAWTuple -> GraphPWTuple -> ((Int,Direction),(Int,Direction)) -> GraphAWTuple
+--stitchUpEdge :: GraphAWTuple -> GraphPWTuple -> ((Int,Direction),(Int,Direction)) -> Int -> GraphAWTuple
 stitchUpEdge antWorld pherWorld quadPair qsiz = do
 
                 let quadSize = qsiz                
