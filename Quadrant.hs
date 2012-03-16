@@ -55,7 +55,7 @@ edgesForTestGraph :: [([Char], Int, [Int])]
 edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
 
 edgesForTestAGraph :: [(Maybe Ant, Int, [Int])]
-edgesForTestAGraph = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Just(Ant 1 West 2.1  0 Return),4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 1.0 0 Return),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Just(Ant 1 West 0.2 0 Return),9,[8,6])]
+edgesForTestAGraph = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 1.0 0 Return),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Just(Ant 1 West 0.2 0 Return),9,[8,6])]
 
 edgesForTestAGraph' :: [(Maybe Ant, Int, [Int])]
 edgesForTestAGraph' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Just(Ant 1 West 2.1  0 Return),5,[2,4,8,6]),(Just(Ant 1 West 2.1  0 Return),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
@@ -243,7 +243,7 @@ procEdgeAntAtNode qs pos  = do -- rename fst and snd to adj and curr to make mor
         let x | (isNothing currAnt) && (isNothing adjAnt) = procEdgeAntAtNode qs (pos+1)
               | (isJust currAnt) && (isNothing adjAnt)    = loneEdgeAnt qs True pos
               | (isNothing currAnt) && (isJust adjAnt)    = loneEdgeAnt qs False pos
-              | (isJust currAnt) && (isJust adjAnt)       = doubleEdgeAnt qs pos -- PROBLEM WITH DOUBLEEDGE
+              | (isJust currAnt) && (isJust adjAnt)       = loneEdgeAnt qs False pos --doubleEdgeAnt qs pos -- PROBLEM WITH DOUBLEEDGE
 
         if pos>3
                 then x
@@ -261,28 +261,28 @@ getSide False OtherSide = fst
 -- | Lone Edge Ant
 loneEdgeAnt :: StitchableQuads -> Bool -> Int -> StitchableQuads
 loneEdgeAnt qs isCurr pos = do
-                        let side        = getSide isCurr Side
-                        let oSide       = getSide isCurr OtherSide
-                        
-                        --Move Ant -- tested with hand calculations
-                        let a           = fromJust $ fst((side $ aEdgePair $ qs)!!pos) -- gets me my Ant
-                        let nd          = nodeFromEdgeIndex side qs pos
-                        -- fetch sense from the graph the ant is in.
-                        let snse        = senseSur (side $ pherGraphs qs) nd
-                        --increases sense to make use of the other graph.
-                        let isnse       = ((side$relation qs), (fst(oSide (pEdgePair qs)!!pos))) :snse
-                        -- makes decision by prioritizing the phermone list
-                        let decisions   = makeDecisions isnse
+        let side        = getSide isCurr Side
+        let oSide       = getSide isCurr OtherSide
 
-                        let moveOutDir  = side $ relation qs -- if this direction is chosen, special swap needed
-                        let moveBackDir = oppDir (antDir a) -- if this direction is chosen change direction but don't move.
+        --Move Ant -- tested with hand calculations
+        let a           = fromJust $ fst((side $ aEdgePair $ qs)!!pos) -- gets me my Ant
+        let nd          = nodeFromEdgeIndex side qs pos
+        -- fetch sense from the graph the ant is in.
+        let snse        = senseSur (side $ pherGraphs qs) nd
+        --increases sense to make use of the other graph.
+        let isnse       = ((side$relation qs), (fst(oSide (pEdgePair qs)!!pos))) :snse
+        -- makes decision by prioritizing the phermone list
+        let decisions   = makeDecisions isnse
 
-                        let qs = loneMoveIt side qs moveOutDir moveBackDir nd decisions isCurr --swapNode --addToNoProc
+        let moveOutDir  = side $ relation qs -- if this direction is chosen, special swap needed
+        let moveBackDir = oppDir (antDir a) -- if this direction is chosen change direction but don't move.
 
-                        procEdgeAntAtNode qs (pos+1)
+        let qs = loneMoveIt side qs moveOutDir moveBackDir nd decisions isCurr --swapNode --addToNoProc
+
+        procEdgeAntAtNode qs (pos+1)
 
 -- | 
-loneMoveIt  :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> Bool -> StitchableQuads
+loneMoveIt  :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, Double)] -> Bool -> StitchableQuads
 loneMoveIt side qs mod mbd nd (dec:decs) isCurr = loneMoveIt' side qs mod mbd nd (dec:decs) isCurr
 loneMoveIt _ qs _ _ _ [] _ = qs -- No possible moves.
 
@@ -304,6 +304,7 @@ flipAntAtNode side qs mbd nd = newQs qs
               npl qs = (noProcList qs) -- NEEDS CHANGING
 
 -- |
+checkForAntIn :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, Double)] -> Bool -> StitchableQuads
 checkForAntIn side qs mod mbd nd (dec:decs) isCurr = do
         let nxtNd = nextNode nd (fst dec) $ qSize qs
         if isAntAtNode (fst$antGraphs qs) nxtNd
@@ -325,21 +326,6 @@ swapIn qs side nd1 nd2 = newQs qs
               npl qs = (noProcList qs) --TODO Update no proc List      
 
 -- | 
---swapOut :: StitchableQuads -> (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> Int -> Int
---        -> StitchableQuads
-swapOut qs side side' currNd oppNd = newQs qs
-        where newQs qs    = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
-              quadSize qs = qSize qs
-              rel qs      = relation qs
-              tempAnt     = Just (fstTrip (getAntFromNode (side' (antGraphs qs)) currNd)) --actually doesn't because its only one Ant
-              ags qs side = side(((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)),(((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing)))) --depending on which side the Ant is in
-                                                                                                     -- a particular solution is chosen from the tuple.                                                                                                     
-              pgs qs      = pherGraphs qs
-              aep qs      = aEdgePair qs
-              pep qs      = pEdgePair qs
-              npl qs      = noProcList qs
-
--- | 
 checkForAntOut side qs mod mbd nd (dec:decs) isCurr = do 
         let outNd = outNode nd (fst dec) $ qSize qs
         let side' = getSide isCurr Side
@@ -347,6 +333,42 @@ checkForAntOut side qs mod mbd nd (dec:decs) isCurr = do
                 then loneMoveIt side qs mod mbd nd decs isCurr
                 else swapOut qs side side' nd outNd -- side' to selct the section of the antGraph returned from antGraphs I want.
 
+-- | 
+--swapOut :: StitchableQuads -> (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> Int -> Int
+--        -> StitchableQuads
+swapOut qs side side' currNd oppNd = newQs qs
+        where newQs qs    = StitchableQuads (quadSize qs) (rel qs) (ags qs side) (pgs qs) (aep qs) (pep qs) (npl qs)
+              quadSize qs = qSize qs
+              rel qs      = relation qs
+              tempAnt     = Just (fstTrip (getAntFromNode (side' (antGraphs qs)) currNd)) --actually doesn't because its only one Ant
+              --depending on which side the Ant is in
+              -- a particular solution is chosen from the tuple.                                                                       
+              ags qs side = side(((addExistingAnt (fst$antGraphs qs) currNd Nothing),(addExistingAnt (snd$antGraphs qs) oppNd tempAnt)),(((addExistingAnt (fst$antGraphs qs) currNd tempAnt)),((addExistingAnt (snd$antGraphs qs) currNd Nothing))))
+              pgs qs      = pherGraphs qs
+              aep qs      = aEdgePair qs
+              pep qs      = pEdgePair qs
+              npl qs      = noProcList qs
+
+{-      *Main> let sti = stitchUpEdge antWorld pherWorld ((0,East),(1,West)) 3
+        *Main> let x = swapOut sti fst snd 6 4 
+        *Main> let gra = antGraphs  x
+        *Main> prettyAnt $ fst $antGraphs sti 
+        |X||X||X|
+        |X||X||O|
+        |X||X||O|
+        .        
+        
+        *Main> prettyAnt $fst gra
+        |X||X||X|
+        |X||X||X|
+        |X||X||O|
+        .
+        
+        *Main> prettyAnt $snd gra
+        |X||X||X|
+        |O||X||O|
+        |X||X||O|
+        . -}
 
 
 -- Y U NO WORK FOR ME :( - found that work around tho :D
@@ -367,7 +389,7 @@ outNode nd dir siz | dir == North = nd + (siz^2 - siz)
                    | dir == East = nd - (siz-1)
                    | dir == West = nd + (siz-1)
 
-nodeFromEdgeIndex :: ((Direction, Direction) -> Direction) -> StitchableQuads -> Int -> Int
+nodeFromEdgeIndex :: ((Direction, Direction) -> Direction) -> StitchableQuads -> Int -> Int -- TODO Faulty function detected
 nodeFromEdgeIndex side qs pos | (side $ relation qs) == North = (pos+1) -- edgepair index to node.
                               | (side $ relation qs) == South = (pos+1) +((qSize qs)^2 - (qSize qs))
                               | (side $ relation qs) == East = (qSize qs)*(pos)+1
@@ -398,10 +420,10 @@ doubleEdgeAnt qs pos = do
 
         procEdgeAntAtNode qs (pos+1)
 
-doubleMoveIt   :: StitchableQuads -> (Direction, Direction) -> (Direction, Direction) -> (Int,Int) -> ([(Direction, b)], [(Direction, b1)])-> (Bool, Bool)-> StitchableQuads
+doubleMoveIt   :: StitchableQuads -> (Direction, Direction) -> (Direction, Direction) -> (Int,Int) -> ([(Direction, Double)], [(Direction, Double)])-> (Bool, Bool)-> StitchableQuads
 --doubleMoveIt :: StitchableQuads -> Direction -> Direction -> Int -> [(Direction, b)] -> (Bool,Bool) -> StitchableQuads
 doubleMoveIt qs mod mbd nd (dec1:decs1,dec2:decs2) (False,False) = do
-        let attemptMove = select  qs  $
+        let attemptMove = select  (doubleMoveIt qs mod mbd nd (dec1:decs1,decs2) (False,False))  $
                 --"attempt to Move Ant1 back in"
                 (fst dec1 == oppDir(fst mod) ,loneMoveIt (getSide True Side) qs (fst mod) (fst mbd) (fst nd) (dec1:decs1) True  ): 
                 --"attempt to Move Ant2 back in"
@@ -414,12 +436,13 @@ doubleMoveIt qs mod mbd nd (dec1:decs1,dec2:decs2) (False,False) = do
                 (True                        ,doubleMoveIt qs mod mbd nd (dec1:decs1,decs2) (False,False)): 
                 []
         attemptMove
-        --putStrLn(a)  -- TODO not what I want to do doesn't cycle through the choices for each Ant
+       
+doubleMoveOne side qs mod mbd nd (dec:decs) isCurr = doubleMoveOne' side qs mod mbd nd (dec:decs) isCurr
+doubleMoveOne _ qs _ _ _ [] _ = qs -- No possible moves.
 
-doubleMoveIt' qs mod mbd nd (dec:decs) (False,False) = qs
-doubleMoveIt' qs mod mbd nd (dec:decs) (True,False) = qs --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) False
-doubleMoveIt' qs mod mbd nd (dec:decs) (False,True) = qs --doubleMoveIt' side qs mod mbd nd (dec:decs) (False,False) True
-doubleMoveIt' qs mod mbd nd (dec:decs) (True,True) = qs --qs
+doubleMoveOne' side qs mod mbd nd (dec:decs) isCurr | mod == fst dec = checkForAntOut side qs mod mbd nd (dec:decs) isCurr
+                                                    | mbd == fst dec = flipAntAtNode side qs mbd nd
+                                                    | otherwise = checkForAntIn side qs mod mbd nd (dec:decs) isCurr
 
 -- | Arranges the Pheremone list to hold
 makeDecision :: [(Direction,Double)] -> Direction
@@ -485,6 +508,6 @@ newAQuad width = graphFromEdges $ zip3 (replicate (width^2) Nothing) (keyList wi
 
 newAQuad' = graphFromEdges $ edgesForTestAGraph' :: GraphATuple
 -- | Gennerating empty pheremone Graph of size width
-newPQuad width = graphFromEdges $ zip3 (replicate (width^2) 0.0) (keyList width) (adjListForNewGraph width) :: GraphPTuple
+newPQuad width = graphFromEdges $ zip3 (replicate (width^2) 1.0) (keyList width) (adjListForNewGraph width) :: GraphPTuple
 
 

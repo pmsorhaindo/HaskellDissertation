@@ -104,17 +104,7 @@ stitchUpEdge antWorld pherWorld quadPair qsiz = do
 
                 stitchable
                 
-                -- x:xs = -- if x = nothing and other list x = nothing do nothing
-                       -- if x = ant and other list x = nothing (<<get all nodes>> for x first list and process)
-                       -- if x = ant and other list x = ants processed one after the other
-                       -- note : if an ant moves in the direction of this function the next 
-                -- x:[] =
-                -- []   =
-
-                -- quadPair shows the move out direction of each edge.
-
---singleStitch aWorld pWorld 
-
+                
 --based off listOfNodesWithAntsIn
 edgePointsWithAntsIn :: [(Maybe Ant, Int)] -> [(Maybe Ant,Int)]
 edgePointsWithAntsIn [] = []

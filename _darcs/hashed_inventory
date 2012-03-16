@@ -1,4 +1,4 @@
-pristine:0e17a8d4609bae3462c33a0abe1eab5951fffeb9999b7783f326b83c9bb491e6
+pristine:29eb878fea3955d07a267d7d5239b3db34a82705d28df4b94b4f66b98179982c
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -264,3 +264,8 @@ pmsorhaindo@gmail.com**20120316161258
  Ignore-this: 84760815f39525659c57b21a8643c389
 ] 
 hash: 0000004739-d969413d4f375f77542c2a8120edef0dc7f2f031aaf1788b27de2b19494b68e2
+[compiling the double edge Ant case but no movement ;(
+pmsorhaindo@gmail.com**20120316174930
+ Ignore-this: f875f897fd73b40a8fc459c8a873d37d
+] 
+hash: 0000005111-19596859f9d2f3a086d26e357a341383aa6f92658a445b89af07fd29a35117a4
