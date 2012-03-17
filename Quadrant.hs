@@ -9,6 +9,7 @@ import Data.Bool.HT
 import Debug.Trace
 import Test.QuickCheck
 import Test.HUnit
+
 --Test-Framework .... to automate the testing -- TODO
 
 -- | Personal imports
@@ -57,8 +58,17 @@ edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),(
 edgesForTestAGraph :: [(Maybe Ant, Int, [Int])]
 edgesForTestAGraph = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 1.0 0 Return),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Just(Ant 1 West 0.2 0 Return),9,[8,6])]
 
-edgesForTestAGraph' :: [(Maybe Ant, Int, [Int])]
-edgesForTestAGraph' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Just(Ant 1 West 2.1  0 Return),5,[2,4,8,6]),(Just(Ant 1 West 2.1  0 Return),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+edgesForTestAGraph1' :: [(Maybe Ant, Int, [Int])]
+edgesForTestAGraph1' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+
+edgesForTestAGraph2' :: [(Maybe Ant, Int, [Int])]
+edgesForTestAGraph2' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Just(Ant 1 West 2.1  0 Return),5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+
+edgesForTestAGraph3' :: [(Maybe Ant, Int, [Int])]
+edgesForTestAGraph3' = [(Just(Ant 1 West 2.1  0 Return),1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+
+edgesForTestAGraph4' :: [(Maybe Ant, Int, [Int])]
+edgesForTestAGraph4' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 2.1  0 Return),6,[3,5,9]),(Just(Ant 1 West 2.1  0 Return),7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
 
 edgesForTestPGraph :: [(Double, Int, [Int])]
 edgesForTestPGraph = [(0,1,[2,4]),(0,2,[1,5,3]),(0,3,[2,6]),(0,4,[1,7,15]),(0,5,[2,4,8,6]),(0,6,[3,5,9]),(0,7,[4,8]),(0,8,[7,5,9]),(0,9,[8,6])]
@@ -224,6 +234,12 @@ senseSur graphT nd = map directionize (adjListForVertex (truncate (sqrt(fromInte
 -- | increaseSense --TODO
 increaseSense :: [(Direction,Double)] -> [(Direction,Double)]
 increaseSense = undefined
+
+putItOutside qs pos currAnt adjAnt
+                      | (isNothing currAnt) && (isNothing adjAnt) = procEdgeAntAtNode qs (pos+1)
+                      | (isJust currAnt) && (isNothing adjAnt)    = loneEdgeAnt qs True pos
+                      | (isNothing currAnt) && (isJust adjAnt)    = loneEdgeAnt qs False pos
+                      | (isJust currAnt) && (isJust adjAnt)       = loneEdgeAnt qs False pos
         
 --procEdgeAntAtNode :: StitchableQuads -> Int -> StitchableQuads 
 procEdgeAntAtNode qs pos  = do -- rename fst and snd to adj and curr to make more readable?
@@ -240,15 +256,22 @@ procEdgeAntAtNode qs pos  = do -- rename fst and snd to adj and curr to make mor
         let currAnt = (fst $ (fst $ aEdge) !! pos)
         let adjAnt = (fst $ (snd $ aEdge) !! pos)
         
-        let x | (isNothing currAnt) && (isNothing adjAnt) = procEdgeAntAtNode qs (pos+1)
-              | (isJust currAnt) && (isNothing adjAnt)    = loneEdgeAnt qs True pos
-              | (isNothing currAnt) && (isJust adjAnt)    = loneEdgeAnt qs False pos
-              | (isJust currAnt) && (isJust adjAnt)       = loneEdgeAnt qs False pos --doubleEdgeAnt qs pos -- PROBLEM WITH DOUBLEEDGE
-
-        if pos>3
-                then x
+        if pos<(qSize qs) -- fail
+                then putItOutside qs pos currAnt adjAnt
                 else qs
 
+testProc pos = do
+        if pos <3
+                then testfunc pos 3 3
+                else putStrLn("Termin")
+
+testfunc pos jub bub
+        | jub==bub = testProc (pos+1)
+        | jub > bub = yolo pos
+
+yolo pos = do
+        putStrLn("yo!")
+        testProc (pos+1)
 data WhichSide = Side | OtherSide
 
 getSide :: Bool -> WhichSide -> (a,a) -> a
@@ -279,7 +302,8 @@ loneEdgeAnt qs isCurr pos = do
 
         let qs = loneMoveIt side qs moveOutDir moveBackDir nd decisions isCurr --swapNode --addToNoProc
 
-        procEdgeAntAtNode qs (pos+1)
+        --procEdgeAntAtNode qs (pos+1)
+        qs
 
 -- | 
 loneMoveIt  :: (((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)) -> StitchableQuads -> Direction -> Direction -> Int -> [(Direction, Double)] -> Bool -> StitchableQuads
@@ -392,7 +416,7 @@ outNode nd dir siz | dir == North = nd + (siz^2 - siz)
 nodeFromEdgeIndex :: ((Direction, Direction) -> Direction) -> StitchableQuads -> Int -> Int -- TODO Faulty function detected
 nodeFromEdgeIndex side qs pos | (side $ relation qs) == North = (pos+1) -- edgepair index to node.
                               | (side $ relation qs) == South = (pos+1) +((qSize qs)^2 - (qSize qs))
-                              | (side $ relation qs) == East = (qSize qs)*(pos)+1
+                              | (side $ relation qs) == East = (qSize qs)*(pos+1)
                               | (side $ relation qs) == West = (pos+1)*(qSize qs)
 
 -- | Double Edge Ant
@@ -501,12 +525,16 @@ getPEdge graphPT getDir
 a'' = graphTuple edgesForTestAGraph
 b'' = graphTuple edgesForTestPGraph
 
+a1' = graphTuple edgesForTestAGraph1'
+a2' = graphTuple edgesForTestAGraph2'
+a3' = graphTuple edgesForTestAGraph3'
+a4' = graphTuple edgesForTestAGraph4'
 
 width = 3
 -- | Generating empty ant Graph of size width
 newAQuad width = graphFromEdges $ zip3 (replicate (width^2) Nothing) (keyList width) (adjListForNewGraph width) :: GraphATuple
 
-newAQuad' = graphFromEdges $ edgesForTestAGraph' :: GraphATuple
+newAQuad' = graphFromEdges $ edgesForTestAGraph1' :: GraphATuple
 -- | Gennerating empty pheremone Graph of size width
 newPQuad width = graphFromEdges $ zip3 (replicate (width^2) 1.0) (keyList width) (adjListForNewGraph width) :: GraphPTuple
 

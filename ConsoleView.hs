@@ -35,7 +35,7 @@ prettyAntWorld aWorld  = do
 
 printWorldLine :: Int -> Int-> Int -> GraphAWTuple -> IO()
 
-printWorldLine row worldCol wsiz aWorld  | ((wsiz^2))-row == 0 = putStr("")
+printWorldLine row worldCol wsiz aWorld  | ((wsiz*3))-row == 0 = putStr("")
 
                                          | ((wsiz - worldCol) > -1) = do
         specificLinePrint aWorld row wsiz worldCol
@@ -43,34 +43,38 @@ printWorldLine row worldCol wsiz aWorld  | ((wsiz^2))-row == 0 = putStr("")
                                          | otherwise = do
         printWorldLine row 1 wsiz aWorld
 
+getGraph row qsiz wsiz worldCol = ((row`div`qsiz)*wsiz)+(worldCol-1)
+
 specificLinePrint aWorld row wsiz worldCol = do
         --a <- getLine
-        let preData = brokenUpGraph $ fstTrip ((sndTrip aWorld) ((nlf row wsiz)+(worldCol-1))) -- pulls out the specific Graph! so only siz^2 elements in pre Data!
-        let theData = fst $ splitAt wsiz $snd (splitAt ((row`mod`wsiz)*wsiz) preData) -- TODO wsiz chang to local size
+        let siz = truncate $ sqrt $fromIntegral $length $brokenUpGraph $ fstTrip ((sndTrip aWorld) (0)) 
+        let preData = brokenUpGraph $ fstTrip ((sndTrip aWorld) (getGraph row siz wsiz worldCol)) -- pulls out the specific Graph! so only siz^2 elements in pre Data! 
+        let theData = fst $ splitAt siz $snd (splitAt ((row`mod`siz)*siz) preData) -- TODO wsiz chang to local size
         --putStr("World Col = "++ (show worldCol) ++ " ")
         --putStr("World Row = " ++ (show row) ++ " ")
         --putStr("World Siz = " ++ (show wsiz) ++ " ")
         --putStrLn("Test ")
         --prizzleLn worldCol wsiz preData
         --putStrLn("%")
-        prizzleLn worldCol wsiz theData
+        prizzleLn worldCol wsiz siz row theData
         let moveOn = worldCol+1   
         if moveOn > wsiz
                 then printWorldLine (row+1) (worldCol+1) wsiz aWorld
                 else printWorldLine row (worldCol+1) wsiz aWorld
 
 
-prizzleLn :: Int -> Int -> [(Maybe Ant, Int, [Int])] -> IO ()
-prizzleLn worldCol siz (someData:theData) | isJust (fstTrip someData) = do putStr("|O|")
-                                                                           prizzleLn worldCol siz theData
+prizzleLn :: Int -> Int -> Int -> Int -> [(Maybe Ant, Int, [Int])] -> IO ()
+prizzleLn worldCol wsiz siz row (someData:theData) | isJust (fstTrip someData) = do putStr("|O|")
+                                                                                    prizzleLn worldCol wsiz siz row theData
 
-                                          | isNothing (fstTrip someData) = do putStr("|X|")
-                                                                              prizzleLn worldCol siz theData
-                                          | otherwise = do putStr("|X|")
-                                                           prizzleLn worldCol siz theData
+                                                   | isNothing (fstTrip someData) = do putStr("|X|")
+                                                                                       prizzleLn worldCol wsiz siz row theData
+                                                   | otherwise = do putStr("|X|")
+                                                                    prizzleLn worldCol wsiz siz row theData
 
-prizzleLn worldCol wsiz [] | worldCol`mod`wsiz == 0 = putStrLn("")
-                           | otherwise = putStr ("  ")
+prizzleLn worldCol wsiz siz row [] | (worldCol`mod`wsiz == 0) && (row`mod`siz ==2) = putStrLn("\n")
+                                   | worldCol`mod`wsiz == 0 = putStrLn("")
+                                   | otherwise = putStr ("  ")
 
 nlf :: Int -> Int -> Int
 nlf row siz = (row)-(row`mod`siz)  -- next Lowest factor

@@ -31,6 +31,10 @@ antWorld = graphFromEdges $ zip3 (listOfAntQuadrants) (keyList worldWidth) (adjL
 antWorld' = graphFromEdges $ zip3 (listOfAntQuadrants') (keyList worldWidth) (adjListForNewGraph worldWidth)
         where listOfAntQuadrants' = [newAQuad',newAQuad 3,newAQuad 3,newAQuad 3,newAQuad',newAQuad 3,newAQuad 3,newAQuad 3,newAQuad']
 
+
+antWorld_ = graphFromEdges $ zip3 (listOfAntQuadrants') (keyList worldWidth) (adjListForNewGraph worldWidth)
+        where listOfAntQuadrants' = [a1',a2',a3',a4']
+
 pherWorld = graphFromEdges $ zip3 (listOfPherQuadrants) (keyList worldWidth) (adjListForNewGraph worldWidth)
 
 -- | Generate empty ant world based on the size (worldWidth) provided as a prameter
@@ -104,7 +108,7 @@ stitchUpEdge antWorld pherWorld quadPair qsiz = do
 
                 stitchable
                 
-                
+                 
 --based off listOfNodesWithAntsIn
 edgePointsWithAntsIn :: [(Maybe Ant, Int)] -> [(Maybe Ant,Int)]
 edgePointsWithAntsIn [] = []
