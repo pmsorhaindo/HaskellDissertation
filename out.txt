@@ -1,0 +1,1 @@
+[4 of 7] Compiling Quadrant         ( Quadrant.hs, Quadrant.o )

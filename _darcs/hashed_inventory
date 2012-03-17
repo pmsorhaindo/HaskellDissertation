@@ -1,4 +1,4 @@
-pristine:5185cad814db1ec86f1c9f363c8036463b426904182d744839b1033f204f0302
+pristine:f074ef36525695df392cb1987cee5efb2f6a509c7e604509b14fc5e23af92c4e
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -274,3 +274,8 @@ pmsorhaindo@gmail.com**20120316224510
  Ignore-this: 46f06ec89e7e78365186032530bf699b
 ] 
 hash: 0000009033-a3d9e67ab3cd09b4529c95c0d60928b57c74f8f6dbf9929d9d5f997f13df9b96
+[fixed buggy printing YET again.. testing wasnt thourough enough... next round!
+pmsorhaindo@gmail.com**20120317160308
+ Ignore-this: a41229a58ca8a9b86edb64546ac1be61
+] 
+hash: 0000006678-63b23e3ed7f4bedc733ffb57e38e68da9e6c5558877c3c0d2fe9634bbb711094
