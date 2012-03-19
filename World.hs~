@@ -6,6 +6,7 @@ import Data.Maybe (fromJust, isNothing)
 import Data.Tuple (swap)
 import Test.QuickCheck
 import Test.HUnit
+import AntRepresent
 import Quadrant
 import GraphOps
 import SimDefine

@@ -10,6 +10,7 @@ data Ant = Ant {
         ,pherLevel :: Double
         ,age       :: Int
         ,aim       :: Mode
+        ,path      :: [Direction]
         }
         deriving(Eq)
 

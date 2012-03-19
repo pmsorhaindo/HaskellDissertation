@@ -6,6 +6,13 @@ module Main
     ( main
     ) where
 
+
+import Data.Foldable (forM_)
+import Control.Parallel.Strategies
+import Control.DeepSeq 
+--import Control.Exception
+--import Control.Applicative
+
 import SimDefine
 import World
 import Quadrant
@@ -13,12 +20,7 @@ import AntRepresent -- this is just so I can call directions with out Qualifying
 import GraphOps
 import RandomNums
 import ConsoleView
-import Data.Foldable (forM_)
-import Control.Parallel.Strategies
---import Control.Exception
-import Control.DeepSeq 
---import Control.Applicative
-
+import QuadStitching
 
 --type check
 deep :: forall b. NFData b => b -> b

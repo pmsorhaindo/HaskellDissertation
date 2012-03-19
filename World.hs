@@ -6,10 +6,13 @@ import Data.Maybe (fromJust, isNothing)
 import Data.Tuple (swap)
 import Test.QuickCheck
 import Test.HUnit
+
+-- Personal Imports
 import AntRepresent
 import Quadrant
 import GraphOps
 import SimDefine
+import QuadStitching
 
 type GraphAWTuple = (Graph, Vertex -> (GraphATuple, Int, [Int]), Int -> Maybe Vertex)
 type GraphPWTuple = (Graph, Vertex -> (GraphPTuple, Int, [Int]), Int -> Maybe Vertex)

@@ -1,16 +1,6 @@
 module AntRepresent where
 import SimDefine
 
---Type enumeration
-{-data Direction = North | South | East | West
-        deriving(Eq)
-
-instance Show Direction where 
-        show North = "North"
-        show South = "South"
-        show East  = "East"
-        show West  = "West" -}
-
 data Mode = Explore | Return -- possibly add more behaviour types here
         deriving (Eq)
 

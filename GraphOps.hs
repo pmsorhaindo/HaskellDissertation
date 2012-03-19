@@ -1,4 +1,5 @@
 module GraphOps where
+
 import Data.Array
 import Data.Graph
 import Data.Maybe (fromJust, isNothing)
@@ -8,6 +9,12 @@ import Test.HUnit
 
 type Size = Int
 type Point = Int
+
+-- TODO adjKeyList a = [genUp,genDown,genLeft,genRight] --need a list of these lists for each key in keyList
+-- secure these functions with better testing on numbers added AdjRight still allows ridiculos -ve numbers
+-- left v-1 (not avaiable if v(modir) size =1) TESTED
+-- | This function gets the adjacent node value given the Quadrant width
+
 
 -- | Utility function for deconstructing 3 tuples with pattern matching (first value of the tuple)
 fstTrip (x,y,z) = x
@@ -122,8 +129,10 @@ prop_nodeList_size (NodeList x) = (length x == length(listOfNodes x))
 
 prop_adjListForVertex_notNull :: IntSmall -> Gen Bool
 prop_adjListForVertex_notNull (IntSmall x) = do
-        v <- choose (0,x-1)
-        return $ not (null (adjListForVertex x v))
+        v <- choose (1,x)
+        if x>1
+                then return $ not (null (adjListForVertex x v))
+                else return True
 
 
 runTests = do
