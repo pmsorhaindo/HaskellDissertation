@@ -15,13 +15,17 @@ data SimParameters = SimParameters {
         get_amountOfFood :: Int
         } deriving(Show)
 
+
+-- | Directions through Type Enumeration
 data Direction = North | South | East | West
+        deriving(Eq)
 
 instance Show Direction where 
         show North = "North"
         show South = "South"
-        show East = "East"
-        show West = "West"
+        show East  = "East"
+        show West  = "West"
+
 
 getParameters Simple   = SimParameters 10 5 10 2
 getParameters Interesting = SimParameters 20 15 30 4

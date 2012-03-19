@@ -6,9 +6,9 @@ import Data.Maybe (fromJust, isNothing)
 import Data.Tuple (swap)
 import Test.QuickCheck
 import Test.HUnit
-import AntRepresent
 import Quadrant
 import GraphOps
+import SimDefine
 
 type GraphAWTuple = (Graph, Vertex -> (GraphATuple, Int, [Int]), Int -> Maybe Vertex)
 type GraphPWTuple = (Graph, Vertex -> (GraphPTuple, Int, [Int]), Int -> Maybe Vertex)
@@ -33,7 +33,7 @@ antWorld' = graphFromEdges $ zip3 (listOfAntQuadrants') (keyList worldWidth) (ad
 
 
 antWorld_ = graphFromEdges $ zip3 (listOfAntQuadrants') (keyList worldWidth) (adjListForNewGraph worldWidth)
-        where listOfAntQuadrants' = [a1',a2',newAQuad 3,a3',a4',newAQuad 3,newAQuad 3,newAQuad 3,newAQuad 3]
+        where listOfAntQuadrants' = [a1',a2',a3',a4']
 
 pherWorld = graphFromEdges $ zip3 (listOfPherQuadrants) (keyList worldWidth) (adjListForNewGraph worldWidth)
 

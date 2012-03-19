@@ -1,4 +1,4 @@
-pristine:f074ef36525695df392cb1987cee5efb2f6a509c7e604509b14fc5e23af92c4e
+pristine:a2a1b71704a6b05565f0315d281a67b3fb919f7b598708dc694737b561ecacf8
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -279,3 +279,8 @@ pmsorhaindo@gmail.com**20120317160308
  Ignore-this: a41229a58ca8a9b86edb64546ac1be61
 ] 
 hash: 0000006678-63b23e3ed7f4bedc733ffb57e38e68da9e6c5558877c3c0d2fe9634bbb711094
+[successful movement between stitched up quads, EPIC use of hpc and {-Wall/-fshowshadowing} the show is back on the road
+pmsorhaindo@gmail.com**20120317215226
+ Ignore-this: 232f93d31490c8d5ff06fe904862625c
+] 
+hash: 0000017952-c1d38cc5b6c7672ad9b5b6cec132800c75233eec75929e910ff458f42f597721

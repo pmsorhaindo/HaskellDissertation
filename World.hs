@@ -9,6 +9,7 @@ import Test.HUnit
 import AntRepresent
 import Quadrant
 import GraphOps
+import SimDefine
 
 type GraphAWTuple = (Graph, Vertex -> (GraphATuple, Int, [Int]), Int -> Maybe Vertex)
 type GraphPWTuple = (Graph, Vertex -> (GraphPTuple, Int, [Int]), Int -> Maybe Vertex)

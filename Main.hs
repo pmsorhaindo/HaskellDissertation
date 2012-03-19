@@ -6,6 +6,7 @@ module Main
     ( main
     ) where
 
+import SimDefine
 import World
 import Quadrant
 import AntRepresent -- this is just so I can call directions with out Qualifying them in ghci

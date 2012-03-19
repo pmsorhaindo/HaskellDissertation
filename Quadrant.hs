@@ -15,6 +15,7 @@ import Test.HUnit
 -- | Personal imports
 import AntRepresent
 import GraphOps
+import SimDefine
 
 type GraphSelect = ((GraphATuple, GraphATuple), (GraphATuple, GraphATuple)) -> (GraphATuple, GraphATuple)
 
