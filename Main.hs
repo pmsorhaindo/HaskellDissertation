@@ -32,16 +32,20 @@ deep a = deepseq a a
 --forM_ (iterate (`processAQuadrant` b) a) (print . brokenUpGraph)
 --evaluate $ deep map runSim (quads `using` parList) rseq
 runSimSingle :: GraphPTuple -> GraphATuple -> IO ()
-runSimSingle pherG antG = forM_ (iterate (`processAQuadrant` pherG) antG) (prettyAnt)
+runSimSingle pherG antG = forM_ (iterate (`processAQuadrant_` pherG) antG) (prettyAnt)
 
 runSimParallel_fail :: forall t a. t -> [a] -> [a]
 runSimParallel_fail aQuadrants pQuadrants = (pQuadrants `using` parList rpar)
 
 runSimParallel_ :: forall t. [GraphATuple] -> t -> [GraphPTuple -> GraphATuple]
-runSimParallel_ aQuadrants pQuadrants = (map processAQuadrant aQuadrants) `using` rpar 
+runSimParallel_ aQuadrants pQuadrants = (map processAQuadrant_ aQuadrants) `using` rpar 
 
-runSimParallel :: [(GraphATuple, GraphPTuple)] -> [GraphATuple]
-runSimParallel zippedQuads = parMap rpar (processAQuadrant_) zippedQuads --(map processAQuadrant aQuads)
+--runSimParallel :: [(GraphATuple, GraphPTuple)] -> [GraphATuple]
+--runSimParallel zippedQuads = parMap rpar (processAQuadrant_) zippedQuads --(map processAQuadrant aQuads)
+
+runSimParallel :: [(GraphATuple, GraphPTuple)] -> [Int] ->  [GraphATuple]
+runSimParallel zippedQuads noProcs  = parMap rpar (processAQuadrant noProcs) zippedQuads --(map processAQuadrant aQuads)
+
 
 --(pQuads `using` parMap rpar processAQuadrant aQuads) 
 
@@ -54,7 +58,7 @@ zippedQuads :: [(GraphATuple, GraphPTuple)]
 zippedQuads = zip aQuads pQuads
 
 z :: GraphATuple
-z = processAQuadrant (head aQuads) emptyPherQuadrant 
+z = processAQuadrant_ (head aQuads) emptyPherQuadrant 
 
 
 -- | Main function

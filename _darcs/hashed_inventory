@@ -1,4 +1,4 @@
-pristine:401ffb821ddea5e4468def4aeb4bd6710d075ff1bc28e2488538106051b0bf62
+pristine:34c9ec82242b3dbc5db2f40f8f81689072f389debaa13115f1192a50de52aa58
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -289,3 +289,8 @@ pmsorhaindo@gmail.com**20120319000744
  Ignore-this: e98671f6c4f29ff0122628eda77d7207
 ] 
 hash: 0000005474-33a5775994e495e68fea30c1d65c250d16e076dd28285c4ad7324c0ddd95756d
+[Got rid of the hacky Graph select added nice little comments placeholders to my code
+pmsorhaindo@gmail.com**20120319221018
+ Ignore-this: aaccb74ff16e5bacc047b85d5ebd8828
+] 
+hash: 0000024035-0fbe2e05227c4530cc37ee732d38245c201f4b4023c4eef83fdc50f81804b6c1

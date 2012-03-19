@@ -5,7 +5,7 @@ module Quadrant where
 import Data.Array
 import Data.Graph
 import Data.Maybe (fromJust, isNothing, isJust)
-import Data.List (maximumBy, sortBy)
+import Data.List (maximumBy, sortBy, (\\))
 import Data.Bool.HT
 import Debug.Trace
 import Test.QuickCheck
@@ -281,22 +281,24 @@ setDir :: GraphATuple   -- ^
 setDir graphT nd newDir = addExistingAnt graphT nd (modif $ fstTrip $ getAntFromNode graphT nd) -- Not to be called it there isn't an ant at the node getAntFromNode will have a fit.
                 where modif x = Just (Ant (antId x) newDir (pherLevel x) (age x) (aim x) (newDir:AntRepresent.path x)) 
 
--- | Function to process the whole Quadrant.
-processAQuadrant :: GraphATuple -- ^
+-- | Old function to process the whole with out a No Process List Quadrant.
+processAQuadrant_ :: GraphATuple -- ^
         -> GraphPTuple          -- ^
         -> GraphATuple          -- ^
-processAQuadrant graphAT graphPT = do    
+processAQuadrant_ graphAT graphPT = do    
         let nodesToProcess = listOfNodesWithAntsIn graphAT
         let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess
         graphAT'
 
--- |
-processAQuadrant_ :: (GraphATuple, GraphPTuple) -- ^
-        -> GraphATuple                          -- ^
-processAQuadrant_ graphs = do    
+-- | Function to process the whole with out a No Process List Quadrant.
+processAQuadrant :: [Int]  -- ^ List of nodes to avoid processing, these will be node already processed in the simulation via stitching.
+        -> (GraphATuple,GraphPTuple)    -- ^             
+        -> GraphATuple                  -- ^
+processAQuadrant noProcs graphs = do    
         let graphAT = fst graphs
         let graphPT = snd graphs
-        let nodesToProcess = listOfNodesWithAntsIn graphAT
+        let anodes        = listOfNodesWithAntsIn graphAT
+        let nodesToProcess = anodes \\ noProcs
         let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess
         graphAT'
 

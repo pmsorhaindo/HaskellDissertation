@@ -144,7 +144,7 @@ swapIn qs nd1 nd2 d s  = newQs qs
               pgs x = (pherGraphs qs)
               aep x = (aEdgePair qs)
               pep x = (pEdgePair qs)
-              npl x = (noProcList qs)      
+              npl x = side (((nd2: (fst$noProcList qs),snd$noProcList qs)),(fst$noProcList qs,nd2: (snd$noProcList qs)))
 
 -- |
 checkForAntOut :: StitchableQuads       -- ^
@@ -157,7 +157,7 @@ checkForAntOut qs modir nd (dec:decs) isCurr = do
         let outNd = outNode nd (fst dec) $ qSize qs
         if isAntAtNode (fst$antGraphs qs) outNd
                 then loneMoveIt qs modir nd decs isCurr
-                else swapOut qs nd outNd isCurr -- side' to selct the section of the antGraph returned from antGraphs I want.
+                else swapOut qs nd outNd isCurr
 checkForAntOut _ _ _ [] _ = undefined
 
 -- | 
@@ -178,28 +178,8 @@ swapOut qs currNd oppNd s = newQs qs
               pgs x      = pherGraphs qs
               aep x      = aEdgePair qs
               pep x      = pEdgePair qs
-              npl x      = noProcList qs
-
-{-      *Main> let sti = stitchUpEdge antWorld pherWorld ((0,East),(1,West)) 3
-        *Main> let x = swapOut sti fst snd 6 4 
-        *Main> let gra = antGraphs  x
-        *Main> prettyAnt $ fst $antGraphs sti 
-        |X||X||X|
-        |X||X||O|
-        |X||X||O|
-        .        
-        
-        *Main> prettyAnt $fst gra
-        |X||X||X|
-        |X||X||X|
-        |X||X||O|
-        .
-        
-        *Main> prettyAnt $snd gra
-        |X||X||X|
-        |O||X||O|
-        |X||X||O|
-        . -}
+              npl x      = side ((fst$noProcList qs,oppNd:(snd$noProcList qs)),(oppNd: (fst$noProcList qs),snd$noProcList qs))
+ 
 
 
 -- Y U NO WORK FOR ME :( - found that work around tho :D
