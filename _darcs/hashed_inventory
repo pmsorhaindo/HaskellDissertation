@@ -1,4 +1,4 @@
-pristine:34c9ec82242b3dbc5db2f40f8f81689072f389debaa13115f1192a50de52aa58
+pristine:d5403e5f4413212c75e2c1ac53bde1f86cda31ddeab73d4aeeaedaade5164e8c
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -294,3 +294,8 @@ pmsorhaindo@gmail.com**20120319221018
  Ignore-this: aaccb74ff16e5bacc047b85d5ebd8828
 ] 
 hash: 0000024035-0fbe2e05227c4530cc37ee732d38245c201f4b4023c4eef83fdc50f81804b6c1
+[No process list functionality (updates and avoidance in process quads)
+pmsorhaindo@gmail.com**20120319234908
+ Ignore-this: bba9e13f83ee56f09e52190489c3aded
+] 
+hash: 0000002398-68a119640a6bc695b5badecff8af0a84340462a72b8574ecd82825167011704d

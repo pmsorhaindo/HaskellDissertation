@@ -10,9 +10,11 @@ module Main
 import Data.Foldable (forM_)
 import Control.Parallel.Strategies
 import Control.DeepSeq 
+import Control.Concurrent
 --import Control.Exception
 --import Control.Applicative
 
+import GUI
 import SimDefine
 import World
 import Quadrant
@@ -21,7 +23,7 @@ import GraphOps
 import RandomNums
 import ConsoleView
 import QuadStitching
-
+import Visuals
 --type check
 deep :: forall b. NFData b => b -> b
 deep a = deepseq a a
@@ -74,8 +76,11 @@ main = do
         prettyAnt $ fst $ antGraphs sti        
         let x = procEdgeAntAtNode sti 1
         prettyAnt $ fst $ antGraphs x
+        forkIO guiFunc
+        antVisGL
+        
 
-
+        
 
 --setUpWorld = 
 

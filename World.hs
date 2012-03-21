@@ -1,7 +1,7 @@
 module World where
 import Data.Array
 import Data.Graph
-import Data.List (nubBy)
+import Data.List (nubBy,(\\))
 import Data.Maybe (fromJust, isNothing)
 import Data.Tuple (swap)
 import Test.QuickCheck
@@ -78,6 +78,73 @@ getPQuadEdge nd edgDir = getAEdge (getPherQuad nd pherWorld) edgDir
 stitchEdges :: GraphAWTuple -> [(Int, Int)]
 stitchEdges world = nubBy (\x y -> x == y || swap x == y) (edges $ fstTrip $ world)
 -- nubBy allows me to remove duplicates from a list like nub but with nubBy I can describe how duplicates 
+
+
+inTupleList ((x,y):xs) xs1 = do
+        let deps = concatMap (\(a,b) -> a : b : []) xs1
+        if x `elem` deps || y `elem` deps
+                then inTupleList xs xs1
+                else inTupleList xs ((x,y):xs1)
+
+inTupleList ((x,y):xs) []= inTupleList xs ((x,y):[])
+inTupleList [] a = a
+
+
+-- *Main> stitchEdges antWorld
+-- [(0,3),(0,1),(1,4),(1,2),(2,5),(3,6),(3,4),(4,7),(4,5),(5,8),(6,7),(7,8)]
+
+getBatch stitchies em batches = do
+        let x = inTupleList stitchies em
+        if x == []
+                then batches
+                else do
+                        let y = inTupleList stitchies em
+                        let s = (\\) stitchies y                     
+                        getBatch  s []  (y:batches)
+                        
+-- not good but close
+
+
+{- *Main> inTupleList it []
+[(6,7),(2,5),(1,4),(0,3)]
+*Main> let wamba = stitchEdges antWorld
+*Main> let err =  inTupleList wamba []
+*Main> err
+[(6,7),(2,5),(1,4),(0,3)]
+*Main> :m + Data.List
+*Main Data.List> wamba \\ err
+[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
+*Main Data.List> err
+[(6,7),(2,5),(1,4),(0,3)]
+*Main Data.List> wamba
+[(0,3),(0,1),(1,4),(1,2),(2,5),(3,6),(3,4),(4,7),(4,5),(5,8),(6,7),(7,8)]
+*Main Data.List> :t (\\)
+(\\) :: Eq a => [a] -> [a] -> [a]
+*Main Data.List> err
+[(6,7),(2,5),(1,4),(0,3)]
+*Main Data.List> wamba
+[(0,3),(0,1),(1,4),(1,2),(2,5),(3,6),(3,4),(4,7),(4,5),(5,8),(6,7),(7,8)]
+*Main Data.List> wamba \\ err
+[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
+*Main Data.List> (\\)wamba err
+[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
+*Main Data.List> (\\) wamba err
+[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
+*Main Data.List> wamba
+[(0,3),(0,1),(1,4),(1,2),(2,5),(3,6),(3,4),(4,7),(4,5),(5,8),(6,7),(7,8)]
+*Main Data.List> (\\) wamba err
+[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
+*Main Data.List> let err2 =  inTupleList it []
+*Main Data.List> err2
+[(5,8),(4,7),(3,6),(0,1)]
+*Main Data.List> (\\) wamba err 
+[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
+*Main Data.List> let rem1 = (\\) wamba err 
+*Main Data.List> rem1 \\ err2
+[(1,2),(3,4),(4,5),(7,8)]
+*Main Data.List> inTupleList it []
+[(7,8),(3,4),(1,2)] -}
+
 
 dirsNeeded :: (Int, Int) -> ((Int, Direction), (Int, Direction)) -- NEEDED TO GENERATE THE quadPairs used in stitchUpEdge
 dirsNeeded quadTuple

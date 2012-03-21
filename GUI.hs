@@ -1,31 +1,45 @@
+module GUI where
 import Graphics.UI.Gtk
+import Data.Char (toUpper)
 
-main :: IO ()
-main = do
+guiFunc :: IO ()
+guiFunc = do
      initGUI
      window <- windowNew
-     set window [windowTitle := "Paned Window", containerBorderWidth := 10,
-                 windowDefaultWidth := 400, windowDefaultHeight := 400 ]
+     set window [windowTitle := "Ant Colony Simulation Parameters", windowDefaultWidth := 400,
+                 windowDefaultHeight := 300 ]
+     
+     ntbk <- notebookNew
+     containerAdd window ntbk
+     set ntbk [notebookScrollable := False, notebookTabPos := PosTop]
 
-     pw <- vPanedNew
-     panedSetPosition pw 250
-     containerAdd window pw
-     af <- aspectFrameNew 0.5 0.5 (Just 3.0)
-     frameSetLabel af "Aspect Ratio: 3.0"
-     frameSetLabelAlign af 1.0 0.0
-     panedAdd1 pw af
+     let names = ["Mode","Size","Run Simulation"]
 
-     da <- drawingAreaNew
-     containerAdd af da
-     widgetModifyBg da StateNormal (Color 65535 0 0)
-   
-     tv <- textViewNew
-     panedAdd2 pw tv
-     buf <- textViewGetBuffer tv
+     q <-hBoxNew True 15
+     x <- frameNew
+     frameSetLabel x "Yo!"
+     --boxPackStart q x PackGrow 10
+          
+     w <-hBoxNew True 15
+     y <- frameNew
+     frameSetLabel y "Euch!"
+     --boxPackStart w y PackGrow 10
 
-     onBufferChanged buf $ do cn <- textBufferGetCharCount buf
-                              putStrLn (show cn)   
+     e <-hBoxNew True 15
+     z <- frameNew
+     frameSetLabel z "Blah!"
+     --boxPackStart e z PackGrow 10
 
-     widgetShowAll window 
+     notebookAppendPage ntbk x "Mode"
+     notebookAppendPage ntbk y "Size"
+     notebookAppendPage ntbk z "Run Simulation"
+
+     
+     
+
+     onSwitchPage ntbk (putStrLn . ((++)"Page: ") . show)
+
+     widgetShowAll window
      onDestroy window mainQuit
      mainGUI
+       
