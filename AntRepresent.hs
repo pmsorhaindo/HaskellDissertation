@@ -1,7 +1,11 @@
 module AntRepresent where
 import SimDefine
 
-data Mode = Explore | Return -- possibly add more behaviour types here
+data Mode = Explore { dir :: Direction, depth :: Int}
+        | TrackFood {latestPher :: [Int]}
+        | Return {steps :: Int} --
+        | TrackNest {latestPhers :: [Int]}
+        -- possibly add more behaviour types here
         deriving (Eq)
 
 data Ant = Ant {
@@ -11,6 +15,8 @@ data Ant = Ant {
         ,age       :: Int
         ,aim       :: Mode
         ,path      :: [Direction]
+        -- possibly add more ant attributes here
+        -- memory :: Int number of steps in the past the ant remembers used for return.
         }
         deriving(Eq)
 

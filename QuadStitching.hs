@@ -27,24 +27,11 @@ getSide False Side = snd
 getSide True OtherSide = snd
 getSide False OtherSide = fst
 
-putItOutside :: StitchableQuads
-        -> Int                 -- ^
-        -> Maybe Ant           -- ^
-        -> Maybe Ant           -- ^
-        -> StitchableQuads     -- ^
-putItOutside qs pos currAnt adjAnt
-                      | (isNothing currAnt) && (isNothing adjAnt) = procEdgeAntAtNode qs (1+pos)
-                      | (isJust currAnt) && (isNothing adjAnt)    = loneEdgeAnt qs True pos
-                      | (isNothing currAnt) && (isJust adjAnt)    = loneEdgeAnt qs False pos
-                      | (isJust currAnt) && (isJust adjAnt)       = loneEdgeAnt qs False pos
-putItOutside _ _ _ _ = undefined
-        
-
--- |
-procEdgeAntAtNode :: StitchableQuads
-        -> Int                  -- ^
-        -> StitchableQuads      -- ^
-procEdgeAntAtNode qs pos  = do 
+-- | A the front of a recursive group of functions which run through the list of Ants along both edges of connected Ant Quadrants. Each Ant is given the information and opportunity to move. If and Ant moves its added to the No process list to avoid ants being given the oppotunity to move twice. 
+procEdgeAntAtNode ::  Int   -- ^ Start with 0 the index position into the list of  Maybe (Edge) Ants  being stitched together.
+        -> StitchableQuads  -- ^ The initial Stitched up Quadrants (pre processing)                   
+        -> StitchableQuads  -- ^ Returns the final Stitchedup Quads once each Ant has had the chance to move.
+procEdgeAntAtNode pos qs  = do 
         -- rename fst and snd to adj and curr to make more readable?
         let rel = relation qs 
         let currAntGraph = fst $ antGraphs qs
@@ -61,6 +48,20 @@ procEdgeAntAtNode qs pos  = do
         if pos<(qSize qs) -- fail
                 then putItOutside qs pos currAnt adjAnt
                 else qs
+
+-- | 
+putItOutside :: StitchableQuads  -- ^
+        -> Int                   -- ^
+        -> Maybe Ant             -- ^
+        -> Maybe Ant             -- ^
+        -> StitchableQuads       -- ^
+putItOutside qs pos currAnt adjAnt
+                      | (isNothing currAnt) && (isNothing adjAnt) = procEdgeAntAtNode (1+pos) qs
+                      | (isJust currAnt) && (isNothing adjAnt)    = loneEdgeAnt qs True pos
+                      | (isNothing currAnt) && (isJust adjAnt)    = loneEdgeAnt qs False pos
+                      | (isJust currAnt) && (isJust adjAnt)       = loneEdgeAnt qs False pos
+putItOutside _ _ _ _ = undefined
+
 
 -- | Lone Edge Ant
 loneEdgeAnt :: StitchableQuads
@@ -85,7 +86,7 @@ loneEdgeAnt qs isCurr pos = do
 
         let newQs = loneMoveIt qs moveOutDir nd decisions isCurr --swapNode --addToNoProc
 
-        --procEdgeAntAtNode qs (pos+1)
+        --procEdgeAntAtNode (pos+1) qs
         newQs
 
 -- | 
@@ -240,7 +241,7 @@ doubleEdgeAnt qs pos = do
 
         let newQs =  doubleMoveIt qs (moveOutDir1,moveOutDir2) (nd1,nd2) (decs1,decs2) (False,False) :: StitchableQuads
 
-        procEdgeAntAtNode newQs (pos+1)
+        procEdgeAntAtNode (pos+1) newQs
 
 
 -- | 

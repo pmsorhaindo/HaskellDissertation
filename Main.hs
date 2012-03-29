@@ -72,9 +72,9 @@ main = do
         putStrLn ("Hey " ++ a)
         putStrLn ("test")
         putStrLn (show $ fst $ splitAt 3 rnumbers)
-        let sti = stitchUpEdge antWorld_ pherWorld ((2,West),(3,East)) 3 
+        let sti = stitchUpEdge antWorld_ pherWorld 3 ((2,West),(3,East))
         prettyAnt $ fst $ antGraphs sti        
-        let x = procEdgeAntAtNode sti 1
+        let x = procEdgeAntAtNode 1 sti
         prettyAnt $ fst $ antGraphs x
         forkIO guiFunc
         antVisGL

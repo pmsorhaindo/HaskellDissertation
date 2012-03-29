@@ -42,19 +42,19 @@ edgesForTestGraph :: [([Char], Int, [Int])]
 edgesForTestGraph = [("rawr",1,[2,4]),("sadface",2,[1,5,3]),("waffle",3,[2,6]),("cheese",4,[1,7,15]),("maybe",5,[2,4,8,6]),("hehe",6,[3,5,9]),("cry",7,[4,8]),("lol",8,[7,5,9]),("yay",9,[8,6])]
 
 edgesForTestAGraph :: [(Maybe Ant, Int, [Int])]
-edgesForTestAGraph = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 1.0 0 Return [West]),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Just(Ant 1 West 0.2 0 Return [North]),9,[8,6])]
+edgesForTestAGraph = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 1.0 0 (Return 10) [West]),6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Just(Ant 1 West 0.2 0 (Return 10) [North]),9,[8,6])]
 
 edgesForTestAGraph1' :: [(Maybe Ant, Int, [Int])]
 edgesForTestAGraph1' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
 
 edgesForTestAGraph2' :: [(Maybe Ant, Int, [Int])]
-edgesForTestAGraph2' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Just(Ant 1 West 2.1  0 Return [South]),5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+edgesForTestAGraph2' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Just(Ant 1 West 2.1  0 (Return 10) [South]),5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
 
 edgesForTestAGraph3' :: [(Maybe Ant, Int, [Int])]
-edgesForTestAGraph3' = [(Just(Ant 1 West 2.1  0 Return [East]),1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+edgesForTestAGraph3' = [(Just(Ant 1 West 2.1  0 (Return 10) [East]),1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Nothing,6,[3,5,9]),(Nothing,7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
 
 edgesForTestAGraph4' :: [(Maybe Ant, Int, [Int])]
-edgesForTestAGraph4' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 2.1  0 Return [East]),6,[3,5,9]),(Just(Ant 1 West 2.1  0 Return [West]),7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
+edgesForTestAGraph4' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),(Nothing,4,[1,7,15]),(Nothing,5,[2,4,8,6]),(Just(Ant 1 West 2.1  0 (Return 10) [East]),6,[3,5,9]),(Just(Ant 1 West 2.1  0 (Return 10) [West]),7,[4,8]),(Nothing,8,[7,5,9]),(Nothing,9,[8,6])]
 
 edgesForTestPGraph :: [(Double, Int, [Int])]
 edgesForTestPGraph = [(0,1,[2,4]),(0,2,[1,5,3]),(0,3,[2,6]),(0,4,[1,7,15]),(0,5,[2,4,8,6]),(0,6,[3,5,9]),(0,7,[4,8]),(0,8,[7,5,9]),(0,9,[8,6])]
@@ -92,7 +92,7 @@ lpart5 x y z = (splittedVertlist2 (y-x) (splittedVertlist2 x z))
 --brokenUpGraph :: (Graph, Vertex -> b, t) -> [b]
 brokenUpGraph z = map (sndTrip z) (vertices $ fstTrip z)
 
---When provided a Graph combo Tuple returns the list of adjacent verts list
+--When provided a Graph combo Tuple (Return 10)s the list of adjacent verts list
 adjVertsFromCombo :: (Graph, Vertex -> (t, t1, b), t2)  -- ^
         -> [b]                                          -- ^
 adjVertsFromCombo z = map trdTrip (brokenUpGraph z)
@@ -105,7 +105,7 @@ updateGraph x y z = graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUp
 
 --If it connects
 --updateGraph':: Int-> Int-> (Graph, Int -> (node, Int, [Int]), t)-> [(node, Vertex, [Int])]
--- now changed to return Graph Tuple
+-- now changed to (Return 10) Graph Tuple
 updateGraph' :: Int             -- ^
         -> Int                  -- ^
         -> GraphATuple          -- ^
@@ -148,7 +148,7 @@ eachSuccNode graphT iterator = do
 addAnt :: GraphATuple   -- ^
         -> Int          -- ^
         -> GraphATuple  -- ^
-addAnt graphT pos = graphFromEdges $ zip3 (preList ++ [Just(Ant 1 East 1 0 Return ([]::[Direction]))] ++ sufList) ([1..]) (adjVertsFromCombo graphT)
+addAnt graphT pos = graphFromEdges $ zip3 (preList ++ [Just(Ant 1 East 1 0 (Return 10) ([]::[Direction]))] ++ sufList) ([1..]) (adjVertsFromCombo graphT)
         where preList | pos < 1 = []
                       | otherwise = take (pos-1) (listOfNodes $ brokenUpGraph graphT)
               sufList = drop pos (listOfNodes $ brokenUpGraph graphT)
@@ -302,7 +302,7 @@ processAQuadrant noProcs graphs = do
         let graphAT' = processAntsInGraph graphPT graphAT nodesToProcess
         graphAT'
 
--- | Export graph Edge for stitching
+-- | Export Ant graph Edge for stitching
 --getEdge :: GraphATuple -> Direction -> Size -> [a] --TODO package the dir up with it.. ([a],Direction)
 getAEdge graphAT getDir
         | getDir == North = zip (map f [1 .. size]) [1..size]
@@ -314,7 +314,7 @@ getAEdge graphAT getDir
 
 getAEdge _ _ = undefined
 
--- |
+-- | Export Pheremone graph edge for stitching
 getPEdge :: forall t1 t2 a e t3 a1. (Ix a, Integral a) => (Array a e, Int -> (a1, t1, t2), t3) -- ^
         -> Direction    -- ^
         -> [(a1, Int)] -- ^

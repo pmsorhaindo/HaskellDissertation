@@ -1,7 +1,7 @@
 module World where
 import Data.Array
 import Data.Graph
-import Data.List (nubBy,(\\))
+import Data.List (nubBy,(\\),sortBy,union)
 import Data.Maybe (fromJust, isNothing)
 import Data.Tuple (swap)
 import Test.QuickCheck
@@ -77,85 +77,40 @@ getPQuadEdge nd edgDir = getAEdge (getPherQuad nd pherWorld) edgDir
 --Get All the stitchupable edges 
 stitchEdges :: GraphAWTuple -> [(Int, Int)]
 stitchEdges world = nubBy (\x y -> x == y || swap x == y) (edges $ fstTrip $ world)
--- nubBy allows me to remove duplicates from a list like nub but with nubBy I can describe how duplicates 
+-- nubBy allows me to remove duplicates from a list like nub but with nubBy I can describe how duplicates
 
+-- *Main> stitchEdges antWorld
+-- [(0,3),(0,1),(1,4),(1,2),(2,5),(3,6),(3,4),(4,7),(4,5),(5,8),(6,7),(7,8)]
 
+-- | Gets the batches for parallel stitching in order.
+getOrderedBatch a = reverse $ sortBy (\x y -> length y `compare` length x) (getBatch a [] [])
+
+-- | Generates the batches of computation for parallel stitching
+getBatch stitchies emptyList batches = do
+        let x = inTupleList stitchies emptyList
+        if x == []
+                then batches
+                else do
+                        let y = inTupleList stitchies emptyList
+                        let s = (\\) stitchies y                     
+                        getBatch  s []  (y:batches)
+
+-- | Helper function for getBatch
 inTupleList ((x,y):xs) xs1 = do
         let deps = concatMap (\(a,b) -> a : b : []) xs1
         if x `elem` deps || y `elem` deps
                 then inTupleList xs xs1
                 else inTupleList xs ((x,y):xs1)
 
-inTupleList ((x,y):xs) []= inTupleList xs ((x,y):[])
+--inTupleList (a:xs) []= inTupleList xs (a:[])
 inTupleList [] a = a
 
-
--- *Main> stitchEdges antWorld
--- [(0,3),(0,1),(1,4),(1,2),(2,5),(3,6),(3,4),(4,7),(4,5),(5,8),(6,7),(7,8)]
-
-getBatch stitchies em batches = do
-        let x = inTupleList stitchies em
-        putStrLn("")        
-        putStrLn("tuplist "++(show x))
-        if x == []
-                then putStrLn(show batches ++ "jh")
-                else do
-                        let y = inTupleList stitchies em
-                        let s = (\\) stitchies y
-                        putStrLn("")
-                        putStrLn("batches: " ++ (show batches))
-                        putStrLn("")
-                        putStrLn("s: " ++ (show s))
-                        putStrLn("")
-                        putStrLn("y" ++ (show (y)))
-                        putStrLn("")
-                        putStrLn("em" ++ (show (em)))                          
-                        getBatch  s []  (y:batches)
                         
--- not good but close
+-- | Produces the intDirection tuple needed for stitchable Quad Generation
+genQuadPairs :: [(Int, Int)] -> [((Int, Direction), (Int, Direction))]
+genQuadPairs pairs = map dirsNeeded pairs
 
-
-{- *Main> inTupleList it []
-[(6,7),(2,5),(1,4),(0,3)]
-*Main> let wamba = stitchEdges antWorld
-*Main> let err =  inTupleList wamba []
-*Main> err
-[(6,7),(2,5),(1,4),(0,3)]
-*Main> :m + Data.List
-*Main Data.List> wamba \\ err
-[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
-*Main Data.List> err
-[(6,7),(2,5),(1,4),(0,3)]
-*Main Data.List> wamba
-[(0,3),(0,1),(1,4),(1,2),(2,5),(3,6),(3,4),(4,7),(4,5),(5,8),(6,7),(7,8)]
-*Main Data.List> :t (\\)
-(\\) :: Eq a => [a] -> [a] -> [a]
-*Main Data.List> err
-[(6,7),(2,5),(1,4),(0,3)]
-*Main Data.List> wamba
-[(0,3),(0,1),(1,4),(1,2),(2,5),(3,6),(3,4),(4,7),(4,5),(5,8),(6,7),(7,8)]
-*Main Data.List> wamba \\ err
-[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
-*Main Data.List> (\\)wamba err
-[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
-*Main Data.List> (\\) wamba err
-[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
-*Main Data.List> wamba
-[(0,3),(0,1),(1,4),(1,2),(2,5),(3,6),(3,4),(4,7),(4,5),(5,8),(6,7),(7,8)]
-*Main Data.List> (\\) wamba err
-[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
-*Main Data.List> let err2 =  inTupleList it []
-*Main Data.List> err2
-[(5,8),(4,7),(3,6),(0,1)]
-*Main Data.List> (\\) wamba err 
-[(0,1),(1,2),(3,6),(3,4),(4,7),(4,5),(5,8),(7,8)]
-*Main Data.List> let rem1 = (\\) wamba err 
-*Main Data.List> rem1 \\ err2
-[(1,2),(3,4),(4,5),(7,8)]
-*Main Data.List> inTupleList it []
-[(7,8),(3,4),(1,2)] -}
-
-
+-- | Helper function for genQuad Pairs
 dirsNeeded :: (Int, Int) -> ((Int, Direction), (Int, Direction)) -- NEEDED TO GENERATE THE quadPairs used in stitchUpEdge
 dirsNeeded quadTuple
    | snd quadTuple == fst quadTuple+1 = ((fst quadTuple,West),(snd quadTuple,East))
@@ -164,14 +119,11 @@ dirsNeeded quadTuple
    | fst quadTuple < snd quadTuple    = ((fst quadTuple,North),(snd quadTuple,South))
 
 
-genQuadPairs :: [(Int, Int)] -> [((Int, Direction), (Int, Direction))]
-genQuadPairs pairs = map dirsNeeded pairs
-
 --stitchUpEdges :: GraphAWTuple -> GraphAWTuple NOT NEEDED?!
 --stitchUpEdges world = undefined --stitchEdges edges $ fstTrip world -- more serially stuffs
 
 --stitchUpEdge :: GraphAWTuple -> GraphPWTuple -> ((Int,Direction),(Int,Direction)) -> Int -> GraphAWTuple
-stitchUpEdge antWorld pherWorld quadPair qsiz = do
+stitchUpEdge antWorld pherWorld qsiz quadPair = do
 
                 let quadSize = qsiz                
 
@@ -190,7 +142,7 @@ stitchUpEdge antWorld pherWorld quadPair qsiz = do
                 stitchable
                 
                  
---based off listOfNodesWithAntsIn
+-- | based off listOfNodesWithAntsIn
 edgePointsWithAntsIn :: [(Maybe Ant, Int)] -> [(Maybe Ant,Int)]
 edgePointsWithAntsIn [] = []
 edgePointsWithAntsIn ((ant,nd):xs)
@@ -206,14 +158,85 @@ edgePointsWithAntsIn ((ant,nd):xs)
 -- flags
 -- Ant pools
 
+--processWorld :: GraphAWTuple -> GraphPWTuple -> GraphAWTuple
+processWorld x y = do
+        let siz = truncate $ sqrt $fromIntegral $length $brokenUpGraph $ fstTrip ((sndTrip x) (0))         
+        let a = stitchEdges x
+        let b = getOrderedBatch a
+        let c = recurseOnBatches b
+        let d = stitchUpEdge x y siz
+        let e = batchStitching d c x siz
+        undefined
 
-processQuadrants :: GraphAWTuple -> GraphPWTuple -> GraphAWTuple
-processQuadrants = undefined -- TODO parallel stuff
 
+-- | 
+recurseOnBatches :: [[(Int,Int)]]                   -- ^
+        -> [[((Int, Direction), (Int, Direction))]] -- ^
+recurseOnBatches x =  map genQuadPairs x
 
-processWorld :: GraphAWTuple -> GraphAWTuple
-processWorld = undefined -- TODO the big loop
+-- |
+--batchStitching :: (((Int, Direction), (Int, Direction)) -> StitchableQuads) -> [[((Int, Direction), (Int, Direction))]] ->
+batchStitching f list@(x:xs) world siz = do
+        let a = map f x
+        let b = map (procEdgeAntAtNode 0) a -- parallelizable
+        let noProcs = map noProcList b
+        let noProcTable = zipNoProcs x noProcs [] siz
+        let newQuads = map antGraphs b        
+        let world' =  updateAntWorld x newQuads world []
+        batchStitching' f xs world' siz noProcTable
 
+batchStitching' f list@(x:xs) world siz noProcTable = do 
+        let a = map f x
+        let b = map (procEdgeAntAtNode 0) a -- parallelizable
+        let noProcs = map noProcList b
+        let noProcTable = zipNoProcs x noProcs noProcTable siz
+        let newQuads = map antGraphs b
+        let world' =  updateAntWorld x newQuads world []
+        batchStitching' f xs world' siz noProcTable
+
+batchStitching' f [] world siz noProcTable = (world,noProcTable)
+
+updateAntWorld ((x1,x2):xs) ((y1,y2):ys) world passedListQuads = updateAntWorld xs ys world ((fst x1,y1):(fst x2,y2):passedListQuads)
+
+updateAntWorld [] _ world passedList = do
+        let siz = truncate $ sqrt $fromIntegral $length $ brokenUpGraph world
+        if length passedList == siz^2
+                then simpleAGraphUpdate passedList siz
+                else complexAGraphUpdate world passedList siz
+
+simpleAGraphUpdate passedList siz = do       
+        let orderedList = sortBy (\x y -> fst y `compare` fst x) passedList
+        let quads = map snd orderedList
+        let update = graphFromEdges $ zip3 (quads) (keyList siz) (adjListForNewGraph siz)
+        update
+
+complexAGraphUpdate world passedList = do
+        patchMissing world passedList 0
+        
+        
+
+-- | Creates and maintains a table for the no process vertices for all Quadrants.
+zipNoProcs :: [((Int, Direction), (Int, Direction))] -- ^
+     -> [([Int], [Int])]                             -- ^
+     -> [[Int]]                                      -- ^
+     -> Int                                          -- ^
+     -> [[Int]]                                      -- ^ Returns a No Process List Table
+zipNoProcs labels@(((x1,_),(x2,_)):xs) noProcs@((y1,y2):ys) [] siz = do
+        let a = replicate siz []
+        let b = updateNoProcList x1 y1 a
+        let c = updateNoProcList x2 y2 b
+        c
+zipNoProcs labels@(((x1,_),(x2,_)):xs) noProcs@((y1,y2):ys) npList@(l:ls) siz = do
+        let a = updateNoProcList x1 y1 npList
+        let b = updateNoProcList x1 y1 a
+        b
+
+-- | 
+updateNoProcList :: Int -> [Int] -> [[Int]] -> [[Int]]
+updateNoProcList quadrant addition currentNoProcList = do
+        let a = splitAt quadrant currentNoProcList
+        let y = fst a ++ [union addition (head $ snd a)] ++ (tail $ snd a)
+        y
 
 
 
