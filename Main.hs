@@ -60,7 +60,17 @@ zippedQuads :: [(GraphATuple, GraphPTuple)]
 zippedQuads = zip aQuads pQuads
 
 z :: GraphATuple
-z = processAQuadrant_ (head aQuads) emptyPherQuadrant 
+z = processAQuadrant_ (head aQuads) emptyPherQuadrant
+
+setupSim worldSize quadSize antNum foodNum = do
+        let a = newAWorld worldSize quadSize--new antWorld -para
+        let p = newPWorld worldSize quadSize--new pherWorld
+        let f = newFWorld worldSize quadSize--new foodWorld
+        undefined
+        --set NestLoc
+        --placeAnts -para
+        --placeFood
+
 
 
 -- | Main function
@@ -72,19 +82,13 @@ main = do
         putStrLn ("Hey " ++ a)
         putStrLn ("test")
         putStrLn (show $ fst $ splitAt 3 rnumbers)
+        
         let sti = stitchUpEdge antWorld_ pherWorld 3 ((2,West),(3,East))
         prettyAnt $ fst $ antGraphs sti        
         let x = procEdgeAntAtNode 1 sti
         prettyAnt $ fst $ antGraphs x
         forkIO guiFunc
         antVisGL
-        
-
-        
-
---setUpWorld = 
-
-
-        
+                
 
        

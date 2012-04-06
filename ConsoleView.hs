@@ -82,3 +82,41 @@ nlf row siz = (row)-(row`mod`siz)  -- next Lowest factor
 hcf :: Integer -> Integer -> Integer
 hcf a b | b==0      = abs a
         | otherwise = hcf b (a`mod`b)
+
+
+
+
+prettyPherWorld pWorld  = do
+        let theData = brokenUpGraph pWorld   
+        let wsiz = truncate $ sqrt $fromIntegral $length $theData
+        printPWorldLine 0 1 wsiz pWorld
+
+printPWorldLine :: Int -> Int-> Int -> GraphPWTuple -> IO()
+
+printPWorldLine row worldCol wsiz pWorld  | ((wsiz*3))-row == 0 = putStr("")
+
+                                         | ((wsiz - worldCol) > -1) = do
+        specificPLinePrint pWorld row wsiz worldCol
+
+                                         | otherwise = do
+        printPWorldLine row 1 wsiz pWorld
+
+
+specificPLinePrint pWorld row wsiz worldCol = do
+        let siz = truncate $ sqrt $fromIntegral $length $brokenUpGraph $ fstTrip ((sndTrip pWorld) (0)) 
+        let preData = brokenUpGraph $ fstTrip ((sndTrip pWorld) (getGraph row siz wsiz worldCol)) -- pulls out the specific Graph! so only siz^2 elements in pre Data! 
+        let theData = fst $ splitAt siz $snd (splitAt ((row`mod`siz)*siz) preData)
+        prizzlePLn worldCol wsiz siz row theData
+        let moveOn = worldCol+1   
+        if moveOn > wsiz
+                then printPWorldLine (row+1) (worldCol+1) wsiz pWorld
+                else printPWorldLine row (worldCol+1) wsiz pWorld
+
+--prizzlePLn :: Int -> Int -> Int -> Int -> [(Maybe Ant, Int, [Int])] -> IO ()
+prizzlePLn worldCol wsiz siz row (someData:theData) = do putStr("|"++ show(fstTrip someData)++"|")
+                                                         prizzlePLn worldCol wsiz siz row theData
+
+
+prizzlePLn worldCol wsiz siz row [] | (worldCol`mod`wsiz == 0) && (row`mod`siz ==2) = putStrLn("\n")
+                                   | worldCol`mod`wsiz == 0 = putStrLn("")
+                                   | otherwise = putStr ("  ")

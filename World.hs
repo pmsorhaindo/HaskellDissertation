@@ -2,7 +2,8 @@ module World where
 import Data.Array
 import Data.Graph
 import Data.List (nubBy,(\\),sortBy,union)
-import Data.Maybe (fromJust, isNothing)
+import Data.Maybe (fromJust,isJust,isNothing)
+import Data.Bool.HT
 import Data.Tuple (swap)
 import Test.QuickCheck
 import Test.HUnit
@@ -16,8 +17,7 @@ import QuadStitching
 
 type GraphAWTuple = (Graph, Vertex -> (GraphATuple, Int, [Int]), Int -> Maybe Vertex)
 type GraphPWTuple = (Graph, Vertex -> (GraphPTuple, Int, [Int]), Int -> Maybe Vertex)
-
---Test-Framework .... to automate the testing
+type GraphFWTuple = (Graph, Vertex -> (GraphFTuple, Int, [Int]), Int -> Maybe Vertex)
 
 --Build a new Graph 6 and 36 need replacing with a variable graph size and graph size^2
 -- let a = graphFromEdges $ zip3 [1..36] (keyList 6) (adjListForNewGraph 6)
@@ -47,6 +47,8 @@ newAWorld worldWidth quadWidth = graphFromEdges $ zip3 (replicate (worldWidth^2)
 -- | Generate empty pheremone world based on the size (worldWidth) provided as a prameter
 newPWorld worldWidth quadWidth = graphFromEdges $ zip3 (replicate (worldWidth^2) (newPQuad quadWidth)) (keyList worldWidth) (adjListForNewGraph worldWidth)
 
+-- | Generate empty food world based on the size (worldWidth) provided as a prameter
+newFWorld worldWidth quadWidth = graphFromEdges $ zip3 (replicate (worldWidth^2) (newFQuad quadWidth)) (keyList worldWidth) (adjListForNewGraph worldWidth)
 
 updatedAWorld newAQuads = graphFromEdges $ zip3 (newAQuads) (keyList worldWidth) (adjListForNewGraph worldWidth)
 
@@ -149,7 +151,7 @@ edgePointsWithAntsIn ((ant,nd):xs)
         | not $ isNothing ant  = (ant,nd) : edgePointsWithAntsIn xs
         | otherwise = edgePointsWithAntsIn xs
                        
---increment vert tuple to get nodes
+-- increment vert tuple to get nodes
 -- get the direction needed from each node.
 -- get the edges for those directions from the nodes
 -- process ants at Edges
@@ -158,15 +160,18 @@ edgePointsWithAntsIn ((ant,nd):xs)
 -- flags
 -- Ant pools
 
+-- |
 --processWorld :: GraphAWTuple -> GraphPWTuple -> GraphAWTuple
 processWorld x y = do
         let siz = truncate $ sqrt $fromIntegral $length $brokenUpGraph $ fstTrip ((sndTrip x) (0))         
-        let a = stitchEdges x
-        let b = getOrderedBatch a
-        let c = recurseOnBatches b
-        let d = stitchUpEdge x y siz
-        let e = batchStitching d c x siz
-        undefined
+        let edgePairs = stitchEdges x
+        let parallelBatches = getOrderedBatch edgePairs
+        let includeDirs = recurseOnBatches parallelBatches
+        let stis = stitchUpEdge x y siz -- partially applied function ready for mass creation of stitchableQuads
+        let batchResult = batchStitching stis includeDirs x y siz
+        let worldRes = fst batchResult
+        let noProcs = snd batchResult
+        worldRes
 
 
 -- | 
@@ -176,25 +181,32 @@ recurseOnBatches x =  map genQuadPairs x
 
 -- |
 --batchStitching :: (((Int, Direction), (Int, Direction)) -> StitchableQuads) -> [[((Int, Direction), (Int, Direction))]] ->
-batchStitching f list@(x:xs) world siz = do
+batchStitching f list@(x:xs) aworld pworld siz = do
         let a = map f x
         let b = map (procEdgeAntAtNode 0) a -- parallelizable
         let noProcs = map noProcList b
         let noProcTable = zipNoProcs x noProcs [] siz
         let newQuads = map antGraphs b        
-        let world' =  updateAntWorld x newQuads world []
-        batchStitching' f xs world' siz noProcTable
+        let aworld' =  updateAntWorld x newQuads aworld []
+        let f' =  stitchUpEdge aworld' pworld siz --updated partially applied stitchies
+        batchStitching' f' xs aworld' pworld siz noProcTable
 
-batchStitching' f list@(x:xs) world siz noProcTable = do 
+
+-- |
+
+batchStitching' f list@(x:xs) aworld pworld siz noProcTable = do 
         let a = map f x
         let b = map (procEdgeAntAtNode 0) a -- parallelizable
         let noProcs = map noProcList b
         let noProcTable = zipNoProcs x noProcs noProcTable siz
         let newQuads = map antGraphs b
-        let world' =  updateAntWorld x newQuads world []
-        batchStitching' f xs world' siz noProcTable
+        let aworld' =  updateAntWorld x newQuads aworld []
+        batchStitching' f xs aworld' pworld siz noProcTable
 
-batchStitching' f [] world siz noProcTable = (world,noProcTable)
+batchStitching' f [] world pworld siz noProcTable = (world,noProcTable)
+
+
+-- |
 
 updateAntWorld ((x1,x2):xs) ((y1,y2):ys) world passedListQuads = updateAntWorld xs ys world ((fst x1,y1):(fst x2,y2):passedListQuads)
 
@@ -204,15 +216,31 @@ updateAntWorld [] _ world passedList = do
                 then simpleAGraphUpdate passedList siz
                 else complexAGraphUpdate world passedList siz
 
+-- |
+
 simpleAGraphUpdate passedList siz = do       
         let orderedList = sortBy (\x y -> fst y `compare` fst x) passedList
         let quads = map snd orderedList
         let update = graphFromEdges $ zip3 (quads) (keyList siz) (adjListForNewGraph siz)
         update
 
-complexAGraphUpdate world passedList = do
-        patchMissing world passedList 0
+-- |
+
+complexAGraphUpdate world passedList siz = do
+        patchMissing world passedList 0 siz []
         
+-- |
+
+patchMissing world passedList inc siz qList = do
+        let potentialQuad = lookup inc passedList
+        let qList' = select [] $ 
+                (inc> ((siz^2)-1)        , qList)
+                :(isNothing potentialQuad, qList ++ [(getAntQuad inc world)])
+                :(isJust potentialQuad   , qList ++ [(fromJust $lookup inc passedList)])
+                :[]
+        if length qList == length qList'
+                then graphFromEdges $ zip3 (qList) (keyList siz) (adjListForNewGraph siz)
+                else patchMissing world passedList (inc+1) siz qList'
         
 
 -- | Creates and maintains a table for the no process vertices for all Quadrants.
@@ -226,6 +254,9 @@ zipNoProcs labels@(((x1,_),(x2,_)):xs) noProcs@((y1,y2):ys) [] siz = do
         let b = updateNoProcList x1 y1 a
         let c = updateNoProcList x2 y2 b
         c
+
+-- |
+
 zipNoProcs labels@(((x1,_),(x2,_)):xs) noProcs@((y1,y2):ys) npList@(l:ls) siz = do
         let a = updateNoProcList x1 y1 npList
         let b = updateNoProcList x1 y1 a

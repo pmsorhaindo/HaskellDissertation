@@ -16,12 +16,16 @@ import Test.HUnit
 import AntRepresent
 import GraphOps
 import SimDefine
+import Food
 
 -- | Type synonym for the 3 tuple Ant Graph to make type signatures easier to read
 type GraphATuple = (Array Vertex [Vertex], Int -> (Maybe Ant, Point, [Point]), Point -> Maybe Vertex)
 
 -- | Similar to GraphATuple but holding pheremone levels instead of Ants.
 type GraphPTuple = (Graph, Vertex -> (Double, Int, [Int]), Int -> Maybe Vertex)
+
+-- | Similar to GraphATuple but holding Food levels instead of Ants.
+type GraphFTuple = (Graph, Vertex -> (Maybe Food, Int, [Int]), Int -> Maybe Vertex)
 
 --Build a new Graph 6 and 36 need replacing with a variable graph size and graph size^2
 -- let a = graphFromEdges $ zip3 [1..36] (keyList 6) (adjListForNewGraph 6)
@@ -360,4 +364,10 @@ newAQuad' = graphFromEdges $ edgesForTestAGraph1' :: GraphATuple
 newPQuad :: Int         -- ^
         -> GraphPTuple  -- ^
 newPQuad gwidth = graphFromEdges $ zip3 (replicate (gwidth^2) 1.0) (keyList gwidth) (adjListForNewGraph gwidth) :: GraphPTuple
+
+-- | Gennerating empty pheremone Graph of size width
+newFQuad :: Int         -- ^
+        -> GraphFTuple  -- ^
+newFQuad gwidth = graphFromEdges $ zip3 (replicate (gwidth^2) Nothing) (keyList gwidth) (adjListForNewGraph gwidth) :: GraphFTuple
+
 
