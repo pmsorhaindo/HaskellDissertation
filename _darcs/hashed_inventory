@@ -1,4 +1,4 @@
-pristine:0b50b085e1a2f24b5a308e4479584e1148fe3830942108f4f473b29b2b8eccad
+pristine:fb3dc1482f81433295743c6de4f375a218a5bf237d8e21571e40290a0521a134
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -309,3 +309,8 @@ pmsorhaindo@gmail.com**20120329232639
  Ignore-this: f60e3153ccde3a9cc4a3fe9b94ab5f2e
 ] 
 hash: 0000011146-933e046c5ac72d4c4a5f37cb2e55b3971f9ab3bf7bdae49429e0e3b7ec674495
+[battling the bugs phermone levels viewable in console. Weird out of bounds exception when processing the second stitchup session.
+pmsorhaindo@gmail.com**20120406105344
+ Ignore-this: 88c2957ce73629b26397d5298cd1d4e4
+] 
+hash: 0000006600-a941a46d001457b7130039143175cce4428bd89dc3163c25332532be162b23c5

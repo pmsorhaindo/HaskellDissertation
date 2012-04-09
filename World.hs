@@ -270,4 +270,38 @@ updateNoProcList quadrant addition currentNoProcList = do
         y
 
 
+addAntToWorld :: Ant -> Location -> GraphAWTuple -> Either String GraphAWTuple
+addAntToWorld a loc awgraph = do
+        let wsiz = truncate $ sqrt $fromIntegral $length $brokenUpGraph awgraph
+        let qsiz = truncate $ sqrt $fromIntegral $length $brokenUpGraph $ fstTrip ((sndTrip awgraph) (0))
+        let siz = wsiz * qsiz
+        let x = xpos loc
+        let y = ypos loc
+        if (x <= siz && y <= siz)
+                then addAntToWorld' a loc awgraph wsiz qsiz
+                else Left "Ant is not of this world."
+
+addAntToWorld' :: Ant -> Location -> GraphAWTuple -> Int -> Int -> Either String GraphAWTuple
+addAntToWorld' a loc awgraph wsiz qsiz = do
+        let wnd = (((xpos loc -1) `div` qsiz) + 1) + (((ypos loc -1) `div` qsiz) * wsiz)
+        let aquad = fstTrip $ (sndTrip awgraph) (wnd)
+        let qnd = 1 + ((xpos loc - 1) `mod` qsiz + (((ypos loc -1) `mod` qsiz) * wsiz))
+        if isAntAtNode aquad qnd       
+                then Left "Ant already here."
+                else addAntToWorld'' wnd awgraph (addAnt aquad qnd)
+
+wnd x y  = (((x-1) `div` 3) + 1) + (((y -1) `div` 3) * 3) 
+  
+addAntToWorld'' :: Int -> GraphAWTuple -> GraphATuple -> Either String GraphAWTuple
+addAntToWorld'' wnd awgraph newQuad = Right (graphFromEdges $ zip3 nds nverts nadjs)
+        where
+               nds = (replace newQuad wnd (map fstTrip $ brokenUpGraph awgraph))
+               nverts = (keyList worldWidth)
+               nadjs = adjListForNewGraph (truncate $ sqrt $fromIntegral $length $brokenUpGraph awgraph)
+
+replace :: GraphATuple -> Int -> [GraphATuple] -> [GraphATuple]
+replace item index list = a ++ item : b
+        where
+                a = take (index-1) list
+                b = drop index list
 
