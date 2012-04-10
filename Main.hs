@@ -82,7 +82,7 @@ setupSim worldSize quadSize antNum foodNum rs aidST = do
 main :: IO ()
 main = do
         -- Launch GUI.
-        rnumbers <- genRandoms 1 4
+        rnumbers <- genRandoms 1 8
         a <- getLine
         putStrLn ("Hey " ++ a)
         putStrLn ("test")
@@ -98,13 +98,13 @@ main = do
 
         putStrLn("")
         putStrLn("")
-        let atestAddWorld = newAWorld 5 5
+        let atestAddWorld = newAWorld 3 3
         prettyAntWorld $ atestAddWorld
         putStrLn("")
         putStrLn("")
-        let ns = splitAt 3 $ take (3*2) rnumbers
+        let ns = splitAt 1000 $ take (1000*2) rnumbers
         let ns'= zip (fst ns) (snd ns)
-        let aPopulate = populateAntWorld atestAddWorld 3 ns' antID
+        let aPopulate = populateAntWorld atestAddWorld 10 ns' antID
         prettyAntWorld $ aPopulate
         
         putStrLn("")

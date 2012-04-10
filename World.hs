@@ -288,16 +288,16 @@ addAntToWorld' a loc awgraph wsiz qsiz = do
         let qnd = 1 + ((xpos loc - 1) `mod` qsiz + (((ypos loc -1) `mod` qsiz) * wsiz))
         if isAntAtNode aquad qnd       
                 then Left "Ant already here."
-                else addAntToWorld'' wnd awgraph (addAnt aquad qnd)
+                else addAntToWorld'' wnd awgraph (addExistingAnt aquad qnd (Just a))
 
-wnd x y  = (((x-1) `div` 3) + 1) + (((y -1) `div` 3) * 3) 
   
 addAntToWorld'' :: Int -> GraphAWTuple -> GraphATuple -> Either String GraphAWTuple
 addAntToWorld'' wnd awgraph newQuad = Right (graphFromEdges $ zip3 nds nverts nadjs)
         where
+               wid = truncate $ sqrt $fromIntegral $length $brokenUpGraph awgraph
                nds = (replace newQuad wnd (map fstTrip $ brokenUpGraph awgraph))
-               nverts = (keyList worldWidth)
-               nadjs = adjListForNewGraph (truncate $ sqrt $fromIntegral $length $brokenUpGraph awgraph)
+               nverts = (keyList wid)
+               nadjs = adjListForNewGraph (wid)
 
 replace :: GraphATuple -> Int -> [GraphATuple] -> [GraphATuple]
 replace item index list = a ++ item : b
@@ -310,6 +310,8 @@ replace item index list = a ++ item : b
 
 extractEither (Right a) aw antNum ((x,y):rs) aidST =  populateAntWorld a antNum ((x,y):rs) aidST --aidST Ant Id from StateM
 extractEither (Right a) aw antNum [] aidST =  a
+extractEither (Right a) aw antNum [] aidST =  a
+extractEither (Left b) aw antNum [] aidST = aw
 extractEither (Left b) aw antNum ((x,y):rs) aidST = do
         --putStrLn(b) -- How I wish I could debug
         populateAntWorld aw antNum ((x,y):rs) aidST
