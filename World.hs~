@@ -305,3 +305,19 @@ replace item index list = a ++ item : b
                 a = take (index-1) list
                 b = drop index list
 
+
+
+
+extractEither (Right a) aw antNum ((x,y):rs) aidST =  populateAntWorld a antNum ((x,y):rs) aidST --aidST Ant Id from StateM
+extractEither (Right a) aw antNum [] aidST =  a
+extractEither (Left b) aw antNum ((x,y):rs) aidST = do
+        --putStrLn(b) -- How I wish I could debug
+        populateAntWorld aw antNum ((x,y):rs) aidST
+
+populateAntWorld aw antNum ((x,y):rs) aidST  = do
+        let checkw = addAntToWorld (blankAnt 1) (Location x y) aw
+        extractEither checkw aw antNum rs aidST
+        
+        
+        
+

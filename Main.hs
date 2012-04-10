@@ -11,6 +11,10 @@ import Data.Foldable (forM_)
 import Control.Parallel.Strategies
 import Control.DeepSeq 
 import Control.Concurrent
+import Control.Monad.State ( get, put, runState
+                           , evalState, State(..)
+                           )
+
 --import Control.Exception
 --import Control.Applicative
 
@@ -62,16 +66,17 @@ zippedQuads = zip aQuads pQuads
 z :: GraphATuple
 z = processAQuadrant_ (head aQuads) emptyPherQuadrant
 
-setupSim worldSize quadSize antNum foodNum = do
-        let a = newAWorld worldSize quadSize--new antWorld -para
-        let p = newPWorld worldSize quadSize--new pherWorld
-        let f = newFWorld worldSize quadSize--new foodWorld
-        undefined
+setupSim worldSize quadSize antNum foodNum rs aidST = do
+        let aw = newAWorld worldSize quadSize--new antWorld -para
+        let pw = newPWorld worldSize quadSize--new pherWorld
+        let fw = newFWorld worldSize quadSize--new foodWorld
+        let ns = splitAt antNum $ take (antNum*2) rs
+        let ns'= zip (fst ns) (snd ns)
+        let aPopulate = populateAntWorld aw antNum ns' aidST
+        ns'
         --set NestLoc
         --placeAnts -para
         --placeFood
-
-
 
 -- | Main function
 main :: IO ()
@@ -82,13 +87,31 @@ main = do
         putStrLn ("Hey " ++ a)
         putStrLn ("test")
         putStrLn (show $ fst $ splitAt 3 rnumbers)
-        
+        let antID = runState (do{return 1}) 1
         let sti = stitchUpEdge antWorld_ pherWorld 3 ((2,West),(3,East))
         prettyAnt $ fst $ antGraphs sti        
         let x = procEdgeAntAtNode 1 sti
         prettyAnt $ fst $ antGraphs x
-        forkIO guiFunc
-        antVisGL
+
+        let sim = setupSim 4 4 10 3 rnumbers antID
+        
+
+        putStrLn("")
+        putStrLn("")
+        let atestAddWorld = newAWorld 5 5
+        prettyAntWorld $ atestAddWorld
+        putStrLn("")
+        putStrLn("")
+        let ns = splitAt 3 $ take (3*2) rnumbers
+        let ns'= zip (fst ns) (snd ns)
+        let aPopulate = populateAntWorld atestAddWorld 3 ns' antID
+        prettyAntWorld $ aPopulate
+        
+        putStrLn("")
+        --_ <- forkIO guiFunc
+        --antVisGL
                 
 
        
+{-
+       -}

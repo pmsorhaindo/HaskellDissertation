@@ -1,11 +1,12 @@
 module AntRepresent where
 import SimDefine
 
+
 data Mode = Explore { dir :: Direction, depth :: Int}
         | TrackFood {latestPher :: [Int]}
         | Return {steps :: Int} --
         | TrackNest {latestPhers :: [Int]}
-        -- possibly add more behaviour types here
+        | Wander -- possibly add more behaviour types here
         deriving (Eq)
 
 data Ant = Ant {
@@ -22,6 +23,8 @@ data Ant = Ant {
 
 instance Show Ant where
          show (Ant {pherLevel = i} ) = "Ant: " ++ show i
+
+blankAnt x = Ant x North 0.0 0 Wander []
 
 
 

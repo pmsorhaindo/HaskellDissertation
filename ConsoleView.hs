@@ -31,23 +31,24 @@ prizzle count siz [] = putStrLn(".")
 prettyAntWorld aWorld  = do
         let theData = brokenUpGraph aWorld   
         let wsiz = truncate $ sqrt $fromIntegral $length $theData
-        printWorldLine 0 1 wsiz aWorld
+        let qsiz = truncate $ sqrt $fromIntegral $length $brokenUpGraph $ fstTrip ((sndTrip aWorld) (0))
+        printWorldLine 0 1 wsiz qsiz aWorld
 
-printWorldLine :: Int -> Int-> Int -> GraphAWTuple -> IO()
+printWorldLine :: Int -> Int-> Int -> Int -> GraphAWTuple -> IO()
 
-printWorldLine row worldCol wsiz aWorld  | ((wsiz*3))-row == 0 = putStr("")
+printWorldLine row worldCol wsiz qsiz aWorld  | ((wsiz*qsiz))-row == 0 = putStr("")
 
-                                         | ((wsiz - worldCol) > -1) = do
-        specificLinePrint aWorld row wsiz worldCol
+                                              | ((wsiz - worldCol) > -1) = do
+        specificLinePrint aWorld row wsiz qsiz worldCol
 
-                                         | otherwise = do
-        printWorldLine row 1 wsiz aWorld
+                                              | otherwise = do
+        printWorldLine row 1 wsiz qsiz aWorld
 
 getGraph row qsiz wsiz worldCol = ((row`div`qsiz)*wsiz)+(worldCol-1)
 
-specificLinePrint aWorld row wsiz worldCol = do
+specificLinePrint aWorld row wsiz siz worldCol = do
         --a <- getLine
-        let siz = truncate $ sqrt $fromIntegral $length $brokenUpGraph $ fstTrip ((sndTrip aWorld) (0)) 
+        --let siz = truncate $ sqrt $fromIntegral $length $brokenUpGraph $ fstTrip ((sndTrip aWorld) (0)) 
         let preData = brokenUpGraph $ fstTrip ((sndTrip aWorld) (getGraph row siz wsiz worldCol)) -- pulls out the specific Graph! so only siz^2 elements in pre Data! 
         let theData = fst $ splitAt siz $snd (splitAt ((row`mod`siz)*siz) preData) -- TODO wsiz chang to local size
         --putStr("World Col = "++ (show worldCol) ++ " ")
@@ -59,8 +60,8 @@ specificLinePrint aWorld row wsiz worldCol = do
         prizzleLn worldCol wsiz siz row theData
         let moveOn = worldCol+1   
         if moveOn > wsiz
-                then printWorldLine (row+1) (worldCol+1) wsiz aWorld
-                else printWorldLine row (worldCol+1) wsiz aWorld
+                then printWorldLine (row+1) (worldCol+1) wsiz siz aWorld
+                else printWorldLine row (worldCol+1) wsiz  siz aWorld
 
 
 prizzleLn :: Int -> Int -> Int -> Int -> [(Maybe Ant, Int, [Int])] -> IO ()
@@ -72,7 +73,7 @@ prizzleLn worldCol wsiz siz row (someData:theData) | isJust (fstTrip someData) =
                                                    | otherwise = do putStr("|X|")
                                                                     prizzleLn worldCol wsiz siz row theData
 
-prizzleLn worldCol wsiz siz row [] | (worldCol`mod`wsiz == 0) && (row`mod`siz ==2) = putStrLn("\n")
+prizzleLn worldCol wsiz siz row [] | (worldCol`mod`wsiz == 0) && (row`mod`siz == (siz-1)) = putStrLn("\n")
                                    | worldCol`mod`wsiz == 0 = putStrLn("")
                                    | otherwise = putStr ("  ")
 
