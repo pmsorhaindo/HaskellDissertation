@@ -46,21 +46,21 @@ procEdgeAntAtNode pos qs  = do
         let adjAnt = (fst $ (snd $ aEdge) !! pos)
         
         if pos<(qSize qs) -- fail
-                then putItOutside qs pos currAnt adjAnt
+                then antScenarios qs pos currAnt adjAnt
                 else qs
 
 -- | 
-putItOutside :: StitchableQuads  -- ^
+antScenarios :: StitchableQuads  -- ^
         -> Int                   -- ^
         -> Maybe Ant             -- ^
         -> Maybe Ant             -- ^
         -> StitchableQuads       -- ^
-putItOutside qs pos currAnt adjAnt
+antScenarios qs pos currAnt adjAnt
                       | (isNothing currAnt) && (isNothing adjAnt) = procEdgeAntAtNode (1+pos) qs
                       | (isJust currAnt) && (isNothing adjAnt)    = loneEdgeAnt qs True pos
                       | (isNothing currAnt) && (isJust adjAnt)    = loneEdgeAnt qs False pos
-                      | (isJust currAnt) && (isJust adjAnt)       = loneEdgeAnt qs False pos
-putItOutside _ _ _ _ = undefined
+                      | (isJust currAnt) && (isJust adjAnt)       = doubleEdgeAnt qs pos
+antScenarios _ _ _ _ = undefined
 
 
 -- | Lone Edge Ant
@@ -110,7 +110,7 @@ loneMoveIt' qs modir nd (dec:decs) isCurr | modir == fst dec = checkForAntOut qs
                                                | otherwise = checkForAntIn qs modir nd (dec:decs) isCurr
 loneMoveIt' _ _ _ [] _ = undefined
 
--- |
+-- | This function checks to see if it is possible for an ant to move back from the edge into the quadrant.
 checkForAntIn ::StitchableQuads         -- ^
         -> Direction                    -- ^
         -> Int                          -- ^
@@ -123,7 +123,7 @@ checkForAntIn qs modir nd (dec:decs) isCurr = do
                 then loneMoveIt qs modir nd decs isCurr
                 else swapIn qs nd nxtNd (fst dec) isCurr
 
--- |
+-- | This function moves ants back from the edge of quadrants into the same quadrant.
 swapIn :: StitchableQuads       -- ^ The stitchable Quad which is to be processed.
         -> Int                  -- ^ First node supplied to update Graph. (Should contain an ant)
         -> Int                  -- ^ Second node supplied to update Graph. (Should contain Nothing)
@@ -147,7 +147,7 @@ swapIn qs nd1 nd2 d s  = newQs qs
               pep x = (pEdgePair qs)
               npl x = side (((nd2: (fst$noProcList qs),snd$noProcList qs)),(fst$noProcList qs,nd2: (snd$noProcList qs)))
 
--- |
+-- | This function checks to see if it is possible for the ant can move out of the quadrant
 checkForAntOut :: StitchableQuads       -- ^
         -> Direction                    -- ^
         -> Int                          -- ^
@@ -161,7 +161,7 @@ checkForAntOut qs modir nd (dec:decs) isCurr = do
                 else swapOut qs nd outNd isCurr
 checkForAntOut _ _ _ [] _ = undefined
 
--- | 
+-- | This function moves an Ant out of the quadrant to the adjacent quadrant in the Stitchable Quadrant structure.
 swapOut :: forall t1 t2 t t3. StitchableQuads   -- ^
         -> Int                                  -- ^
         -> Int                                  -- ^
@@ -198,7 +198,7 @@ nextNode nd dir siz | dir == North = nd - siz
                     | dir == East = nd + 1
                     | dir == West = nd - 1
 
--- | Getting the node value of the node in a given direction on another graph given an edge Node.
+-- | Getting the node value of the node in a given direction on the other graph in a StitchableQuad structure  given an edge Node.
 outNode :: Int          -- ^
         -> Direction    -- ^
         -> Int          -- ^
@@ -208,6 +208,7 @@ outNode nd dir siz | dir == North = nd + (siz^2 - siz)
                    | dir == East = nd - (siz-1)
                    | dir == West = nd + (siz-1)
 
+-- |
 nodeFromEdgeIndex :: ((Direction, Direction)-> Direction)  -- ^
         -> StitchableQuads                                 -- ^
         -> Int                                             -- ^

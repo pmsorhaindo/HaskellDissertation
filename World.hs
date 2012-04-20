@@ -18,6 +18,7 @@ import QuadStitching
 type GraphAWTuple = (Graph, Vertex -> (GraphATuple, Int, [Int]), Int -> Maybe Vertex)
 type GraphPWTuple = (Graph, Vertex -> (GraphPTuple, Int, [Int]), Int -> Maybe Vertex)
 type GraphFWTuple = (Graph, Vertex -> (GraphFTuple, Int, [Int]), Int -> Maybe Vertex)
+type GraphNWTuple = (Graph, Vertex -> (GraphNTuple, Int, [Int]), Int -> Maybe Vertex)
 
 --Build a new Graph 6 and 36 need replacing with a variable graph size and graph size^2
 -- let a = graphFromEdges $ zip3 [1..36] (keyList 6) (adjListForNewGraph 6)
@@ -28,6 +29,8 @@ testBuildEmptyWorld size = graphFromEdges $ zip3 (replicate (size^2) 0) (keyList
 -- | Globals\
 a_ = graphTuple edgesForTestAGraph
 b_ = graphTuple edgesForTestPGraph
+
+-- Global pre predeclared Worlds for testing. --
 
 worldWidth = 3 -- this calls for the generation of 9 Ant Worlds and Pheremone Maps
 antWorld = graphFromEdges $ zip3 (listOfAntQuadrants) (keyList worldWidth) (adjListForNewGraph worldWidth)
@@ -50,24 +53,29 @@ newPWorld worldWidth quadWidth = graphFromEdges $ zip3 (replicate (worldWidth^2)
 -- | Generate empty food world based on the size (worldWidth) provided as a prameter
 newFWorld worldWidth quadWidth = graphFromEdges $ zip3 (replicate (worldWidth^2) (newFQuad quadWidth)) (keyList worldWidth) (adjListForNewGraph worldWidth)
 
+-- | Generate empty nest world based on the size (worldWidth) provided as a prameter
+newNWorld worldWidth quadWidth = graphFromEdges $ zip3 (replicate (worldWidth^2) (newNQuad quadWidth)) (keyList worldWidth) (adjListForNewGraph worldWidth)
+
 updatedAWorld newAQuads = graphFromEdges $ zip3 (newAQuads) (keyList worldWidth) (adjListForNewGraph worldWidth)
 
 --listOfAntQuadrants = replicate (worldWidth^2) emptyAntQuadrant
 listOfAntQuadrants = replicate (worldWidth^2) a''
 
+
 listOfPherQuadrants = replicate (worldWidth^2) emptyPherQuadrant
 
-stitchUp quad1 quad2 = undefined
-
+-- | This prints out the details of an Ant Quadrant to the terminal given its node in the antWorld Graph.
 showAntQuad nd world = brokenUpGraph $ fstTrip ((sndTrip world) nd)
 
+-- | This function pulls a quadrant out of an ant world graph when given its index.
 getAntQuad :: Int -> GraphAWTuple -> GraphATuple
 getAntQuad nd world = fstTrip ((sndTrip world) nd)
 
+-- | This function pulls a quadrant out of a pheremone world graph given its index.
 getPherQuad :: Int -> GraphPWTuple -> GraphPTuple
 getPherQuad nd world = fstTrip ((sndTrip world) nd)
 
--- | gets the edge of the Graph at nd in the world  ::ghci getAQuadEdge 1 West
+-- | This function returns the edge of the Graph at a particular node in the world  ::ghci getAQuadEdge 1 West
 getAQuadEdge nd edgDir = getAEdge (getAntQuad nd antWorld) edgDir
 getPQuadEdge nd edgDir = getAEdge (getPherQuad nd pherWorld) edgDir
 
@@ -76,7 +84,8 @@ getPQuadEdge nd edgDir = getAEdge (getPherQuad nd pherWorld) edgDir
 --9|A|B|C
 --D|E|F|G
 
---Get All the stitchupable edges 
+-- | Get All the stitchupable edges. This generates a list of all the quadrant edges as pairs of the quadrant indices into the world graph that 
+--   form them.
 stitchEdges :: GraphAWTuple -> [(Int, Int)]
 stitchEdges world = nubBy (\x y -> x == y || swap x == y) (edges $ fstTrip $ world)
 -- nubBy allows me to remove duplicates from a list like nub but with nubBy I can describe how duplicates
@@ -87,7 +96,8 @@ stitchEdges world = nubBy (\x y -> x == y || swap x == y) (edges $ fstTrip $ wor
 -- | Gets the batches for parallel stitching in order.
 getOrderedBatch a = reverse $ sortBy (\x y -> length y `compare` length x) (getBatch a [] [])
 
--- | Generates the batches of computation for parallel stitching
+-- | Generates the batches of computation for parallel stitching, this produces a list of lists, where each list is a set of stitching quads
+--   which can be stitched in parallel without loosing the worlds coherence.
 getBatch stitchies emptyList batches = do
         let x = inTupleList stitchies emptyList
         if x == []
@@ -125,6 +135,7 @@ dirsNeeded quadTuple
 --stitchUpEdges world = undefined --stitchEdges edges $ fstTrip world -- more serially stuffs
 
 --stitchUpEdge :: GraphAWTuple -> GraphPWTuple -> ((Int,Direction),(Int,Direction)) -> Int -> GraphAWTuple
+-- | stitchUpEdge 
 stitchUpEdge antWorld pherWorld qsiz quadPair = do
 
                 let quadSize = qsiz                
@@ -144,7 +155,7 @@ stitchUpEdge antWorld pherWorld qsiz quadPair = do
                 stitchable
                 
                  
--- | based off listOfNodesWithAntsIn
+-- | This function is based off listOfNodesWithAntsIn with pattern matching it loops through a list of ants and their vertices on a given edge --   and returns a list of maybe ants where all values are Just ant, Nothings are disregarded.
 edgePointsWithAntsIn :: [(Maybe Ant, Int)] -> [(Maybe Ant,Int)]
 edgePointsWithAntsIn [] = []
 edgePointsWithAntsIn ((ant,nd):xs)
@@ -174,7 +185,10 @@ processWorld x y = do
         worldRes
 
 
--- | 
+-- | The takes pairs of quadrant vertexes into a world graph and returns the relation to each other as a tuple in terms of sides touching.
+--   for example the top two quadrants indexed 1 and to would be input as (1,2) and would be returned as ((1,West),(2,East)) the second element
+--   in each tuple being the direction for the edge which touches the other quadrant which is indexed.
+--   The seperate lists whould be sets of quadrant pairs which can be processed in parallel.
 recurseOnBatches :: [[(Int,Int)]]                   -- ^
         -> [[((Int, Direction), (Int, Direction))]] -- ^
 recurseOnBatches x =  map genQuadPairs x
@@ -230,7 +244,6 @@ complexAGraphUpdate world passedList siz = do
         patchMissing world passedList 0 siz []
         
 -- |
-
 patchMissing world passedList inc siz qList = do
         let potentialQuad = lookup inc passedList
         let qList' = select [] $ 
@@ -255,22 +268,26 @@ zipNoProcs labels@(((x1,_),(x2,_)):xs) noProcs@((y1,y2):ys) [] siz = do
         let c = updateNoProcList x2 y2 b
         c
 
--- |
-
 zipNoProcs labels@(((x1,_),(x2,_)):xs) noProcs@((y1,y2):ys) npList@(l:ls) siz = do
         let a = updateNoProcList x1 y1 npList
         let b = updateNoProcList x1 y1 a
         b
 
--- | 
-updateNoProcList :: Int -> [Int] -> [[Int]] -> [[Int]]
+-- |
+updateNoProcList :: Int         -- ^
+        -> [Int]                -- ^
+        -> [[Int]]              -- ^
+        -> [[Int]]              -- ^
 updateNoProcList quadrant addition currentNoProcList = do
         let a = splitAt quadrant currentNoProcList
         let y = fst a ++ [union addition (head $ snd a)] ++ (tail $ snd a)
         y
 
-
-addAntToWorld :: Ant -> Location -> GraphAWTuple -> Either String GraphAWTuple
+-- | 
+addAntToWorld :: Ant                    -- ^ The desired ant to be added to the simulation world.
+        -> Location                     -- ^ The location that the simulation wants to place the ant at.
+        -> GraphAWTuple                 -- ^ The current Ant world graph.
+        -> Either String GraphAWTuple   -- ^ Either a returned updated ant graph or an error message if the coordinates do not exist within the world.
 addAntToWorld a loc awgraph = do
         let wsiz = truncate $ sqrt $fromIntegral $length $brokenUpGraph awgraph
         let qsiz = truncate $ sqrt $fromIntegral $length $brokenUpGraph $ fstTrip ((sndTrip awgraph) (0))
@@ -281,17 +298,41 @@ addAntToWorld a loc awgraph = do
                 then addAntToWorld' a loc awgraph wsiz qsiz
                 else Left "Ant is not of this world."
 
-addAntToWorld' :: Ant -> Location -> GraphAWTuple -> Int -> Int -> Either String GraphAWTuple
+
+-- | This is a helper funcion to addAntToWorld and converts the world coordinates to coordinates for a specific quad
+--   it also extracts the necessary quadrant for updating.
+addAntToWorld' :: Ant                   -- ^ The ant to be added to the simulation
+        -> Location                     -- ^ The requested location for the ant within the simulation world
+        -> GraphAWTuple                 -- ^ The ant world graph to be edited.
+        -> Int                          -- ^ The size of ant world graph in terms of quadrants across.
+        -> Int                          -- ^ The size of each quadrant in terms of nodes across.
+        -> Either String GraphAWTuple   -- ^ The result, either an error string if an ant already exists in the desired location or the edited ant world Graph.
 addAntToWorld' a loc awgraph wsiz qsiz = do
-        let wnd = (((xpos loc -1) `div` qsiz) + 1) + (((ypos loc -1) `div` qsiz) * wsiz)
+        let wnd = ((xpos loc -1) `div` qsiz) + (((ypos loc -1) `div` qsiz) * wsiz)
         let aquad = fstTrip $ (sndTrip awgraph) (wnd)
         let qnd = 1 + ((xpos loc - 1) `mod` qsiz + (((ypos loc -1) `mod` qsiz) * wsiz))
         if isAntAtNode aquad qnd       
                 then Left "Ant already here."
                 else addAntToWorld'' wnd awgraph (addExistingAnt aquad qnd (Just a))
 
-  
-addAntToWorld'' :: Int -> GraphAWTuple -> GraphATuple -> Either String GraphAWTuple
+
+-- | testing wnode function on a fixed 3x3 quad 9 quadrant world. World coordinate (1-9,1-9)
+wnodeTest :: Int        -- ^ The given x world coordinate
+        -> Int          -- ^ The given y world coordinate
+        -> Int          -- ^ The resulting quadrant the coordinate should lie in.
+wnodeTest x y = ((x -1) `div` 3) + (((y -1) `div` 3) * 3)
+
+-- | testing qnode function on a fixed 3x3 quad 9 quadrant world. World coordinate (1-9,1-9)
+qnodeTest :: Int        -- ^ The given x world coordinate
+        -> Int          -- ^ The given y world coordinate
+        -> Int          -- ^ The resulting node within the quadrant the world coordinate identifies.
+qnodeTest x y = 1 + ((x - 1) `mod` 3 + (((y -1) `mod` 3) * 3))
+
+-- | This function updates the specific quadrant the ant is to be added to then updates the world replacing only the updated quadrant in the world Graph.
+addAntToWorld'' :: Int                  -- ^ The quadrant to be changed's node position within the ant world graph.
+        -> GraphAWTuple                 -- ^ The ant world Graph to be changed.
+        -> GraphATuple                  -- ^ The ant edited ant quandrant
+        -> Either String GraphAWTuple   -- ^ The returned ant world graph.
 addAntToWorld'' wnd awgraph newQuad = Right (graphFromEdges $ zip3 nds nverts nadjs)
         where
                wid = truncate $ sqrt $fromIntegral $length $brokenUpGraph awgraph
@@ -299,27 +340,70 @@ addAntToWorld'' wnd awgraph newQuad = Right (graphFromEdges $ zip3 nds nverts na
                nverts = (keyList wid)
                nadjs = adjListForNewGraph (wid)
 
-replace :: GraphATuple -> Int -> [GraphATuple] -> [GraphATuple]
+
+-- | This function replaces a Quadrant within a list of Quadrants.
+{-replace :: GraphATuple          -- ^ The edited ant quadrant.
+        -> Int                  -- ^ The index of the graph that needs to  be replaced
+        -> [GraphATuple]        -- ^ The list of ant quadrants
+        -> [GraphATuple]        -- ^ The resulting edited list.-}
 replace item index list = a ++ item : b
         where
-                a = take (index-1) list
+                a = take (index) list
                 b = drop index list
 
+-- | Extracts the a given value out of the Either Monadic Type
+extractAntPlaceEither (Right a) _ 0 rs _ =  (a,rs)
+extractAntPlaceEither (Right a) aw antNum ((x,y):rs) aidST =  populateAntWorld a (antNum-1) (rs) aidST --aidST Ant Id from StateM
+extractAntPlaceEither (Left b) aw antNum ((x,y):rs) aidST = populateAntWorld aw (antNum) rs aidST
+extractAntPlaceEither (Right a) aw antNum [] aidST =  (a,[])
+extractAntPlaceEither (Left b) aw antNum [] aidST = (aw,[])
 
-
-
-extractEither (Right a) aw antNum ((x,y):rs) aidST =  populateAntWorld a antNum ((x,y):rs) aidST --aidST Ant Id from StateM
-extractEither (Right a) aw antNum [] aidST =  a
-extractEither (Right a) aw antNum [] aidST =  a
-extractEither (Left b) aw antNum [] aidST = aw
-extractEither (Left b) aw antNum ((x,y):rs) aidST = do
-        --putStrLn(b) -- How I wish I could debug
-        populateAntWorld aw antNum ((x,y):rs) aidST
-
+-- | Given a list of world coordinates this function populates an AntWorld with the given amount of ants.
+populateAntWorld :: GraphAWTuple        -- ^ The current ant world graph.
+        -> Int                          -- ^ The number of ants to be added to the simulation.
+        -> [(Int, Int)]                 -- ^ Takes a list of coordinates that ants are to be placed at.
+        -> t1                           -- ^ Ant Id -- TODO State Monad.
+        -> (GraphAWTuple,[(Int,Int)])   -- ^ The resulting ant updated ant world graph.
 populateAntWorld aw antNum ((x,y):rs) aidST  = do
         let checkw = addAntToWorld (blankAnt 1) (Location x y) aw
-        extractEither checkw aw antNum rs aidST
-        
-        
-        
+        extractAntPlaceEither checkw aw (antNum) rs aidST
+
+
+
+-- | Given a list of world coordinates this function initialzes a nest world graph with a starting nest location.
+populateNestWorld :: GraphNWTuple       -- ^ The current nest world graph.
+        -> [(Int, Int)]                 -- ^ Takes a list of coordinates that the nests starting location could be placed at.
+        -> (GraphNWTuple,(Int,Int))     -- ^ The resulting updated nest world graph.
+populateNestWorld nw ((x,y):rs) = do
+        let wsiz = truncate $ sqrt $fromIntegral $length $brokenUpGraph nw
+        let qsiz = truncate $ sqrt $fromIntegral $length $brokenUpGraph $ fstTrip ((sndTrip nw) (0))
+        let siz = wsiz * qsiz
+        if (x <= siz && y <= siz)
+                then placeNestStart x y nw wsiz qsiz
+                else placeNestStart 1 1 nw wsiz qsiz
+
+placeNestStart x y nwgraph wsiz qsiz = do
+        let wnd = ((x -1) `div` qsiz) + (((y -1) `div` qsiz) * wsiz)
+        let nquad = fstTrip $ (sndTrip nwgraph) (wnd)
+        let qnd = 1 + ((x - 1) `mod` qsiz + (((y -1) `mod` qsiz) * wsiz))
+        placeNestStart' wnd nwgraph (buildNest nquad qnd) (x,y)
+
+
+placeNestStart' wnd nwgraph newQuad coords = ((graphFromEdges $ zip3 nds nverts nadjs), coords)
+        where
+               wid = truncate $ sqrt $fromIntegral $length $brokenUpGraph nwgraph
+               nds = (replace newQuad wnd (map fstTrip $ brokenUpGraph nwgraph))
+               nverts = (keyList wid)
+               nadjs = adjListForNewGraph (wid)
+
+
+populateFoodWorld fw foodNum ((x,y):rs) = do
+        let wsiz = truncate $ sqrt $fromIntegral $length $brokenUpGraph nw
+        let qsiz = truncate $ sqrt $fromIntegral $length $brokenUpGraph $ fstTrip ((sndTrip nw) (0))
+        let siz = wsiz * qsiz
+        if (x <= siz && y <= siz)
+                then placeFoodSource x y nw wsiz qsiz
+                else Left "Food must be placed within the world"
+
+
 

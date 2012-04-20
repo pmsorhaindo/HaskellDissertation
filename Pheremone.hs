@@ -32,6 +32,7 @@ pherToAnt ant pher = do
                 then Nothing
                 else pherToAnt' (fromJust ant) pher
 
+-- | A helper function for pherToAnt.
 pherToAnt' ant pher = do        
         let currLevel = pherLevel ant
         let additPher = pher*0.25 -- additional pheremone to add (1/4 of the pher at location)
@@ -39,7 +40,7 @@ pherToAnt' ant pher = do
         newAnt
         
 
--- | TODO
+-- | This function updates the Pheremone graph with a transfer of the current ants pheremones onto the pheremone representation of a Quadrant.
 transAntToPher :: GraphPTuple -> GraphATuple -> GraphPTuple
 transAntToPher graphPT graphAT = do
         let aphers = listOfNodes $ brokenUpGraph graphAT

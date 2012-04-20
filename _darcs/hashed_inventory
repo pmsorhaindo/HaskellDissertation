@@ -1,4 +1,4 @@
-pristine:89d679ca12e2eb7d24a4b13a14959e534c8ff4e8b99d6a5914a3ca31a1759958
+pristine:80263f377caa4e5189cdd1594092c03cdd0c5e590e776b0b4ee66530534559d1
 [first steps in Haskell
 pmsorhaindo@gmail.com**20111121210005
  Ignore-this: b009ca3a80e5e354c7a89c4133c232e3
@@ -319,3 +319,8 @@ pmsorhaindo@gmail.com**20120409171256
  Ignore-this: f755fe2a106e165f60325ea575df9b12
 ] 
 hash: 0000002818-d0d07c3b162a05c6a895a514ba0df1e0b026e8f8023cd3d79997ab21e1c8533f
+[buggy addition of ants far right and bottom quadrants don't want to know
+pmsorhaindo@gmail.com**20120410010848
+ Ignore-this: 71a9b4c9997a8525dec17bfa8dd9f027
+] 
+hash: 0000005081-f0f119a7bdfdce05c91276f4cafdd4dc991f5616eb6834e5e7369f28f7dcc80b

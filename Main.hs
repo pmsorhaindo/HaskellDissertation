@@ -70,22 +70,28 @@ setupSim worldSize quadSize antNum foodNum rs aidST = do
         let aw = newAWorld worldSize quadSize--new antWorld -para
         let pw = newPWorld worldSize quadSize--new pherWorld
         let fw = newFWorld worldSize quadSize--new foodWorld
+        let nw = newNWorld worldSize quadSize--new nestWorld
         let ns = splitAt antNum $ take (antNum*2) rs
         let ns'= zip (fst ns) (snd ns)
         let aPopulate = populateAntWorld aw antNum ns' aidST
-        ns'
-        --set NestLoc
+        let fPopulate = populateFoodWorld fw foodNum (snd aPopulate)
+        let nPopulate = populateNestWorld nw (snd fPopulate) --set NestLoc
         --placeAnts -para
-        --placeFood
+        --let fPopulate = --placeFood
+        (aPopulate,pw,fPopulate,nPopulate)
+        
+        
+        
 
 -- | Main function
 main :: IO ()
 main = do
         -- Launch GUI.
         rnumbers <- genRandoms 1 8
+        putStrLn("Testing IO .. input please ")        
         a <- getLine
-        putStrLn ("Hey " ++ a)
-        putStrLn ("test")
+        putStrLn ("IO Test :: " ++ a)
+        putStrLn ("Testing crossing Quadrants")
         putStrLn (show $ fst $ splitAt 3 rnumbers)
         let antID = runState (do{return 1}) 1
         let sti = stitchUpEdge antWorld_ pherWorld 3 ((2,West),(3,East))
@@ -104,8 +110,8 @@ main = do
         putStrLn("")
         let ns = splitAt 1000 $ take (1000*2) rnumbers
         let ns'= zip (fst ns) (snd ns)
-        let aPopulate = populateAntWorld atestAddWorld 10 ns' antID
-        prettyAntWorld $ aPopulate
+        let aPopulate = populateAntWorld atestAddWorld 3 ns' antID
+        prettyAntWorld $ fst aPopulate
         
         putStrLn("")
         --_ <- forkIO guiFunc

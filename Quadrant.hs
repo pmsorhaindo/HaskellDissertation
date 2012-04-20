@@ -7,7 +7,6 @@ import Data.Graph
 import Data.Maybe (fromJust, isNothing, isJust)
 import Data.List (maximumBy, sortBy, (\\))
 import Data.Bool.HT
-import Debug.Trace
 import Test.QuickCheck
 import Test.HUnit
 --Test-Framework .... to automate the testing -- TODO
@@ -26,6 +25,9 @@ type GraphPTuple = (Graph, Vertex -> (Double, Int, [Int]), Int -> Maybe Vertex)
 
 -- | Similar to GraphATuple but holding Food levels instead of Ants.
 type GraphFTuple = (Graph, Vertex -> (Maybe Food, Int, [Int]), Int -> Maybe Vertex)
+
+-- | Similar to GraphATuple but holding the locations of the nest instead of Ants.
+type GraphNTuple = (Graph, Vertex -> (Bool, Int, [Int]), Int -> Maybe Vertex)
 
 --Build a new Graph 6 and 36 need replacing with a variable graph size and graph size^2
 -- let a = graphFromEdges $ zip3 [1..36] (keyList 6) (adjListForNewGraph 6)
@@ -63,7 +65,7 @@ edgesForTestAGraph4' = [(Nothing,1,[2,4]),(Nothing,2,[1,5,3]),(Nothing,3,[2,6]),
 edgesForTestPGraph :: [(Double, Int, [Int])]
 edgesForTestPGraph = [(0,1,[2,4]),(0,2,[1,5,3]),(0,3,[2,6]),(0,4,[1,7,15]),(0,5,[2,4,8,6]),(0,6,[3,5,9]),(0,7,[4,8]),(0,8,[7,5,9]),(0,9,[8,6])]
 
-
+-- | This function produces a graphTuple
 graphTuple :: [(node, Int, [Int])]                                      -- ^
         -> (Graph, Vertex -> (node, Int, [Int]), Int -> Maybe Vertex)   -- ^
 graphTuple edgs    = graphFromEdges edgs
@@ -72,8 +74,9 @@ graph edgs         = fstTrip $ graphFromEdges edgs
 graphfunc edgs     = sndTrip $ graphFromEdges edgs
 graphfuncVert edgs = trdTrip $ graphFromEdges edgs
 
---list splitting functions take the first and second half, repsectively , of the list y when split at x.
+-- | list splitting functions take the first and second half, repsectively , of the list y when split at x.
 splittedVertlist1 x y = fst $ splitAt x y
+-- | list splitting functions take the first and second half, repsectively , of the list y when split at x.
 splittedVertlist2 x y = snd $ splitAt x y
 
 swapNodes :: Int        -- ^
@@ -101,27 +104,30 @@ adjVertsFromCombo :: (Graph, Vertex -> (t, t1, b), t2)  -- ^
         -> [b]                                          -- ^
 adjVertsFromCombo z = map trdTrip (brokenUpGraph z)
 
-updateGraph :: Int      -- ^
-        -> Int          -- ^
-        -> GraphATuple  -- ^
-        -> GraphATuple  -- ^
+-- | This function swaps the values of two nodes in a given graph. This function is used for easy ant movement in quadrant as no passing of 
+--   data outside of the data structure is need.
+updateGraph :: Int      -- ^ The first node that is to be swapped with the second node.
+        -> Int          -- ^ The second node that is to be swapped with the first node.
+        -> GraphATuple  -- ^ The ant graph in which the swap taked place.
+        -> GraphATuple  -- ^ The updated ant graph.
 updateGraph x y z = graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) ([1..])  (adjVertsFromCombo z)
 
 --If it connects
 --updateGraph':: Int-> Int-> (Graph, Int -> (node, Int, [Int]), t)-> [(node, Vertex, [Int])]
 -- now changed to (Return 10) Graph Tuple
-updateGraph' :: Int             -- ^
-        -> Int                  -- ^
-        -> GraphATuple          -- ^
-        -> Maybe GraphATuple    -- ^
+-- | This is a safer version of the updateGraph function returning a type Maybe GraphATuple if swap doesn't complete a Nothin
+updateGraph' :: Int             -- ^ The first node that is to be swapped with the second node.
+        -> Int                  -- ^ The second node that is to be swapped with the first node.
+        -> GraphATuple          -- ^ The ant graph in which the swap taked place.
+        -> Maybe GraphATuple    -- ^ The updated ant graph wrapped in a Maybe.
 updateGraph' x y z
         | y `elem` (legalEdges z $ x-1) = Just (graphFromEdges $ zip3 (swapNodes x y (listOfNodes $ brokenUpGraph z)) ([1..])  (adjVertsFromCombo z))
         | otherwise                     = Nothing
 
--- legalEdges
-legalEdges :: GraphATuple       -- ^
-        -> Int                  -- ^
-        -> [Int]                -- ^
+-- This function calculates the legal nodes that can be moved to from a particular node in a graph.
+legalEdges :: GraphATuple       -- ^ The graph to be processed
+        -> Int                  -- ^ The current node
+        -> [Int]                -- ^ The list of nodes that may be possible to move to (legal moves)
 legalEdges graphT v = trdTrip $ sndTrip graphT $ v
 
 
@@ -158,6 +164,12 @@ addAnt graphT pos = graphFromEdges $ zip3 (preList ++ [Just(Ant 1 East 1 0 (Retu
               sufList = drop pos (listOfNodes $ brokenUpGraph graphT)
 --Allows a prexisting Ant to be placed in a graph.
 
+buildNest graphT pos =  graphFromEdges $ zip3 (preList ++ [True] ++ sufList) ([1..]) (adjVertsFromCombo graphT)
+        where preList | pos < 1 = []
+                      | otherwise = take (pos-1) (listOfNodes $ brokenUpGraph graphT)
+              sufList = drop pos (listOfNodes $ brokenUpGraph graphT)
+
+-- This function takes
 addExistingAnt :: GraphATuple   -- ^
         -> Int                  -- ^
         -> Maybe Ant            -- ^
@@ -320,8 +332,8 @@ getAEdge _ _ = undefined
 
 -- | Export Pheremone graph edge for stitching
 getPEdge :: forall t1 t2 a e t3 a1. (Ix a, Integral a) => (Array a e, Int -> (a1, t1, t2), t3) -- ^
-        -> Direction    -- ^
-        -> [(a1, Int)] -- ^
+        -> Direction    -- ^ The direction of the edge required
+        -> [(a1, Int)]  -- ^ Returns the pheremone "quantity and quadrant node" tuple of all the nodes along the edge of a Pheremone graph as a list
 getPEdge graphPT getDir
         | getDir == North = zip (map f [1 .. size]) [1..size]
         | getDir == West  = zip (map f [size,size+size .. size^2]) [size,size+size .. size^2]
@@ -352,22 +364,27 @@ width :: Size
 width = 3
 
 -- | Generating empty ant Graph of size width
-newAQuad :: Int ->      -- ^
-        GraphATuple     -- ^
+newAQuad :: Int ->      -- ^ The size of the new ant quadrant as its width or height (All quadrants are square)
+        GraphATuple     -- ^ The returned Ant Quadrant.
 newAQuad gwidth = graphFromEdges $ zip3 (replicate (gwidth^2) Nothing) (keyList gwidth) (adjListForNewGraph gwidth) :: GraphATuple
 
 newAQuad' :: GraphATuple -- ^
 newAQuad' = graphFromEdges $ edgesForTestAGraph1' :: GraphATuple
 
 
--- | Gennerating empty pheremone Graph of size width
-newPQuad :: Int         -- ^
-        -> GraphPTuple  -- ^
+-- | Generating empty pheremone Graph of size width
+newPQuad :: Int         -- ^ The size of the new pheremone quadrant as its width or height (All quadrants are square)
+        -> GraphPTuple  -- ^ The returned new Pheremone quadrant
 newPQuad gwidth = graphFromEdges $ zip3 (replicate (gwidth^2) 1.0) (keyList gwidth) (adjListForNewGraph gwidth) :: GraphPTuple
 
 -- | Gennerating empty pheremone Graph of size width
-newFQuad :: Int         -- ^
-        -> GraphFTuple  -- ^
+newFQuad :: Int         -- ^ The size of the new food quadrant as its width or height (All quadrants are square)
+        -> GraphFTuple  -- ^ The returned new Food quadrant
 newFQuad gwidth = graphFromEdges $ zip3 (replicate (gwidth^2) Nothing) (keyList gwidth) (adjListForNewGraph gwidth) :: GraphFTuple
+
+-- | Gennerating empty nest Graph of size width
+newNQuad :: Int         -- ^ The size of the new nest quadrant as its width or height (All quadrants are square)
+        -> GraphNTuple  -- ^ The returned new Nest quadrant
+newNQuad gwidth = graphFromEdges $ zip3 (replicate (gwidth^2) False) (keyList gwidth) (adjListForNewGraph gwidth) :: GraphNTuple
 
 
